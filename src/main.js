@@ -1,8 +1,7 @@
 import './style.css'
 import { World } from './world/World.js'
 import { TOUR } from './world/tour.js'
-import { HOTSPOTS, ACTION_LABELS, INDEX_ORDER, CHAPTERS } from './content.js'
-import screenArt from './assets/screen/ouro.jpg'
+import { HOTSPOTS, ACTION_LABELS, INDEX_ORDER, CHAPTERS, LINES } from './content.js'
 
 // Drop images into src/assets/drawings and they're hung around the room in filename order
 const drawings = Object.entries(
@@ -142,10 +141,11 @@ for (const [id, item] of Object.entries(HOTSPOTS)) labels[id] = item.bubble
 renderMode()
 const world = new World(document.querySelector('#world'), {
   bubble: document.querySelector('#bubble'),
+  say: document.querySelector('#say'),
   labels,
+  lines: LINES,
   mode,
   drawings,
-  screenArt,
   onActivate: (id) => (id === 'lamp' ? toggleMode() : openHotspot(id)),
 })
 window.addEventListener('scroll', onScroll, { passive: true })

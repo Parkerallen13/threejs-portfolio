@@ -26,8 +26,9 @@ export function createCharacter() {
   const blouse = toon(C.blouse)
 
   // Skirt + shoes
-  const skirt = inked(new THREE.CylinderGeometry(0.19, 0.34, 0.78, 24), toon(C.skirt))
-  body.add(at(skirt, 0, 0.45, 0))
+  // Reccardi proportions: pinched waist, tall A-line skirt, long neck, big hair
+  const skirt = inked(new THREE.CylinderGeometry(0.13, 0.36, 0.88, 24), toon(C.skirt))
+  body.add(at(skirt, 0, 0.48, 0))
   for (const x of [-0.09, 0.09]) {
     const shoe = inked(new THREE.SphereGeometry(0.07, 12, 8), toon(C.shoe), 0.015)
     shoe.scale.set(1, 0.6, 1.5)
@@ -35,28 +36,28 @@ export function createCharacter() {
   }
 
   // Blouse, puff sleeves, collar + bow
-  body.add(at(inked(new THREE.CylinderGeometry(0.15, 0.2, 0.36, 20), blouse), 0, 1.0, 0))
-  for (const x of [-0.21, 0.21]) body.add(at(inked(new THREE.SphereGeometry(0.105, 14, 10), blouse), x, 1.1, 0))
-  body.add(at(inked(new THREE.CylinderGeometry(0.19, 0.19, 0.03, 24), blouse, 0.012), 0, 1.18, 0))
-  for (const x of [-0.035, 0.035]) body.add(at(inked(new THREE.SphereGeometry(0.03, 8, 6), blouse, 0.008), x, 1.12, 0.17))
+  body.add(at(inked(new THREE.CylinderGeometry(0.17, 0.12, 0.38, 20), blouse), 0, 1.1, 0))
+  for (const x of [-0.2, 0.2]) body.add(at(inked(new THREE.SphereGeometry(0.1, 14, 10), blouse), x, 1.22, 0))
+  body.add(at(inked(new THREE.CylinderGeometry(0.19, 0.19, 0.03, 24), blouse, 0.012), 0, 1.29, 0))
+  for (const x of [-0.035, 0.035]) body.add(at(inked(new THREE.SphereGeometry(0.03, 8, 6), blouse, 0.008), x, 1.23, 0.17))
 
   // Arms swing from the shoulders
   const arms = [-1, 1].map((side) => {
-    const pivot = at(new THREE.Group(), side * 0.23, 1.08, 0)
-    pivot.add(at(inked(new THREE.CapsuleGeometry(0.042, 0.28, 4, 8), skin, 0.015), side * 0.02, -0.22, 0))
+    const pivot = at(new THREE.Group(), side * 0.21, 1.2, 0)
+    pivot.add(at(inked(new THREE.CapsuleGeometry(0.03, 0.36, 4, 8), skin, 0.015), side * 0.02, -0.26, 0))
     body.add(pivot)
     return pivot
   })
 
   // Neck + gold chain with a little jade pendant
-  body.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.2, 12), skin), 0, 1.27, 0))
-  const chain = new THREE.Mesh(new THREE.TorusGeometry(0.068, 0.012, 6, 24), toon(C.gold))
+  body.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.26, 12), skin), 0, 1.4, 0))
+  const chain = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.011, 6, 24), toon(C.gold))
   chain.rotation.x = Math.PI / 2 - 0.25
-  body.add(at(chain, 0, 1.22, 0.01))
-  body.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), toon(C.jade)), 0, 1.2, 0.08))
+  body.add(at(chain, 0, 1.33, 0.01))
+  body.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), toon(C.jade)), 0, 1.31, 0.075))
 
   // Head
-  const head = at(new THREE.Group(), 0, 1.58, 0)
+  const head = at(new THREE.Group(), 0, 1.72, 0)
   head.scale.set(0.94, 1.1, 0.96) // egg-shaped, Reccardi style
   body.add(head)
   head.add(inked(new THREE.SphereGeometry(0.29, 24, 18), skin))

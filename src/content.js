@@ -72,7 +72,7 @@ HOTSPOTS.me = { ...HOTSPOTS.about, bubble: "Hi, I'm Parker!" }
 export const ACTION_LABELS = {
   lamp: 'Lights!',
   plant: 'Water me',
-  mini: 'Beep beep!',
+  dog: 'Pet me!',
 }
 
 export const INDEX_ORDER = ['about', 'ouro', 'aldente', 'brewing', 'drawings', 'typeface', 'resume', 'contact']
@@ -89,5 +89,19 @@ export const CHAPTERS = {
   aldente: { blurb: 'My capstone, still simmering.' },
   resume: { blurb: 'Where I have worked and what I have learned.' },
   brewing: { blurb: 'A product design assignment with a good name.' },
-  outro: { kicker: 'Thanks for stopping by', title: 'See you around', blurb: 'Click the lamp to flip the lights. Watch out for the Mini.' },
+  outro: { kicker: 'Thanks for stopping by', title: 'See you around', blurb: 'Click the lamp to flip the lights. Say hi to the husky on your way out.' },
+}
+
+// What Parker says to you at each stop of the tour
+export const LINES = {
+  intro: "Oh hi! Come on in, make yourself at home.",
+  about: "That's my favorite chair. Want to know about me?",
+  typeface: "I drew this typeface letter by letter.",
+  contact: "The door's always open. Say hi anytime!",
+  ouro: "I designed and built Ouro Room's site right here.",
+  drawings: "These are my drawings. Even the rug!",
+  aldente: "Hungry? This is Al Dente, my capstone.",
+  resume: "Those books? That's my experience.",
+  brewing: "Careful, that's Bad Decisions Brewing.",
+  outro: "Thanks for visiting! Come back soon.",
 }

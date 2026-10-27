@@ -19,12 +19,11 @@ src/main.js                boots the world, builds the scroll chapters, opens pa
 src/content.js             all the words: hotspot bubbles + panels, chapter blurbs
 src/style.css              cartoon-dark UI (Fraunces + Pinyon Script + Space Mono)
 src/assets/drawings/       drop images here: they hang on the walls, mantel and rug in filename order
-src/assets/screen/         art on the desk monitor
-src/world/World.js         renderer, camera tour, Parker + the Mini, hover/click, day/night
+src/world/World.js         renderer, camera tour, Parker + the husky, hover/click, day/night
 src/world/tour.js          scroll chapters: camera position, look target, lens + color wash
 src/world/room.js          the living room, piece by piece, and which objects are clickable
 src/world/character.js     Parker, built from primitives, animated on twos
-src/world/car.js           the black Mini convertible
+src/world/dog.js           the black-and-white husky
 src/world/lensPass.js      fisheye + line boil, dry-brush mottling, paper grain, palette wash
 src/world/toon.js          toon materials, ink outlines, hand-drawn wobble
 src/world/textures.js      canvas-drawn textures (floor, brick, blanket, posters)

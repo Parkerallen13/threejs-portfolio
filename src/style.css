@@ -190,6 +190,16 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: 3px 3px 0 var(--ink);
 }
 .bubble.is-visible { opacity: 1; }
+/* Parker talking to you */
+.bubble--say {
+  background: var(--secondary);
+  font-size: 1.15rem;
+  white-space: normal;
+  width: max-content;
+  max-width: min(320px, 70vw);
+  text-align: center;
+}
+.bubble--say::after { background: var(--secondary); }
 .bubble::after {
   content: '';
   position: absolute;

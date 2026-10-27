@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { toon, inked, block, at, hitbox } from './toon.js'
+import { toon, logs, inked, block, at, hitbox } from './toon.js'
 import * as tex from './textures.js'
 
 // Inner wall faces: x = ±6, z = -5. The front (z = +5) is open like a dollhouse.
@@ -62,10 +62,40 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   add(floor)
   add(at(block(12.4, 0.4, 10.2, toon('#5a3a22'), 0.05), 0, -0.23, -0.1))
 
-  const wallMat = toon(C.wall)
-  add(at(block(12.4, 3.2, 0.2, wallMat, 0.02), 0, 1.6, -5.1))
-  add(at(block(0.2, 3.2, 10.2, wallMat, 0.02), -6.1, 1.6, -0.1))
-  add(at(block(0.2, 3.2, 10.2, wallMat, 0.02), 6.1, 1.6, -0.1))
+  // ---------- Cottage: log walls, a real window hole, pitched timber roof ----------
+  const wallMat = logs('#9a6a43')
+  // Back wall is built around the window opening (x -2.25..-0.95, y 1.1..2.4) so you can see the woods
+  add(at(block(3.95, 3.2, 0.2, wallMat, 0.01), -4.225, 1.6, -5.1))
+  add(at(block(7.15, 3.2, 0.2, wallMat, 0.01), 2.625, 1.6, -5.1))
+  add(at(block(1.3, 1.1, 0.2, wallMat, 0.01), -1.6, 0.55, -5.1))
+  add(at(block(1.3, 0.8, 0.2, wallMat, 0.01), -1.6, 2.8, -5.1))
+  add(at(block(0.2, 3.2, 10.2, wallMat, 0.01), -6.1, 1.6, -0.1))
+  add(at(block(0.2, 3.2, 10.2, wallMat, 0.01), 6.1, 1.6, -0.1))
+
+  // Back gable fills the triangle under the roof
+  const gable = new THREE.Shape([new THREE.Vector2(-6.2, 0), new THREE.Vector2(6.2, 0), new THREE.Vector2(0, 2.0)])
+  add(at(inked(new THREE.ExtrudeGeometry(gable, { depth: 0.2, bevelEnabled: false }), wallMat), 0, 3.2, -5.2))
+
+  // Roof slabs: warm planks inside, mossy shingles on top
+  const pitch = Math.atan2(2.0, 6.4)
+  const planks = toon('#7a4e30')
+  const shingles = toon('#5f5a3a')
+  for (const side of [-1, 1]) {
+    const slab = at(block(6.9, 0.2, 10.8, planks, 0.02), side * 3.2, 4.25, -0.1)
+    slab.rotation.z = -side * pitch
+    add(slab)
+    const top = at(block(7.0, 0.14, 11.0, shingles, 0.05), side * 3.17, 4.42, -0.1)
+    top.rotation.z = -side * pitch
+    add(top)
+  }
+  // Exposed beams
+  const beamMat = toon('#4a2f1d')
+  for (const z of [-3.6, -1.1, 1.4, 3.9]) add(at(block(12.2, 0.22, 0.24, beamMat, 0.03), 0, 3.1, z))
+  add(at(block(0.26, 0.26, 10.8, beamMat, 0.03), 0, 5.05, -0.1))
+  for (const z of [-3.6, -1.1, 1.4, 3.9]) {
+    const post = at(block(0.16, 1.8, 0.16, beamMat, 0.03), 0, 4.1, z)
+    add(post)
+  }
   const trimMat = toon(C.trim)
   add(at(block(12, 0.14, 0.05, trimMat, 0.01), 0, 0.07, -4.98))
   add(at(block(0.05, 0.14, 10, trimMat, 0.01), -5.98, 0.07, 0))
@@ -88,7 +118,7 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   // ---------- Window, curtains, paper chain ----------
   const win = new THREE.Group()
   win.add(at(block(1.5, 1.5, 0.1, trimMat, 0.02), 0, 1.75, 0))
-  const glassMaterial = new THREE.MeshBasicMaterial({ color: '#cfe8ff' })
+  const glassMaterial = new THREE.MeshBasicMaterial({ color: '#cfe8ff', transparent: true, opacity: 0.15, depthWrite: false })
   win.add(at(new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), glassMaterial), 0, 1.75, 0.06))
   win.add(at(block(0.05, 1.3, 0.04, trimMat, 0.01), 0, 1.75, 0.08))
   win.add(at(block(1.3, 0.05, 0.04, trimMat, 0.01), 0, 1.75, 0.08))
@@ -227,6 +257,7 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   add(at(block(0.8, 3.2, 3.0, brickMat, 0.01), 5.6, 1.6, -2.7))
   add(at(block(0.1, 0.95, 1.2, toon('#141210'), 0.01), 5.2, 0.62, -2.7))
   add(at(block(0.7, 0.22, 3.0, brickMat, 0.02), 4.95, 0.11, -2.7))
+  add(at(block(0.9, 2.6, 1.0, brickMat, 0.02), 5.6, 4.5, -2.7))
   const woodMat = toon('#a8693a')
   add(at(block(0.55, 0.1, 3.3, woodMat, 0.02), 5.0, 1.95, -2.7))
   for (const z of [-3.8, -1.6]) add(at(block(0.3, 0.25, 0.08, woodMat, 0.02), 5.1, 1.78, z))

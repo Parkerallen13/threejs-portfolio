@@ -3,8 +3,9 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 
 export const lens = { k: 0.38 }
 
-// Fisheye lens + the hand-made bits of a 60s cartoon: line boil on twos,
-// dry-brush mottling, paper grain, and a round lens vignette.
+// Fisheye lens + a hand-painted storybook finish (think Snow White backgrounds): soft
+// watercolor bleed, pigment pooling at edges, warm glow, paper grain, line boil on twos,
+// and an oval vignette.
 export function createLensPass() {
   return new ShaderPass({
     uniforms: {
@@ -12,7 +13,7 @@ export function createLensPass() {
       uTime: { value: 0 },
       uK: { value: lens.k },
       uResolution: { value: new THREE.Vector2(1, 1) },
-      uEdge: { value: new THREE.Color('#1d1a16') },
+      uEdge: { value: new THREE.Color('#2a1d14') },
       uTint: { value: new THREE.Color('#f2b632') },
       uGrade: { value: 0 },
     },
@@ -53,21 +54,39 @@ export function createLensPass() {
       void main() {
         float frame = floor(uTime * 8.0);
         vec2 px = vUv * uResolution;
-        vec2 boil = (vec2(noise(px * 0.015 + frame * 7.13), noise(px * 0.015 + frame * 3.71 + 19.0)) - 0.5) * 2.0 / uResolution;
-        vec3 color = texture2D(tDiffuse, fisheye(vUv) + boil).rgb;
+        vec2 boil = (vec2(noise(px * 0.015 + frame * 7.13), noise(px * 0.015 + frame * 3.71 + 19.0)) - 0.5) * 1.5 / uResolution;
+        vec2 uv = fisheye(vUv) + boil;
 
-        // Limited-palette wash: map brightness onto dark-tint -> light-tint, like a two-color print
+        // Watercolor softness: blend in a small blur so edges bleed a little
+        vec2 texel = 1.5 / uResolution;
+        vec3 c = texture2D(tDiffuse, uv).rgb;
+        vec3 n1 = texture2D(tDiffuse, uv + vec2(texel.x, 0.0)).rgb;
+        vec3 n2 = texture2D(tDiffuse, uv - vec2(texel.x, 0.0)).rgb;
+        vec3 n3 = texture2D(tDiffuse, uv + vec2(0.0, texel.y)).rgb;
+        vec3 n4 = texture2D(tDiffuse, uv - vec2(0.0, texel.y)).rgb;
+        vec3 color = mix(c, (c * 2.0 + n1 + n2 + n3 + n4) / 6.0, 0.5);
+
+        // Pigment pools darker where colors meet, like paint drying on paper
+        float edge = length(n1 - n2) + length(n3 - n4);
+        color *= 1.0 - smoothstep(0.08, 0.5, edge) * 0.16;
+
+        // Storybook palette: a touch muted and warm, with a soft glow on highlights
         float lum = dot(color, vec3(0.299, 0.587, 0.114));
+        color = mix(vec3(lum), color, 0.86) * vec3(1.03, 1.0, 0.94);
+        color += smoothstep(0.55, 1.0, lum) * vec3(1.0, 0.85, 0.6) * 0.12;
+
+        // Per-stop color wash
         vec3 duo = mix(uTint * 0.32, mix(uTint, vec3(1.0, 0.96, 0.88), 0.55), smoothstep(0.02, 0.75, lum));
         color = mix(color, duo, uGrade);
 
-        float blotch = noise(px * 0.006) * 0.6 + noise(px * 0.025) * 0.4;
-        color *= 0.92 + blotch * 0.14;
-        color *= 0.95 + hash(floor(px * 0.5)) * 0.07;
+        // Watercolor paper: blotchy pigment and fine grain
+        float blotch = noise(px * 0.004) * 0.5 + noise(px * 0.02) * 0.3 + noise(px * 0.09) * 0.2;
+        color *= 0.9 + blotch * 0.16;
+        color *= 0.96 + hash(floor(px * 0.5)) * 0.05;
 
-        float aspect = uResolution.x / uResolution.y;
-        float d = length((vUv - 0.5) * vec2(aspect, 1.0)) / length(vec2(aspect, 1.0) * 0.5);
-        color = mix(color, uEdge, smoothstep(0.72, 1.02, d) * 0.9);
+        // Soft oval storybook vignette
+        float d = length((vUv - 0.5) * vec2(1.0, 1.15)) * 1.55;
+        color = mix(color, uEdge, smoothstep(0.62, 1.08, d) * 0.85);
         gl_FragColor = vec4(color, 1.0);
       }
     `,
