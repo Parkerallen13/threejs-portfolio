@@ -1,33 +1,148 @@
-:root {
-  --paper: #f4ecd8;
-  --ink: #1d1a16;
-  --tomato: #e0482f;
-  --mustard: #f2b632;
-  --teal: #2a8c84;
-  --pink: #f2a7a0;
+/* ---------- Style + mode tokens ---------- */
+
+:root,
+[data-style='cartoon'] {
+  --bg: #f4ecd8;
+  --fg: #1d1a16;
+  --card: #f4ecd8;
+  --line: #1d1a16;
+  --primary: #e0482f;
+  --secondary: #f2b632;
+  --tone1: #2a8c84;
+  --tone2: #e0482f;
+  --tone3: #f2b632;
+  --stub-ink: #1d1a16;
+  --poster: #f2b632;
+  --poster-ink: #1d1a16;
+  --title-shadow: 4px 4px 0 var(--secondary);
+  --card-shadow: 6px 6px 0 var(--line);
+  --card-shadow-hover: 9px 9px 0 var(--line);
+  --texture: radial-gradient(rgba(29, 26, 22, 0.09) 1px, transparent 1.2px) 0 0 / 5px 5px;
+  --texture-blend: multiply;
+  --border: 3px;
   --display: 'Bowlby One', 'Arial Black', sans-serif;
   --script: 'Yellowtail', cursive;
-  --mono: 'Space Mono', ui-monospace, monospace;
+  --body: 'Space Mono', ui-monospace, monospace;
+  --body-size: 1rem;
+  --h1-size: clamp(3.5rem, 13vw, 9rem);
+  --script-rotate: -6deg;
 }
+
+[data-style='cartoon'][data-mode='dark'] {
+  --bg: #1d1a16;
+  --fg: #f4ecd8;
+  --card: #2a2520;
+  --line: #f4ecd8;
+  --title-shadow: 4px 4px 0 var(--primary);
+  --texture: radial-gradient(rgba(244, 236, 216, 0.07) 1px, transparent 1.2px) 0 0 / 5px 5px;
+  --texture-blend: screen;
+}
+
+[data-style='neon'] {
+  --bg: #efe4ea;
+  --fg: #2b1f4a;
+  --card: #fff7fb;
+  --line: #2b1f4a;
+  --primary: #e0489c;
+  --secondary: #13a89e;
+  --tone1: #13a89e;
+  --tone2: #e8364a;
+  --tone3: #e5a500;
+  --stub-ink: #2b1f4a;
+  --poster: #e0489c;
+  --poster-ink: #fff7fb;
+  --title-shadow: 3px 3px 0 var(--primary);
+  --card-shadow: 6px 6px 0 var(--secondary);
+  --card-shadow-hover: 9px 9px 0 var(--secondary);
+  --texture: none;
+  --border: 3px;
+  --display: 'Monoton', 'Arial Black', sans-serif;
+  --h1-size: clamp(3rem, 11vw, 7.5rem);
+  --script-rotate: -4deg;
+}
+
+[data-style='neon'][data-mode='dark'] {
+  --bg: #14122b;
+  --fg: #fdf0d5;
+  --card: #1d1a3d;
+  --line: #ff3d9a;
+  --primary: #ff7ad9;
+  --secondary: #3ff2e0;
+  --tone1: #3ff2e0;
+  --tone2: #ff4f5e;
+  --tone3: #ffd23f;
+  --stub-ink: #14122b;
+  --poster: #1d1a3d;
+  --poster-ink: #ffd23f;
+  --title-shadow: 0 0 4px #fff, 0 0 12px var(--primary), 0 0 28px var(--primary);
+  --card-shadow: 0 0 10px var(--line), inset 0 0 10px rgba(255, 61, 154, 0.35);
+  --card-shadow-hover: 0 0 22px var(--line), inset 0 0 14px rgba(255, 61, 154, 0.5);
+}
+
+[data-style='pixel'] {
+  --bg: #a3ab84;
+  --fg: #1f2618;
+  --card: #b4bb95;
+  --line: #1f2618;
+  --primary: #46542f;
+  --secondary: #6f7d4c;
+  --tone1: #6f7d4c;
+  --tone2: #46542f;
+  --tone3: #2c3520;
+  --stub-ink: #dfe4c0;
+  --poster: #b4bb95;
+  --poster-ink: #1f2618;
+  --title-shadow: 4px 4px 0 var(--secondary);
+  --card-shadow: 4px 4px 0 var(--line);
+  --card-shadow-hover: 6px 6px 0 var(--line);
+  --texture: repeating-linear-gradient(0deg, rgba(31, 38, 24, 0.06) 0 1px, transparent 1px 3px);
+  --texture-blend: multiply;
+  --border: 4px;
+  --display: 'Silkscreen', ui-monospace, monospace;
+  --script: 'VT323', ui-monospace, monospace;
+  --body: 'VT323', ui-monospace, monospace;
+  --body-size: 1.15rem;
+  --h1-size: clamp(2.6rem, 10vw, 6.5rem);
+  --h2-size: clamp(1.8rem, 5vw, 3.4rem);
+  --script-rotate: 0deg;
+}
+
+[data-style='pixel'][data-mode='dark'] {
+  --bg: #1f2618;
+  --fg: #c9d1a8;
+  --card: #2a3321;
+  --line: #a3ab84;
+  --primary: #8fa05c;
+  --secondary: #5d6b3c;
+  --tone1: #8fa05c;
+  --tone2: #c9d1a8;
+  --tone3: #dfe4c0;
+  --stub-ink: #1f2618;
+  --poster: #2a3321;
+  --poster-ink: #dfe4c0;
+  --texture: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.25) 0 1px, transparent 1px 3px);
+}
+
+/* ---------- Base ---------- */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--mono);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: var(--body-size);
 }
 
-/* Halftone dots + paper grain over everything, like an old print */
+/* Print texture over everything: halftone dots, or scanlines in Retro UI */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 2;
-  background-image: radial-gradient(rgba(29, 26, 22, 0.09) 1px, transparent 1.2px);
-  background-size: 5px 5px;
-  mix-blend-mode: multiply;
+  background: var(--texture);
+  mix-blend-mode: var(--texture-blend);
 }
 
 #webgl {
@@ -37,6 +152,7 @@ body::after {
   height: 100%;
   outline: none;
 }
+[data-style='pixel'] #webgl { image-rendering: pixelated; }
 
 .overlay { position: relative; z-index: 1; }
 
@@ -49,29 +165,68 @@ body::after {
   max-width: 900px;
 }
 
+/* ---------- Switcher ---------- */
+
+.switcher {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.switcher button {
+  font: 700 0.72rem/1 var(--body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  background: var(--card);
+  border: 2px solid var(--line);
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--line);
+  transition: transform 0.1s ease;
+}
+[data-style='pixel'] .switcher button { font-size: 1rem; font-weight: 400; }
+[data-style='neon'][data-mode='dark'] .switcher button { box-shadow: 0 0 8px var(--line); }
+.switcher button:hover { transform: translate(-1px, -1px); }
+.switcher button[aria-pressed='true']:not(.switcher__mode) {
+  background: var(--fg);
+  color: var(--bg);
+}
+.switcher__mode { min-width: 2.4rem; font-size: 1rem !important; }
+
+/* ---------- Hero ---------- */
+
 .script {
   font-family: var(--script);
-  color: var(--tomato);
+  color: var(--primary);
   font-size: clamp(2rem, 5vw, 3.2rem);
-  transform: rotate(-6deg);
+  transform: rotate(var(--script-rotate));
   transform-origin: left;
 }
+[data-style='pixel'] .script::before { content: '> '; }
+[data-style='neon'][data-mode='dark'] .script { text-shadow: 0 0 10px var(--primary); }
 
 h1, h2 {
   font-family: var(--display);
   font-weight: 400;
   text-transform: uppercase;
-  line-height: 0.92;
-  color: var(--ink);
-  text-shadow: 4px 4px 0 var(--mustard);
+  line-height: 0.95;
+  color: var(--fg);
+  text-shadow: var(--title-shadow);
 }
-h1 { font-size: clamp(3.5rem, 13vw, 9rem); margin: 0.2rem 0 1.5rem; }
-h2 { font-size: clamp(2.4rem, 8vw, 5rem); margin-bottom: 2rem; }
+h1 { font-size: var(--h1-size); margin: 0.2rem 0 1.5rem; }
+h2 { font-size: var(--h2-size, clamp(2.2rem, 7vw, 4.5rem)); margin-bottom: 2rem; }
+[data-style='neon'] :is(h1, h2, h3) { word-spacing: 0.25em; }
 
-.lede { font-size: 1.05rem; max-width: 34ch; line-height: 1.6; }
-.scroll-cue { margin-top: 3rem; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tomato); }
+.lede { max-width: 34ch; line-height: 1.6; }
+.scroll-cue { margin-top: 3rem; font-size: 0.8em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--primary); }
 
-/* Ticket-stub project cards */
+/* ---------- Ticket-stub project cards ---------- */
+
 .tickets { list-style: none; display: grid; gap: 1.5rem; max-width: 560px; }
 
 .ticket,
@@ -82,45 +237,53 @@ h2 { font-size: clamp(2.4rem, 8vw, 5rem); margin-bottom: 2rem; }
 }
 
 .ticket {
-  --tone: var(--teal);
-  border: 3px solid var(--ink);
-  background: var(--paper);
-  box-shadow: 6px 6px 0 var(--ink);
+  --tone: var(--tone1);
+  border: var(--border) solid var(--line);
+  background: var(--card);
+  box-shadow: var(--card-shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .ticket > a { flex: 1; }
-.ticket:has(a):hover { transform: translate(-3px, -3px) rotate(-0.6deg); box-shadow: 9px 9px 0 var(--ink); }
-.ticket--tomato { --tone: var(--tomato); }
-.ticket--mustard { --tone: var(--mustard); }
-.ticket--mustard .ticket__kicker { color: var(--ink); }
+.ticket:has(a):hover { transform: translate(-3px, -3px) rotate(-0.6deg); box-shadow: var(--card-shadow-hover); }
+[data-style='pixel'] .ticket:has(a):hover { transform: translate(-2px, -2px); }
+.ticket--tomato { --tone: var(--tone2); }
+.ticket--mustard { --tone: var(--tone3); }
 
 .ticket__main { flex: 1; padding: 1.1rem 1.3rem; }
-.ticket__kicker { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tone); font-weight: 700; }
+[data-style='pixel'] .ticket__main { padding: 0.8rem 1.1rem; }
+[data-style='pixel'] .ticket h3 { font-size: 1.5rem; }
+.ticket__kicker { font-size: 0.7em; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+.ticket__kicker::before { content: '■ '; color: var(--tone); }
 .ticket h3 { font-family: var(--display); font-weight: 400; font-size: 1.8rem; text-transform: uppercase; line-height: 1.05; margin: 0.2rem 0 0.4rem; }
-.ticket__main p:last-child { font-size: 0.85rem; line-height: 1.5; }
+[data-style='neon'] .ticket h3 { font-size: 1.5rem; }
+.ticket__main p:last-child { font-size: 0.85em; line-height: 1.5; }
 
 .ticket__stub {
   width: 92px;
   flex-shrink: 0;
   background: var(--tone);
-  border-left: 3px dashed var(--ink);
+  color: var(--stub-ink);
+  border-left: var(--border) dashed var(--line);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.2rem;
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.65em;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 .ticket__stub strong { font-family: var(--display); font-weight: 400; font-size: 2rem; letter-spacing: 0; }
+[data-style='neon'] .ticket__stub strong { font-family: 'Bowlby One', sans-serif; }
 
-/* Contact poster, à la "Magic Oyster" */
+/* ---------- Contact poster ---------- */
+
 .poster {
-  background: var(--mustard);
-  border: 3px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
+  background: var(--poster);
+  color: var(--poster-ink);
+  border: var(--border) solid var(--line);
+  box-shadow: var(--card-shadow);
   padding: 1.5rem;
   max-width: 460px;
   display: grid;
@@ -129,16 +292,19 @@ h2 { font-size: clamp(2.4rem, 8vw, 5rem); margin-bottom: 2rem; }
 .poster p { font-weight: 700; line-height: 1.5; }
 .poster a {
   font-family: var(--display);
-  color: var(--ink);
+  color: inherit;
   font-size: clamp(1.1rem, 4vw, 1.5rem);
   text-decoration: none;
-  border-top: 3px solid var(--ink);
+  border-top: var(--border) solid currentColor;
   padding-top: 0.6rem;
   overflow-wrap: anywhere;
 }
-.poster a:hover { color: var(--tomato); }
+[data-style='neon'] .poster a { font-family: 'Bowlby One', sans-serif; }
+.poster a:hover { text-decoration: underline; text-decoration-thickness: 3px; }
 
 @media (max-width: 600px) {
   .panel { padding: 0 16px; }
+  .hero { padding-top: 64px; }
   .ticket__stub { width: 70px; }
+  .switcher { left: 16px; justify-content: flex-start; }
 }

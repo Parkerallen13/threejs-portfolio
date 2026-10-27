@@ -1,16 +1,14 @@
 import * as THREE from 'three'
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js'
+import { getTheme } from './themes.js'
 
-const COLORS = {
-  paper: '#f4ecd8',
-  ink: '#1d1a16',
-  tomato: '#e0482f',
-  mustard: '#f2b632',
-  teal: '#2a8c84',
-  pink: '#f2a7a0',
-}
+const ROLES = ['primary', 'secondary', 'accent', 'accent2']
 
 export class Experience {
-  constructor(canvas) {
+  constructor(canvas, style = 'cartoon', mode = 'light') {
     this.canvas = canvas
     this.sizes = { width: window.innerWidth, height: window.innerHeight }
     this.pointer = new THREE.Vector2()
@@ -18,24 +16,42 @@ export class Experience {
     this.clock = new THREE.Clock()
 
     this.scene = new THREE.Scene()
-    this.scene.fog = new THREE.Fog(COLORS.paper, 8, 20)
+    this.scene.background = new THREE.Color()
+    this.scene.fog = new THREE.Fog('#000000', 8, 20)
 
     this.camera = new THREE.PerspectiveCamera(45, this.sizes.width / this.sizes.height, 0.1, 100)
     this.camera.position.set(0, 0, 8)
     this.scene.add(this.camera)
 
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
     this.renderer.setSize(this.sizes.width, this.sizes.height)
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    this.composer = new EffectComposer(this.renderer)
+    this.composer.addPass(new RenderPass(this.scene, this.camera))
+    this.composer.addPass(new UnrealBloomPass(new THREE.Vector2(this.sizes.width, this.sizes.height), 0.55, 0.4, 0.35))
+    this.composer.addPass(new OutputPass())
 
     this.gradientMap = this.createGradientMap()
     this.sectionSpacing = 6
     this.animated = []
 
+    // Shared materials so a theme change is just a recolor
+    this.materials = Object.fromEntries(
+      ROLES.map((role) => [role, new THREE.MeshToonMaterial({ gradientMap: this.gradientMap })]),
+    )
+    this.outlineMaterial = new THREE.MeshBasicMaterial({ side: THREE.BackSide })
+    this.ringMaterial = new THREE.MeshBasicMaterial()
+    this.sparkleMaterials = ['outline', 'primary', 'accent', 'secondary'].map((role) => {
+      const material = new THREE.MeshBasicMaterial()
+      material.userData.role = role
+      return material
+    })
+
     this.setLights()
     this.setObjects()
     this.setSparkles()
     this.setEvents()
+    this.setTheme(style, mode)
 
     this.renderer.setAnimationLoop(() => this.update())
   }
@@ -50,17 +66,37 @@ export class Experience {
     return texture
   }
 
-  toon(color) {
-    return new THREE.MeshToonMaterial({ color, gradientMap: this.gradientMap })
+  setTheme(style, mode) {
+    const theme = getTheme(style, mode)
+    this.theme = theme
+
+    this.scene.background.set(theme.background)
+    this.scene.fog.color.set(theme.background)
+    for (const role of ROLES) {
+      const material = this.materials[role]
+      material.color.set(theme[role])
+      material.emissive.set(theme[role]).multiplyScalar(theme.emissive)
+    }
+    this.outlineMaterial.color.set(theme.outline)
+    this.ringMaterial.color.set(theme.ring)
+    for (const material of this.sparkleMaterials) material.color.set(theme[material.userData.role])
+
+    this.updatePixelRatio()
+  }
+
+  updatePixelRatio() {
+    // Pixel style renders at a fraction of the resolution; CSS scales it up crisply
+    const ratio = this.theme.pixelated ? 0.22 : Math.min(window.devicePixelRatio, 2)
+    this.renderer.setPixelRatio(ratio)
+    this.renderer.setSize(this.sizes.width, this.sizes.height)
+    this.composer.setPixelRatio(ratio)
+    this.composer.setSize(this.sizes.width, this.sizes.height)
   }
 
   // Inverted-hull outline for an inked cartoon look
-  inked(geometry, color, thickness = 1.06) {
-    const mesh = new THREE.Mesh(geometry, this.toon(color))
-    const outline = new THREE.Mesh(
-      geometry,
-      new THREE.MeshBasicMaterial({ color: COLORS.ink, side: THREE.BackSide }),
-    )
+  inked(geometry, role, thickness = 1.06) {
+    const mesh = new THREE.Mesh(geometry, this.materials[role])
+    const outline = new THREE.Mesh(geometry, this.outlineMaterial)
     outline.scale.setScalar(thickness)
     mesh.add(outline)
     return mesh
@@ -120,16 +156,15 @@ export class Experience {
 
     // Hero: atomic-age atom
     const atom = new THREE.Group()
-    atom.add(this.inked(new THREE.SphereGeometry(0.55, 32, 32), COLORS.tomato, 1.08))
-    const ringMaterial = new THREE.MeshBasicMaterial({ color: COLORS.ink })
+    atom.add(this.inked(new THREE.SphereGeometry(0.55, 32, 32), 'primary', 1.08))
     this.electrons = []
     for (let i = 0; i < 3; i++) {
       const orbit = new THREE.Group()
       orbit.rotation.order = 'YXZ'
       orbit.rotation.y = (i * Math.PI) / 3
       orbit.rotation.x = Math.PI / 2.6
-      orbit.add(new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.03, 12, 120), ringMaterial))
-      const electron = this.inked(new THREE.SphereGeometry(0.16, 20, 20), COLORS.mustard, 1.15)
+      orbit.add(new THREE.Mesh(new THREE.TorusGeometry(1.6, 0.03, 12, 120), this.ringMaterial))
+      const electron = this.inked(new THREE.SphereGeometry(0.16, 20, 20), 'secondary', 1.15)
       orbit.add(electron)
       this.electrons.push({ mesh: electron, offset: (i * Math.PI * 2) / 3 })
       atom.add(orbit)
@@ -141,8 +176,8 @@ export class Experience {
     // Work: stack of boomerangs
     const boomerangs = new THREE.Group()
     const boomerangGeometry = this.boomerangGeometry()
-    ;[COLORS.teal, COLORS.pink, COLORS.mustard].forEach((color, i) => {
-      const b = this.inked(boomerangGeometry, color, 1.05)
+    ;['accent', 'accent2', 'secondary'].forEach((role, i) => {
+      const b = this.inked(boomerangGeometry, role, 1.05)
       b.position.set((i - 1) * 0.5, (i - 1) * 0.9, -i * 0.3)
       b.rotation.z = (i - 1) * 0.6
       boomerangs.add(b)
@@ -152,7 +187,7 @@ export class Experience {
     this.scene.add(boomerangs)
 
     // Contact: big starburst, like a "SALE!" sticker
-    const burst = this.inked(this.starGeometry(14, 1.5, 1.15, 0.25), COLORS.mustard, 1.04)
+    const burst = this.inked(this.starGeometry(14, 1.5, 1.15, 0.25), 'secondary', 1.04)
     burst.position.set(x, -this.sectionSpacing * 2, 0)
     this.scene.add(burst)
     this.burst = burst
@@ -161,11 +196,10 @@ export class Experience {
   // Four-point atomic sparkles scattered through the scroll depth
   setSparkles() {
     const geometry = this.starGeometry(4, 0.35, 0.08, 0.06)
-    const palette = [COLORS.ink, COLORS.tomato, COLORS.teal, COLORS.mustard]
     const depth = this.sectionSpacing * 3
     this.sparkles = []
     for (let i = 0; i < 40; i++) {
-      const mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: palette[i % palette.length] }))
+      const mesh = new THREE.Mesh(geometry, this.sparkleMaterials[i % this.sparkleMaterials.length])
       mesh.position.set(
         (Math.random() - 0.5) * 14,
         this.sectionSpacing * 0.6 - Math.random() * depth,
@@ -184,8 +218,7 @@ export class Experience {
       this.sizes.height = window.innerHeight
       this.camera.aspect = this.sizes.width / this.sizes.height
       this.camera.updateProjectionMatrix()
-      this.renderer.setSize(this.sizes.width, this.sizes.height)
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      this.updatePixelRatio()
     })
 
     window.addEventListener('pointermove', (e) => {
@@ -230,6 +263,7 @@ export class Experience {
     this.camera.position.y += (targetY - this.camera.position.y) * 0.1
     this.camera.position.x += (this.pointer.x * 0.8 - this.camera.position.x) * 0.05
 
-    this.renderer.render(this.scene, this.camera)
+    if (this.theme.bloom) this.composer.render()
+    else this.renderer.render(this.scene, this.camera)
   }
 }

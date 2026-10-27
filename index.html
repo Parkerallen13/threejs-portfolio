@@ -7,12 +7,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Yellowtail&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Yellowtail&family=Space+Mono:wght@400;700&family=Monoton&family=Silkscreen:wght@400;700&family=VT323&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
     <canvas id="webgl"></canvas>
+
+    <nav class="switcher" aria-label="Site style">
+      <button type="button" data-style-option="cartoon" aria-pressed="false">Cartoon</button>
+      <button type="button" data-style-option="neon" aria-pressed="false">Neon Motel</button>
+      <button type="button" data-style-option="pixel" aria-pressed="false">Retro UI</button>
+      <button type="button" class="switcher__mode" data-mode-toggle aria-pressed="false">☀</button>
+    </nav>
 
     <main class="overlay">
       <section class="panel hero">
