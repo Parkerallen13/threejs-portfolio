@@ -85,8 +85,8 @@ export function createLensPass() {
         color *= 0.96 + hash(floor(px * 0.5)) * 0.05;
 
         // Soft oval storybook vignette
-        float d = length((vUv - 0.5) * vec2(1.0, 1.15)) * 1.55;
-        color = mix(color, uEdge, smoothstep(0.62, 1.08, d) * 0.85);
+        float d = length((vUv - 0.5) * vec2(1.0, 1.15)) * 1.45;
+        color = mix(color, uEdge, smoothstep(0.8, 1.15, d) * 0.7);
         gl_FragColor = vec4(color, 1.0);
       }
     `,

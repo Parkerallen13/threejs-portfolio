@@ -62,29 +62,42 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   add(floor)
   add(at(block(12.4, 0.4, 10.2, toon('#5a3a22'), 0.05), 0, -0.23, -0.1))
 
-  // ---------- Cottage: log walls, a real window hole, pitched timber roof ----------
+  // ---------- Cottage: log walls cut around doors and windows, pitched timber roof ----------
   const wallMat = logs('#9a6a43')
-  // Back wall is built around the window opening (x -2.25..-0.95, y 1.1..2.4) so you can see the woods
-  add(at(block(3.95, 3.2, 0.2, wallMat, 0.01), -4.225, 1.6, -5.1))
-  add(at(block(7.15, 3.2, 0.2, wallMat, 0.01), 2.625, 1.6, -5.1))
-  add(at(block(1.3, 1.1, 0.2, wallMat, 0.01), -1.6, 0.55, -5.1))
-  add(at(block(1.3, 0.8, 0.2, wallMat, 0.01), -1.6, 2.8, -5.1))
+  const WALL_H = 3.2
+  const wallPiece = (x0, x1, y0, y1, z) =>
+    add(at(block(x1 - x0, y1 - y0, 0.2, wallMat, 0.01), (x0 + x1) / 2, (y0 + y1) / 2, z))
+  // A wall along x with rectangular holes (sorted left to right)
+  const wallWithHoles = (z, holes) => {
+    let cursor = -6.2
+    for (const h of holes) {
+      if (h.x0 > cursor) wallPiece(cursor, h.x0, 0, WALL_H, z)
+      if (h.y0 > 0) wallPiece(h.x0, h.x1, 0, h.y0, z)
+      wallPiece(h.x0, h.x1, h.y1, WALL_H, z)
+      cursor = h.x1
+    }
+    wallPiece(cursor, 6.2, 0, WALL_H, z)
+  }
+  const DOOR = { x0: -0.3, x1: 0.9, y0: 0, y1: 2.3 }
+  const FRONT_WINDOWS = [{ x0: -3.8, x1: -2.4, y0: 1.0, y1: 2.2 }, { x0: 2.8, x1: 4.2, y0: 1.0, y1: 2.2 }]
+  wallWithHoles(-5.1, [{ x0: -2.25, x1: -0.95, y0: 1.1, y1: 2.4 }])
+  wallWithHoles(5.1, [FRONT_WINDOWS[0], DOOR, FRONT_WINDOWS[1]])
   add(at(block(0.2, 3.2, 10.2, wallMat, 0.01), -6.1, 1.6, -0.1))
   add(at(block(0.2, 3.2, 10.2, wallMat, 0.01), 6.1, 1.6, -0.1))
 
-  // Back gable fills the triangle under the roof
+  // Gables fill the triangles under the roof, front and back
   const gable = new THREE.Shape([new THREE.Vector2(-6.2, 0), new THREE.Vector2(6.2, 0), new THREE.Vector2(0, 2.0)])
-  add(at(inked(new THREE.ExtrudeGeometry(gable, { depth: 0.2, bevelEnabled: false }), wallMat), 0, 3.2, -5.2))
+  for (const z of [-5.2, 5.0]) add(at(inked(new THREE.ExtrudeGeometry(gable, { depth: 0.2, bevelEnabled: false }), wallMat), 0, 3.2, z))
 
-  // Roof slabs: warm planks inside, mossy shingles on top
+  // Roof slabs: warm planks inside, thick snow on top
   const pitch = Math.atan2(2.0, 6.4)
   const planks = toon('#7a4e30')
-  const shingles = toon('#5f5a3a')
+  const snow = toon('#f3f6f9')
   for (const side of [-1, 1]) {
     const slab = at(block(6.9, 0.2, 10.8, planks, 0.02), side * 3.2, 4.25, -0.1)
     slab.rotation.z = -side * pitch
     add(slab)
-    const top = at(block(7.0, 0.14, 11.0, shingles, 0.05), side * 3.17, 4.42, -0.1)
+    const top = at(block(7.1, 0.22, 11.2, snow, 0.1), side * 3.17, 4.45, -0.1)
     top.rotation.z = -side * pitch
     add(top)
   }
@@ -92,33 +105,53 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   const beamMat = toon('#4a2f1d')
   for (const z of [-3.6, -1.1, 1.4, 3.9]) add(at(block(12.2, 0.22, 0.24, beamMat, 0.03), 0, 3.1, z))
   add(at(block(0.26, 0.26, 10.8, beamMat, 0.03), 0, 5.05, -0.1))
-  for (const z of [-3.6, -1.1, 1.4, 3.9]) {
-    const post = at(block(0.16, 1.8, 0.16, beamMat, 0.03), 0, 4.1, z)
-    add(post)
-  }
+  for (const z of [-3.6, -1.1, 1.4, 3.9]) add(at(block(0.16, 1.8, 0.16, beamMat, 0.03), 0, 4.1, z))
   const trimMat = toon(C.trim)
   add(at(block(12, 0.14, 0.05, trimMat, 0.01), 0, 0.07, -4.98))
   add(at(block(0.05, 0.14, 10, trimMat, 0.01), -5.98, 0.07, 0))
   add(at(block(0.05, 0.14, 10, trimMat, 0.01), 5.98, 0.07, 0))
 
-  // ---------- Front door ----------
-  const door = new THREE.Group()
-  door.add(at(block(1.3, 2.4, 0.05, trimMat, 0.02), 0, 1.2, 0))
-  door.add(at(block(1.05, 2.2, 0.08, toon(C.door), 0.02), 0, 1.1, 0.04))
-  const panelMat = toon(C.doorPanel)
-  for (const x of [-0.22, 0.22]) {
-    door.add(at(block(0.34, 0.8, 0.03, panelMat, 0.06), x, 1.55, 0.09))
-    door.add(at(block(0.34, 0.6, 0.03, panelMat, 0.02), x, 0.55, 0.09))
-  }
+  // ---------- Front door (swings open at the start of the tour) ----------
   const brass = toon(C.brass)
-  door.add(at(inked(new THREE.SphereGeometry(0.045, 16, 12), brass), 0.4, 1.05, 0.13))
-  door.add(at(block(0.06, 0.22, 0.02, brass, 0.01), 0.4, 1.05, 0.09))
-  add(hotspot('contact', at(door, -4.5, 0, -4.98)))
+  const doorFrame = new THREE.Group()
+  for (const x of [DOOR.x0 - 0.06, DOOR.x1 + 0.06]) doorFrame.add(at(block(0.12, 2.42, 0.32, trimMat, 0.02), x, 1.21, 0))
+  doorFrame.add(at(block(1.44, 0.14, 0.32, trimMat, 0.02), 0.3, 2.37, 0))
+  add(at(doorFrame, 0, 0, 5.1))
+  const doorHinge = at(new THREE.Group(), DOOR.x0, 0, 5.1)
+  const doorLeaf = new THREE.Group()
+  doorLeaf.add(at(block(1.18, 2.28, 0.1, toon(C.door), 0.02), 0, 1.14, 0))
+  const panelMat = toon(C.doorPanel)
+  for (const z of [-0.06, 0.06]) {
+    for (const x of [-0.25, 0.25]) {
+      doorLeaf.add(at(block(0.38, 0.8, 0.03, panelMat, 0.06), x, 1.6, z))
+      doorLeaf.add(at(block(0.38, 0.6, 0.03, panelMat, 0.02), x, 0.55, z))
+    }
+    doorLeaf.add(at(inked(new THREE.SphereGeometry(0.045, 16, 12), brass), 0.45, 1.05, z * 1.8))
+  }
+  // A wreath on the outside
+  doorLeaf.add(at(inked(new THREE.TorusGeometry(0.2, 0.06, 8, 20), toon('#3d6b45')), 0, 1.75, 0.1))
+  doorLeaf.add(at(inked(new THREE.SphereGeometry(0.05, 8, 6), toon('#c8322a'), 0.01), 0, 1.55, 0.14))
+  doorLeaf.position.x = 0.59
+  doorHinge.add(doorLeaf)
+  add(hotspot('contact', doorHinge))
+
+  // Front windows: warm glass, snowy flower boxes outside
+  const glassMaterial = new THREE.MeshBasicMaterial({ color: '#cfe8ff', transparent: true, opacity: 0.15, depthWrite: false, side: THREE.DoubleSide })
+  for (const w of FRONT_WINDOWS) {
+    const cx = (w.x0 + w.x1) / 2
+    const cy = (w.y0 + w.y1) / 2
+    const width = w.x1 - w.x0
+    const height = w.y1 - w.y0
+    add(at(new THREE.Mesh(new THREE.PlaneGeometry(width, height), glassMaterial), cx, cy, 5.1))
+    add(at(block(0.05, height, 0.24, trimMat, 0.01), cx, cy, 5.1))
+    add(at(block(width, 0.05, 0.24, trimMat, 0.01), cx, cy, 5.1))
+    add(at(block(width + 0.3, 0.3, 0.3, toon('#7a4e30'), 0.03), cx, w.y0 - 0.12, 5.35))
+    add(at(block(width + 0.32, 0.1, 0.32, snow, 0.05), cx, w.y0 + 0.06, 5.35))
+  }
 
   // ---------- Window, curtains, paper chain ----------
   const win = new THREE.Group()
   win.add(at(block(1.5, 1.5, 0.1, trimMat, 0.02), 0, 1.75, 0))
-  const glassMaterial = new THREE.MeshBasicMaterial({ color: '#cfe8ff', transparent: true, opacity: 0.15, depthWrite: false })
   win.add(at(new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), glassMaterial), 0, 1.75, 0.06))
   win.add(at(block(0.05, 1.3, 0.04, trimMat, 0.01), 0, 1.75, 0.08))
   win.add(at(block(1.3, 0.05, 0.04, trimMat, 0.01), 0, 1.75, 0.08))
@@ -255,15 +288,34 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   // ---------- Fireplace + mantel ----------
   const brickMat = toon('#ffffff', { map: tex.brick() })
   add(at(block(0.8, 3.2, 3.0, brickMat, 0.01), 5.6, 1.6, -2.7))
-  add(at(block(0.1, 0.95, 1.2, toon('#141210'), 0.01), 5.2, 0.62, -2.7))
+  add(at(block(0.1, 1.05, 1.3, toon('#141210'), 0.01), 5.2, 0.72, -2.7))
   add(at(block(0.7, 0.22, 3.0, brickMat, 0.02), 4.95, 0.11, -2.7))
   add(at(block(0.9, 2.6, 1.0, brickMat, 0.02), 5.6, 4.5, -2.7))
   const woodMat = toon('#a8693a')
   add(at(block(0.55, 0.1, 3.3, woodMat, 0.02), 5.0, 1.95, -2.7))
   for (const z of [-3.8, -1.6]) add(at(block(0.3, 0.25, 0.08, woodMat, 0.02), 5.1, 1.78, z))
-  // TV on the hearth
-  add(at(block(0.06, 0.58, 1.0, blackMat, 0.01), 4.85, 0.55, -2.7))
-  add(at(block(0.2, 0.04, 0.3, blackMat, 0.01), 4.85, 0.24, -2.7))
+  // The fire: crossed logs + flickering cartoon flames (animated in World)
+  const fire = new THREE.Group()
+  const logMat = toon('#5a3a22')
+  for (const r of [0.5, -0.5]) {
+    const log = inked(new THREE.CylinderGeometry(0.06, 0.07, 0.8, 8), logMat, 0.015)
+    log.rotation.set(Math.PI / 2, r, 0)
+    fire.add(at(log, 0, 0.3, 0))
+  }
+  const flameMats = ['#ff7a2f', '#ffb347', '#ffe08a'].map((color) => new THREE.MeshBasicMaterial({ color }))
+  const flames = []
+  for (let i = 0; i < 7; i++) {
+    const flameMesh = new THREE.Mesh(new THREE.ConeGeometry(0.09 - (i % 3) * 0.02, 0.45 - (i % 3) * 0.1, 6), flameMats[i % 3])
+    flameMesh.position.set(0.02 * (i % 3), 0.5, -0.35 + (i / 6) * 0.7)
+    flameMesh.userData.base = flameMesh.position.y
+    fire.add(flameMesh)
+    flames.push(flameMesh)
+  }
+  fire.add(hitbox(0.4, 1.0, 1.2))
+  add(hotspot('fire', at(fire, 5.0, 0, -2.7)))
+  const fireLight = new THREE.PointLight('#ff8a3d', 4, 7, 1.4)
+  fireLight.position.set(4.6, 0.8, -2.7)
+  add(fireLight)
   collide(4.55, 6, -4.3, -1.1)
 
   // Mantel: art canvases (drawings)
@@ -299,10 +351,14 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   add(hotspot('brewing', at(bottle, 5.12, 2.0, -4.22)))
 
   // Mantel: candle + photo frame
-  add(at(inked(new THREE.CylinderGeometry(0.07, 0.07, 0.14, 14), toon('#f3e2c0'), 0.012), 5.12, 2.07, -1.45))
-  const flame = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: '#ffb347' }))
+  const candle = new THREE.Group()
+  candle.add(at(inked(new THREE.CylinderGeometry(0.08, 0.08, 0.24, 16), toon('#f3e2c0'), 0.012), 0, 0.12, 0))
+  candle.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.04, 4), blackMat), 0, 0.26, 0))
+  const flame = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), new THREE.MeshBasicMaterial({ color: '#ffb347' }))
   flame.scale.y = 1.8
-  add(at(flame, 5.12, 2.18, -1.45))
+  candle.add(at(flame, 0, 0.31, 0))
+  candle.add(hitbox(0.3, 0.45, 0.3))
+  add(hotspot('candle', at(candle, 5.12, 2.0, -1.4)))
   const candleLight = new THREE.PointLight('#ffb347', 0, 3, 1.5)
   candleLight.position.set(5.0, 2.3, -1.45)
   add(candleLight)
@@ -318,14 +374,69 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   for (const y of [0.1, 0.55, 1.0, 1.45]) rack.add(at(block(0.46, 0.03, 1.12, rackMat, 0.01, 0.01), 0, y, 0))
   for (const [i, color] of ['#f2f2f2', '#9aa0a6', '#f2f2f2', '#2b2b2b'].entries())
     rack.add(at(block(0.28, 0.1, 0.16, toon(color), 0.04, 0.012), 0, 0.62 + (i > 1 ? 0.45 : 0), (i % 2 ? 0.2 : -0.2)))
-  add(at(rack, 5.65, 0, 1.6))
+  rack.rotation.y = Math.PI / 2
+  add(at(rack, -1.3, 0, 4.7))
   const redMat = toon(C.red)
-  for (const z of [2.3, 2.48]) {
-    add(at(inked(new THREE.CylinderGeometry(0.075, 0.085, 0.55, 12), redMat), 5.25, 0.3, z))
-    add(at(block(0.24, 0.08, 0.16, redMat, 0.04), 5.18, 0.04, z))
+  for (const x of [-2.2, -2.38]) {
+    add(at(inked(new THREE.CylinderGeometry(0.075, 0.085, 0.55, 12), redMat), x, 0.3, 4.65))
+    add(at(block(0.16, 0.08, 0.24, redMat, 0.04), x, 0.04, 4.58))
   }
-  for (const z of [0.9, 1.06]) add(at(inked(new THREE.CylinderGeometry(0.07, 0.08, 0.4, 12), toon('#2c3329')), 5.25, 0.2, z))
-  collide(5.0, 6, 0.75, 2.65)
+  for (const x of [-2.7, -2.86]) add(at(inked(new THREE.CylinderGeometry(0.07, 0.08, 0.4, 12), toon('#2c3329')), x, 0.2, 4.65))
+  collide(-2.95, -0.7, 4.35, 5)
+
+  // ---------- Kitchen (right wall, front): Parker cooks pasta here ----------
+  const sage = toon('#9fb39a')
+  const butcher = toon('#b07a45')
+  add(at(block(0.75, 0.9, 3.1, sage, 0.03), 5.62, 0.45, 3.05))
+  for (const z of [1.85, 2.6, 3.35, 4.1]) {
+    add(at(block(0.03, 0.7, 0.62, toon('#8aa085'), 0.02, 0.01), 5.23, 0.45, z))
+    add(at(inked(new THREE.SphereGeometry(0.025, 8, 6), brass, 0.006), 5.2, 0.62, z + 0.22))
+  }
+  add(at(block(0.85, 0.07, 3.2, butcher, 0.02), 5.58, 0.935, 3.05))
+  // Enamel stove with a pot of pasta on the boil
+  const stove = new THREE.Group()
+  stove.add(at(block(0.8, 0.9, 0.85, toon('#efe6d2'), 0.05), 0, 0.45, 0))
+  stove.add(at(block(0.78, 0.04, 0.83, blackMat, 0.01), 0, 0.92, 0))
+  for (const z of [-0.2, 0.2]) {
+    stove.add(at(inked(new THREE.TorusGeometry(0.11, 0.015, 6, 16).rotateX(Math.PI / 2), blackMat, 0.008), 0.08, 0.95, z))
+    stove.add(at(inked(new THREE.SphereGeometry(0.035, 8, 6), blackMat, 0.008), -0.42, 0.75, z))
+  }
+  stove.add(at(block(0.03, 0.3, 0.6, blackMat, 0.02, 0.01), -0.41, 0.4, 0))
+  add(at(stove, 5.6, 0, 1.0))
+  const pot = new THREE.Group()
+  pot.add(at(inked(new THREE.CylinderGeometry(0.2, 0.18, 0.26, 18, 1, true), toon('#b9bcc2', { side: THREE.DoubleSide })), 0, 0.13, 0))
+  pot.add(at(new THREE.Mesh(new THREE.CircleGeometry(0.19, 18).rotateX(-Math.PI / 2), toon('#cfe3ea')), 0, 0.22, 0))
+  for (const side of [-1, 1]) pot.add(at(block(0.06, 0.03, 0.1, blackMat, 0.01, 0.008), 0, 0.22, side * 0.24))
+  const noodleMat = toon('#f1c96b')
+  for (let i = 0; i < 9; i++) {
+    const noodle = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.36, 4), noodleMat)
+    noodle.rotation.set((i - 4) * 0.08, 0, 0.35 + (i % 3) * 0.08)
+    noodle.position.set(0.04, 0.32, -0.08 + i * 0.02)
+    pot.add(noodle)
+  }
+  const steamMat = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.5, depthWrite: false })
+  const steam = []
+  for (let i = 0; i < 5; i++) {
+    const puff = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), steamMat.clone())
+    puff.userData.phase = i / 5
+    pot.add(puff)
+    steam.push(puff)
+  }
+  pot.add(hitbox(0.5, 0.6, 0.5))
+  add(hotspot('aldente', at(pot, 5.52, 0.95, 0.8)))
+  // Shelf with jars and plates, and copper pans on a rail
+  add(at(block(0.32, 0.04, 2.6, butcher, 0.01), 5.82, 1.95, 3.1))
+  for (const [i, color] of ['#f1c96b', '#c8322a', '#e9d8b0', '#5fa055'].entries())
+    add(at(inked(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 10), toon(color), 0.01), 5.82, 2.07, 2.1 + i * 0.4))
+  for (let i = 0; i < 4; i++) add(at(inked(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 16).rotateZ(Math.PI / 2), toon('#f4ecd8'), 0.008), 5.9, 2.08, 3.85 + i * 0.05))
+  add(at(inked(new THREE.CylinderGeometry(0.012, 0.012, 1.4, 6).rotateX(Math.PI / 2), brass, 0.006), 5.9, 1.65, 3.0))
+  for (const [i, r] of [0.13, 0.1, 0.15].entries()) {
+    const pan = new THREE.Group()
+    pan.add(at(inked(new THREE.CylinderGeometry(r, r * 0.85, 0.06, 16).rotateZ(Math.PI / 2), toon('#c46e3a'), 0.01), 0, -0.2 - r, 0))
+    pan.add(at(block(0.02, 0.2, 0.03, toon('#c46e3a'), 0.005, 0.006), 0, -0.1, 0))
+    add(at(pan, 5.88, 1.65, 2.55 + i * 0.45))
+  }
+  collide(5.15, 6, 0.55, 4.65)
 
   // ---------- Sofa ----------
   const sofa = new THREE.Group()
@@ -453,6 +564,10 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
     hotspots,
     lampLight,
     candleLight,
+    flames,
+    fireLight,
+    steam,
+    doorHinge,
     flame,
     glassMaterial,
     shadeMaterial,

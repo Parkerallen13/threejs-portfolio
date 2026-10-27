@@ -148,6 +148,7 @@ const world = new World(document.querySelector('#world'), {
   drawings,
   onActivate: (id) => (id === 'lamp' ? toggleMode() : openHotspot(id)),
 })
+if (import.meta.env.DEV) window.__world = world // for poking at the scene from the console
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll)
 onScroll()

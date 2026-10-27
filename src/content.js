@@ -71,6 +71,8 @@ HOTSPOTS.me = { ...HOTSPOTS.about, bubble: "Hi, I'm Parker!" }
 // Things that do something in the room instead of opening a panel
 export const ACTION_LABELS = {
   lamp: 'Lights!',
+  candle: 'Blow me out',
+  fire: 'Warm your hands',
   plant: 'Water me',
   dog: 'Pet me!',
 }
@@ -80,13 +82,15 @@ export const INDEX_ORDER = ['about', 'ouro', 'aldente', 'brewing', 'drawings', '
 // Scroll chapters, in TOUR order (see world/tour.js). Chapters that match a hotspot
 // reuse its kicker/title; `blurb` is the short line on the scroll card.
 export const CHAPTERS = {
-  intro: { kicker: 'Welcome in', title: 'Design by Parker Allen', blurb: "This is my living room. Scroll to look around; hover anything that catches your eye." },
+  intro: { kicker: 'A cottage in the redwoods', title: 'Design by Parker Allen', blurb: 'Scroll to walk up to the door. Hover anything that catches your eye.' },
+  door: { kicker: 'Knock knock', title: 'Come on in', blurb: 'Mind the husky, it has places to be.' },
+  inside: { kicker: 'Make yourself at home', title: 'The whole place', blurb: 'Fire is going, lamp is on. Everything with a bubble is clickable.' },
   about: { blurb: "Designer and illustrator. Pull up a chair." },
   typeface: { blurb: 'Letterforms I drew from scratch.' },
   contact: { blurb: 'The door is always open.' },
   ouro: { blurb: 'A home online for a music collective.' },
   drawings: { blurb: 'Procreate pieces hung all over the house, even the rug.' },
-  aldente: { blurb: 'My capstone, still simmering.' },
+  aldente: { blurb: 'My capstone is cooking right now. Watch your noodles around the dog.' },
   resume: { blurb: 'Where I have worked and what I have learned.' },
   brewing: { blurb: 'A product design assignment with a good name.' },
   outro: { kicker: 'Thanks for stopping by', title: 'See you around', blurb: 'Click the lamp to flip the lights. Say hi to the husky on your way out.' },
@@ -94,13 +98,14 @@ export const CHAPTERS = {
 
 // What Parker says to you at each stop of the tour
 export const LINES = {
-  intro: "Oh hi! Come on in, make yourself at home.",
+  door: "Oh hi! Come on in, it's freezing out there.",
+  inside: "Make yourself at home. Go ahead, poke around!",
   about: "That's my favorite chair. Want to know about me?",
   typeface: "I drew this typeface letter by letter.",
   contact: "The door's always open. Say hi anytime!",
   ouro: "I designed and built Ouro Room's site right here.",
   drawings: "These are my drawings. Even the rug!",
-  aldente: "Hungry? This is Al Dente, my capstone.",
+  aldente: "I'm making pasta! Al Dente is my capstone, and it's cooking too.",
   resume: "Those books? That's my experience.",
   brewing: "Careful, that's Bad Decisions Brewing.",
   outro: "Thanks for visiting! Come back soon.",

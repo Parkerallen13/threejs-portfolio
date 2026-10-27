@@ -8,13 +8,13 @@ import { createDog } from './dog.js'
 import { createBird } from './birds.js'
 import { buildForest } from './forest.js'
 import { blobShadow } from './textures.js'
-import { TOUR } from './tour.js'
+import { TOUR, DOOR_OPEN_AT } from './tour.js'
 import { createLensPass, lensDistort, lensUndistort, lens } from './lensPass.js'
 
-// Misty storybook woods by day, moonlit blue with fireflies by night
+// Pale overcast snow by day, deep blue winter night with warm windows
 const MODES = {
-  light: { background: '#d6e3cf', ambient: ['#fff6e6', 1.5], sun: 2.2, lamp: 0, candle: 0, glass: '#e6f2ff', shade: 0, fireflies: false },
-  dark: { background: '#1b2638', ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#1c2448', shade: 0.7, fireflies: true },
+  light: { background: '#dfe6ec', ambient: ['#f4f6ff', 1.5], sun: 2.0, lamp: 0, candle: 0.6, glass: '#e6f2ff', shade: 0, fire: 3 },
+  dark: { background: '#1a2335', ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#ffcf7a', shade: 0.7, fire: 6 },
 }
 
 const WALK_SPEED = 2.4
@@ -22,6 +22,12 @@ const RADIUS = 0.28
 const POSE_FPS = 12 // character poses update "on twos", like limited TV animation
 const DOG_PATH = { x: 0.4, z: 3.1, rx: 3.6, rz: 1.1, speed: 0.4 }
 const DOG_ROUTINE = ['loop', 'roll', 'loop', 'toCouch', 'jumpUp', 'lounge', 'jumpDown', 'toLoop']
+// When the front door opens the husky bolts outside, does laps in the snow, then trots back in
+const DOOR_INSIDE = new THREE.Vector3(0.3, 0, 3.8)
+const DOOR_OUTSIDE = new THREE.Vector3(0.3, 0, 6.4)
+const YARD = { x: -2.5, z: 7.0, r: 1.6 }
+// Where the husky sits to beg for a noodle while Parker cooks
+const BEG_SPOT = new THREE.Vector3(4.0, 0, 1.9)
 const COUCH = { approach: new THREE.Vector3(-1.5, 0, 0.3), seat: new THREE.Vector3(-2.5, 0.62, -0.2) }
 
 export class World {
@@ -45,7 +51,7 @@ export class World {
 
     this.scene = new THREE.Scene()
     this.scene.background = new THREE.Color()
-    this.scene.fog = new THREE.Fog('#d6e3cf', 14, 45)
+    this.scene.fog = new THREE.Fog('#dfe6ec', 16, 55)
     this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.05, 100)
     this.camPos = new THREE.Vector3(...TOUR[0].cam)
     this.camLook = new THREE.Vector3(...TOUR[0].look)
@@ -84,7 +90,10 @@ export class World {
 
     this.dog = createDog()
     this.scene.add(this.dog.root)
-    this.run = { mode: 'loop', step: 0, timer: 0, t: Math.PI / 2, speed: DOG_PATH.speed, woofAt: -10, from: new THREE.Vector3() }
+    this.run = { mode: 'waitDoor', step: -1, timer: 0, t: Math.PI / 2, speed: DOG_PATH.speed, woofAt: -10, woofText: 'WOOF!', from: new THREE.Vector3(), laps: 0, hasNoodle: false }
+    this.dog.root.position.copy(DOOR_INSIDE)
+    this.candleLit = true
+    this.fireBoostAt = -10
 
     const shadowMat = new THREE.MeshBasicMaterial({ map: blobShadow(), transparent: true, depthWrite: false })
     const shadow = (w, d) => {
@@ -116,7 +125,7 @@ export class World {
     const m = MODES[mode] ?? MODES.dark
     this.scene.background.set(m.background)
     this.scene.fog.color.set(m.background)
-    this.forest.fireflies.visible = m.fireflies
+    this.fireIntensity = m.fire
     this.ambient.color.set(m.ambient[0])
     this.ambient.intensity = m.ambient[1]
     this.sun.intensity = m.sun
@@ -179,6 +188,22 @@ export class World {
   activate(id) {
     if (id === 'dog') {
       this.run.woofAt = this.elapsed
+      this.run.woofText = 'WOOF!'
+      return
+    }
+    if (id === 'candle') {
+      this.candleLit = !this.candleLit
+      this.room.flame.visible = this.candleLit
+      this.actionText = this.candleLit ? 'Lit!' : 'Poof!'
+      this.actionAt = this.elapsed
+      this.actionId = 'candle'
+      return
+    }
+    if (id === 'fire') {
+      this.fireBoostAt = this.elapsed
+      this.actionText = 'Toasty!'
+      this.actionAt = this.elapsed
+      this.actionId = 'fire'
       return
     }
     if (id === 'plant') {
@@ -216,11 +241,28 @@ export class World {
       const before = pos.clone()
       if (!this.blocked(pos.x + input.x * step, pos.z)) pos.x += input.x * step
       if (!this.blocked(pos.x, pos.z + input.z * step)) pos.z += input.z * step
+      // Bumped into furniture: sidestep along it (keeping the same side until free)
+      if (before.distanceTo(pos) < step * 0.3) {
+        this.sideSign = this.sideSign ?? 1
+        for (const sign of [this.sideSign, -this.sideSign]) {
+          const sx = pos.x - input.z * sign * step
+          const sz = pos.z + input.x * sign * step
+          if (!this.blocked(sx, sz)) {
+            pos.set(sx, 0, sz)
+            this.sideSign = sign
+            input.set(-input.z * sign, 0, input.x * sign)
+            break
+          }
+        }
+      } else this.sideSign = null
       walking = Math.min(1, before.distanceTo(pos) / step)
       facing = Math.atan2(input.x, input.z)
     } else {
-      // Arrived: turn to say hi to the camera
-      facing = Math.atan2(this.camera.position.x - pos.x, this.camera.position.z - pos.z)
+      // Arrived: turn to talk to you (or to whatever they're busy with, like the stove)
+      const face = TOUR[this.chapterIndex()].face
+      const fx = face ? face[0] : this.camera.position.x
+      const fz = face ? face[1] : this.camera.position.z
+      facing = Math.atan2(fx - pos.x, fz - pos.z)
     }
     const diff = Math.atan2(Math.sin(facing - rot.y), Math.cos(facing - rot.y))
     rot.y += diff * Math.min(1, dt * 8)
@@ -247,12 +289,12 @@ export class World {
   }
 
   // Trot toward a floor point; returns true once there
-  dogWalkTo(target, dt) {
+  dogWalkTo(target, dt, speed = 2.0) {
     const root = this.dog.root
     const dir = new THREE.Vector3(target.x - root.position.x, 0, target.z - root.position.z)
     const dist = dir.length()
     if (dist < 0.06) return true
-    root.position.addScaledVector(dir.normalize(), Math.min(dist, 2.0 * dt))
+    root.position.addScaledVector(dir.normalize(), Math.min(dist, speed * dt))
     root.rotation.y = Math.atan2(dir.x, dir.z)
     return false
   }
@@ -263,6 +305,16 @@ export class World {
     const r = this.run
     const root = this.dog.root
     r.timer += dt
+    const inside = !['waitDoor', 'out', 'yard', 'backIn'].includes(r.mode)
+    const cooking = TOUR[this.chapterIndex()].key === 'aldente' && Math.abs(this.progress - this.chapterIndex()) < 0.2
+    if (cooking && inside && !r.hasNoodle && r.mode !== 'beg' && root.position.y < 0.1) {
+      r.mode = 'beg'
+      r.timer = 0
+    }
+    if (!cooking && r.hasNoodle && r.mode === 'lounge' && r.timer > 2) {
+      r.hasNoodle = false
+      this.dog.noodle.visible = false
+    }
     let pace = 0
     let lying = false
     let rolling = false
@@ -274,7 +326,64 @@ export class World {
       r.from.copy(root.position)
     }
 
-    if (r.mode === 'loop') {
+    const doorOpen = this.doorOpen ?? 0
+    if (r.mode === 'waitDoor') {
+      root.rotation.y = 0
+      if (doorOpen > 0.75) {
+        r.mode = 'out'
+        r.timer = 0
+      }
+    } else if (r.mode === 'out') {
+      pace = 1.3
+      if (this.dogWalkTo(DOOR_OUTSIDE, dt, 3.2)) {
+        r.mode = 'yard'
+        r.timer = 0
+        r.yardT = Math.PI / 2 + Math.PI
+      }
+    } else if (r.mode === 'yard') {
+      // Zoomies in the snow
+      r.yardT += dt * 1.6
+      root.position.set(YARD.x + Math.cos(r.yardT) * YARD.r, 0, YARD.z + Math.sin(r.yardT) * YARD.r * 0.8)
+      root.rotation.y = Math.atan2(-Math.sin(r.yardT), Math.cos(r.yardT) * 0.8)
+      pace = 1.3
+      if (r.timer > 1.2 && r.timer < 1.3 && this.elapsed - r.woofAt > 2) {
+        r.woofAt = this.elapsed
+        r.woofText = 'WOOF!'
+      }
+      if (r.timer > 7) {
+        r.mode = 'backIn'
+        r.wp = 0
+        r.timer = 0
+      }
+    } else if (r.mode === 'backIn') {
+      // Out of the yard to the doorstep, then through the door
+      pace = 1
+      const waypoint = r.wp === 1 ? DOOR_INSIDE : DOOR_OUTSIDE
+      if (this.dogWalkTo(waypoint, dt, 2.6)) {
+        if (r.wp === 1) {
+          r.step = DOG_ROUTINE.indexOf('toLoop')
+          r.mode = 'toLoop'
+          r.timer = 0
+        } else r.wp = 1
+      }
+    } else if (r.mode === 'beg') {
+      pace = 1
+      if (this.dogWalkTo(BEG_SPOT, dt, 2.4)) {
+        root.rotation.y = Math.atan2(this.character.root.position.x - root.position.x, this.character.root.position.z - root.position.z)
+        pace = 0
+        if (r.timer > 2.2 && !r.hasNoodle) {
+          r.hasNoodle = true
+          this.dog.noodle.visible = true
+          r.woofAt = this.elapsed
+          r.woofText = 'Nom!'
+        }
+        if (r.timer > 4) {
+          r.step = DOG_ROUTINE.indexOf('toCouch')
+          r.mode = 'toCouch'
+          r.timer = 0
+        }
+      }
+    } else if (r.mode === 'loop') {
       // Stop and wait if Parker is in the way
       const ahead = this.dogPoint(r.t + 0.35)
       const blocked = ahead.distanceTo(this.character.root.position) < 0.9
@@ -343,14 +452,29 @@ export class World {
     }
   }
 
+  // Straight line between stops, or a curve that threads the front door when `via` is set
+  cameraPath(a, b, t) {
+    const from = new THREE.Vector3(...a.cam)
+    const to = new THREE.Vector3(...b.cam)
+    const via = (b.via ?? a.via) && new THREE.Vector3(...(b.via ?? a.via))
+    if (!via || a.via === b.via) return from.lerp(to, t)
+    const control = via.clone().multiplyScalar(2).sub(from.clone().add(to).multiplyScalar(0.5))
+    const u = 1 - t
+    return from.multiplyScalar(u * u).add(control.multiplyScalar(2 * u * t)).add(to.multiplyScalar(t * t))
+  }
+
   updateCamera(dt) {
     // Hold on each chapter, then glide to the next
     const i = Math.min(Math.floor(this.progress), TOUR.length - 2)
     const t = THREE.MathUtils.smoothstep(this.progress - i, 0.15, 0.85)
     const a = TOUR[i]
     const b = TOUR[i + 1]
-    const pos = new THREE.Vector3(...a.cam).lerp(new THREE.Vector3(...b.cam), t)
+    const pos = this.cameraPath(a, b, t)
     const look = new THREE.Vector3(...a.look).lerp(new THREE.Vector3(...b.look), t)
+    // The door swings open as you walk up to it, and stays open
+    this.doorOpen = THREE.MathUtils.smoothstep(this.progress, DOOR_OPEN_AT - 0.75, DOOR_OPEN_AT - 0.1)
+    if (this.doorOpen > (this.doorMax ?? 0)) this.doorMax = this.doorOpen
+    this.room.doorHinge.rotation.y = (this.doorMax ?? 0) * 1.7
 
     // A little parallax from the pointer
     if (this.pointerInside) {
@@ -399,7 +523,10 @@ export class World {
     let text = shown && this.labels[shown.id]
     if (this.elapsed - this.run.woofAt < 1.4) {
       shown = this.hotspots.find((h) => h.id === 'dog')
-      text = 'WOOF!'
+      text = this.run.woofText
+    } else if (this.elapsed - (this.actionAt ?? -10) < 1.4) {
+      shown = this.hotspots.find((h) => h.id === this.actionId)
+      text = this.actionText
     } else if (this.elapsed - this.plantThanksAt < 1.6) {
       shown = this.hotspots.find((h) => h.id === 'plant')
       text = 'Thanks for the water!'
@@ -439,9 +566,29 @@ export class World {
     this.updateCamera(dt)
     this.updateBubble()
 
+    this.forest.update(dt, this.elapsed)
     const flicker = 0.85 + Math.sin(this.elapsed * 13) * Math.sin(this.elapsed * 7.3) * 0.15
-    this.room.candleLight.intensity = this.candleIntensity * flicker
+    this.room.candleLight.intensity = this.candleLit ? this.candleIntensity * flicker : 0
     this.room.flame.scale.set(1, 1.8 * flicker, 1)
+
+    // Fire flickers on twos; clicking it makes it roar for a moment
+    const frame = Math.floor(this.elapsed * POSE_FPS)
+    const boost = 1 + Math.max(0, 1 - (this.elapsed - this.fireBoostAt) / 1.5) * 0.8
+    this.room.flames.forEach((f, i) => {
+      const n = Math.sin(frame * 1.7 + i * 2.3) * 0.5 + 0.5
+      f.scale.set(1, (0.75 + n * 0.5) * boost, 1)
+      f.position.y = f.userData.base + (n - 0.5) * 0.05
+      f.rotation.z = Math.sin(frame * 0.9 + i) * 0.12
+    })
+    this.room.fireLight.intensity = this.fireIntensity * (0.85 + Math.sin(frame * 2.1) * 0.15) * boost
+
+    // Steam curling up off the pasta pot
+    for (const puff of this.room.steam) {
+      const k = (this.elapsed * 0.5 + puff.userData.phase) % 1
+      puff.position.set(Math.sin(k * 6 + puff.userData.phase * 9) * 0.06, 0.3 + k * 0.7, 0)
+      puff.scale.setScalar(0.6 + k * 1.4)
+      puff.material.opacity = 0.5 * (1 - k)
+    }
 
     this.lens.uniforms.uTime.value = this.elapsed
     this.composer.render()

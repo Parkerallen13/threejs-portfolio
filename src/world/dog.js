@@ -58,6 +58,24 @@ export function createDog() {
     head.add(at(ear, x * 1.4, 0.16, -0.01))
   }
 
+  // A stolen noodle, hidden until the kitchen scene
+  const noodle = new THREE.Mesh(
+    new THREE.TubeGeometry(
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.18, -0.2, 0.2),
+        new THREE.Vector3(-0.06, -0.1, 0.24),
+        new THREE.Vector3(0.05, -0.1, 0.24),
+        new THREE.Vector3(0.16, -0.24, 0.19),
+      ]),
+      12,
+      0.012,
+      5,
+    ),
+    toon('#f1c96b'),
+  )
+  noodle.visible = false
+  head.add(noodle)
+
   // Curled tail over the back
   const tail = at(new THREE.Group(), 0, 0.55, -0.32)
   const curl = inked(new THREE.TorusGeometry(0.1, 0.04, 8, 16, Math.PI * 1.3), black, 0.012)
@@ -86,6 +104,7 @@ export function createDog() {
     root,
     spin,
     body,
+    noodle,
     // pace: 0 = still, 1 = full trot. lying tucks the legs; rolling flails them.
     update(dt, pace, elapsed, { lying = false, rolling = false } = {}) {
       phase += dt * 14 * Math.max(pace, rolling ? 1 : 0)
