@@ -1,16 +1,33 @@
 :root {
-  --bg: #0b0b10;
-  --fg: #f2f2f5;
-  --muted: #9a9aaa;
-  --accent: #7c5cff;
+  --paper: #f4ecd8;
+  --ink: #1d1a16;
+  --tomato: #e0482f;
+  --mustard: #f2b632;
+  --teal: #2a8c84;
+  --pink: #f2a7a0;
+  --display: 'Bowlby One', 'Arial Black', sans-serif;
+  --script: 'Yellowtail', cursive;
+  --mono: 'Space Mono', ui-monospace, monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+}
+
+/* Halftone dots + paper grain over everything, like an old print */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background-image: radial-gradient(rgba(29, 26, 22, 0.09) 1px, transparent 1.2px);
+  background-size: 5px 5px;
+  mix-blend-mode: multiply;
 }
 
 #webgl {
@@ -32,13 +49,96 @@ html, body {
   max-width: 900px;
 }
 
-.eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; }
-h1 { font-size: clamp(3rem, 10vw, 7rem); line-height: 1; margin: 0.5rem 0 1rem; }
-h2 { font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 1.5rem; }
-.lede { color: var(--muted); font-size: 1.25rem; max-width: 32ch; }
+.script {
+  font-family: var(--script);
+  color: var(--tomato);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  transform: rotate(-6deg);
+  transform-origin: left;
+}
 
-.projects { list-style: none; display: grid; gap: 1.5rem; }
-.projects h3 { font-size: 1.4rem; }
-.projects p { color: var(--muted); }
+h1, h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.92;
+  color: var(--ink);
+  text-shadow: 4px 4px 0 var(--mustard);
+}
+h1 { font-size: clamp(3.5rem, 13vw, 9rem); margin: 0.2rem 0 1.5rem; }
+h2 { font-size: clamp(2.4rem, 8vw, 5rem); margin-bottom: 2rem; }
 
-a { color: var(--accent); font-size: 1.5rem; }
+.lede { font-size: 1.05rem; max-width: 34ch; line-height: 1.6; }
+.scroll-cue { margin-top: 3rem; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tomato); }
+
+/* Ticket-stub project cards */
+.tickets { list-style: none; display: grid; gap: 1.5rem; max-width: 560px; }
+
+.ticket,
+.ticket > a {
+  display: flex;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ticket {
+  --tone: var(--teal);
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 6px 6px 0 var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ticket > a { flex: 1; }
+.ticket:has(a):hover { transform: translate(-3px, -3px) rotate(-0.6deg); box-shadow: 9px 9px 0 var(--ink); }
+.ticket--tomato { --tone: var(--tomato); }
+.ticket--mustard { --tone: var(--mustard); }
+.ticket--mustard .ticket__kicker { color: var(--ink); }
+
+.ticket__main { flex: 1; padding: 1.1rem 1.3rem; }
+.ticket__kicker { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tone); font-weight: 700; }
+.ticket h3 { font-family: var(--display); font-weight: 400; font-size: 1.8rem; text-transform: uppercase; line-height: 1.05; margin: 0.2rem 0 0.4rem; }
+.ticket__main p:last-child { font-size: 0.85rem; line-height: 1.5; }
+
+.ticket__stub {
+  width: 92px;
+  flex-shrink: 0;
+  background: var(--tone);
+  border-left: 3px dashed var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.ticket__stub strong { font-family: var(--display); font-weight: 400; font-size: 2rem; letter-spacing: 0; }
+
+/* Contact poster, à la "Magic Oyster" */
+.poster {
+  background: var(--mustard);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 1.5rem;
+  max-width: 460px;
+  display: grid;
+  gap: 0.8rem;
+}
+.poster p { font-weight: 700; line-height: 1.5; }
+.poster a {
+  font-family: var(--display);
+  color: var(--ink);
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  text-decoration: none;
+  border-top: 3px solid var(--ink);
+  padding-top: 0.6rem;
+  overflow-wrap: anywhere;
+}
+.poster a:hover { color: var(--tomato); }
+
+@media (max-width: 600px) {
+  .panel { padding: 0 16px; }
+  .ticket__stub { width: 70px; }
+}

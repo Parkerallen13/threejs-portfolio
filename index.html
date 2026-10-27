@@ -3,30 +3,74 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parker Allen — Portfolio</title>
+    <title>Parker Allen — Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Yellowtail&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <canvas id="webgl"></canvas>
 
     <main class="overlay">
       <section class="panel hero">
-        <p class="eyebrow">Portfolio</p>
-        <h1>Parker Allen</h1>
-        <p class="lede">Creative developer building interactive 3D experiences for the web.</p>
+        <p class="script">Design by</p>
+        <h1>Parker<br />Allen</h1>
+        <p class="lede">Illustration, interfaces &amp; websites with a little old-school ink on them.</p>
+        <p class="scroll-cue">&darr; Scroll for the feature presentation</p>
       </section>
 
       <section class="panel" id="work">
-        <h2>Selected Work</h2>
-        <ul class="projects">
-          <li><h3>Project One</h3><p>Short description of the project.</p></li>
-          <li><h3>Project Two</h3><p>Short description of the project.</p></li>
-          <li><h3>Project Three</h3><p>Short description of the project.</p></li>
+        <h2>Now Showing</h2>
+        <ul class="tickets">
+          <li class="ticket ticket--teal">
+            <a href="https://ouroroomcollective.com/home" target="_blank" rel="noopener">
+              <div class="ticket__main">
+                <p class="ticket__kicker">Website &middot; Design + Build</p>
+                <h3>Ouro Room</h3>
+                <p>Site for a music collective: events, DJ mixes, artist profiles, a photo gallery, and a custom admin for adding it all.</p>
+              </div>
+              <div class="ticket__stub">
+                <span>Admit</span>
+                <strong>01</strong>
+                <span>Visit &rarr;</span>
+              </div>
+            </a>
+          </li>
+          <li class="ticket ticket--tomato">
+            <a href="https://www.instagram.com/aldentecapstone/" target="_blank" rel="noopener">
+              <div class="ticket__main">
+                <p class="ticket__kicker">Capstone &middot; In Production</p>
+                <h3>Al Dente</h3>
+                <p>My capstone project. Follow along as it comes together.</p>
+              </div>
+              <div class="ticket__stub">
+                <span>Admit</span>
+                <strong>02</strong>
+                <span>Follow &rarr;</span>
+              </div>
+            </a>
+          </li>
+          <li class="ticket ticket--mustard">
+            <div class="ticket__main">
+              <p class="ticket__kicker">Coming Soon</p>
+              <h3>Project Three</h3>
+              <p>Short description of the project.</p>
+            </div>
+            <div class="ticket__stub"><span>Admit</span><strong>03</strong></div>
+          </li>
         </ul>
       </section>
 
       <section class="panel" id="contact">
-        <h2>Get in touch</h2>
-        <p><a href="mailto:hello@example.com">hello@example.com</a></p>
+        <h2>Dial &amp; Ring</h2>
+        <div class="poster">
+          <p>Got a project? Want a drawing? Just want to say howdy?</p>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="https://www.instagram.com/designbyparkerallen/" target="_blank" rel="noopener">@designbyparkerallen</a>
+        </div>
       </section>
     </main>
 
