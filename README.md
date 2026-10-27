@@ -28,5 +28,5 @@ src/world/car.js           the black Mini convertible
 src/world/lensPass.js      fisheye + line boil, dry-brush mottling, paper grain, palette wash
 src/world/toon.js          toon materials, ink outlines, hand-drawn wobble
 src/world/textures.js      canvas-drawn textures (floor, brick, blanket, posters)
-public/fonts/              put typeface.woff2 or typeface.otf here for the type poster
+public/fonts/              put typeface.woff2 or typeface.otf here for the type poster + specimen
 ```

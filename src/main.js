@@ -152,5 +152,10 @@ window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll)
 onScroll()
 
-// Redraw the type poster once fonts (including your typeface, if added) have loaded
-document.fonts.ready.then(() => world.room.poster.draw('ParkerType'))
+// Your typeface: put typeface.woff2 (or .otf) in public/fonts/ and the poster + specimen use it
+const base = import.meta.env.BASE_URL
+new FontFace('ParkerType', `url(${base}fonts/typeface.woff2) format('woff2'), url(${base}fonts/typeface.otf) format('opentype')`)
+  .load()
+  .then((face) => document.fonts.add(face))
+  .catch(() => {})
+  .finally(() => document.fonts.ready.then(() => world.room.poster.draw('ParkerType')))

@@ -1,10 +1,3 @@
-/* Your typeface: drop typeface.woff2 (or .otf) into public/fonts/ */
-@font-face {
-  font-family: 'ParkerType';
-  src: url('/fonts/typeface.woff2') format('woff2'), url('/fonts/typeface.otf') format('opentype');
-  font-display: swap;
-}
-
 :root {
   --bg: #1d1a16;
   --fg: #f4ecd8;
