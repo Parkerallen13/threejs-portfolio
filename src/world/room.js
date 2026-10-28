@@ -26,7 +26,7 @@ const C = {
   red: '#c8202a',
 }
 
-export function buildRoom({ drawings = [], screenArt } = {}) {
+export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   const group = new THREE.Group()
   const colliders = []
   const hotspots = []
@@ -340,15 +340,6 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   books.add(at(hitbox(0.4, 0.45, 0.5), 0, 0, -0.1))
   add(hotspot('resume', at(books, 5.15, 2.0, -2.0)))
 
-  // Mantel: Bad Decisions Brewing bottle
-  const bottle = new THREE.Group()
-  const glass = toon('#5a2e12')
-  bottle.add(at(inked(new THREE.CylinderGeometry(0.05, 0.055, 0.24, 14), glass, 0.012), 0, 0.12, 0))
-  bottle.add(at(inked(new THREE.CylinderGeometry(0.02, 0.05, 0.08, 14), glass, 0.012), 0, 0.28, 0))
-  bottle.add(at(inked(new THREE.CylinderGeometry(0.02, 0.02, 0.07, 10), glass, 0.01), 0, 0.35, 0))
-  bottle.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.057, 0.057, 0.1, 14), toon('#f2b632')), 0, 0.12, 0))
-  bottle.add(at(hitbox(0.25, 0.42, 0.25), 0, 0, 0))
-  add(hotspot('brewing', at(bottle, 5.12, 2.0, -4.22)))
 
   // Mantel: candle + photo frame
   const candle = new THREE.Group()
@@ -387,12 +378,12 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   // ---------- Kitchen (right wall, front): Parker cooks pasta here ----------
   const sage = toon('#9fb39a')
   const butcher = toon('#b07a45')
-  add(at(block(0.75, 0.9, 3.1, sage, 0.03), 5.62, 0.45, 3.05))
-  for (const z of [1.85, 2.6, 3.35, 4.1]) {
+  add(at(block(0.75, 0.9, 2.1, sage, 0.03), 5.62, 0.45, 2.55))
+  for (const z of [1.85, 2.6, 3.35]) {
     add(at(block(0.03, 0.7, 0.62, toon('#8aa085'), 0.02, 0.01), 5.23, 0.45, z))
     add(at(inked(new THREE.SphereGeometry(0.025, 8, 6), brass, 0.006), 5.2, 0.62, z + 0.22))
   }
-  add(at(block(0.85, 0.07, 3.2, butcher, 0.02), 5.58, 0.935, 3.05))
+  add(at(block(0.85, 0.07, 2.2, butcher, 0.02), 5.58, 0.935, 2.55))
   // Enamel stove with a pot of pasta on the boil
   const stove = new THREE.Group()
   stove.add(at(block(0.8, 0.9, 0.85, toon('#efe6d2'), 0.05), 0, 0.45, 0))
@@ -425,10 +416,10 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
   pot.add(hitbox(0.5, 0.6, 0.5))
   add(hotspot('aldente', at(pot, 5.52, 0.95, 0.8)))
   // Shelf with jars and plates, and copper pans on a rail
-  add(at(block(0.32, 0.04, 2.6, butcher, 0.01), 5.82, 1.95, 3.1))
+  add(at(block(0.32, 0.04, 1.9, butcher, 0.01), 5.82, 1.95, 2.6))
   for (const [i, color] of ['#f1c96b', '#c8322a', '#e9d8b0', '#5fa055'].entries())
     add(at(inked(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 10), toon(color), 0.01), 5.82, 2.07, 2.1 + i * 0.4))
-  for (let i = 0; i < 4; i++) add(at(inked(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 16).rotateZ(Math.PI / 2), toon('#f4ecd8'), 0.008), 5.9, 2.08, 3.85 + i * 0.05))
+  for (let i = 0; i < 4; i++) add(at(inked(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 16).rotateZ(Math.PI / 2), toon('#f4ecd8'), 0.008), 5.9, 2.08, 3.2 + i * 0.05))
   add(at(inked(new THREE.CylinderGeometry(0.012, 0.012, 1.4, 6).rotateX(Math.PI / 2), brass, 0.006), 5.9, 1.65, 3.0))
   for (const [i, r] of [0.13, 0.1, 0.15].entries()) {
     const pan = new THREE.Group()
@@ -436,7 +427,70 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
     pan.add(at(block(0.02, 0.2, 0.03, toon('#c46e3a'), 0.005, 0.006), 0, -0.1, 0))
     add(at(pan, 5.88, 1.65, 2.55 + i * 0.45))
   }
-  collide(5.15, 6, 0.55, 4.65)
+  collide(5.15, 6, 0.55, 3.65)
+
+  // ---------- Retro fridge full of Bad Decisions Brewing cans ----------
+  const mint = toon('#a8d5c2')
+  const fridgeChrome = toon('#d3d6dc')
+  const fridge = new THREE.Group()
+  // Body is open at the front (-x) so you can see inside when the door swings open
+  const W = 0.9 // along z
+  const D = 0.75 // along x
+  const H = 1.85
+  fridge.add(at(block(D, 0.08, W, mint, 0.03), 0, H - 0.04, 0))
+  fridge.add(at(block(D, 0.12, W, mint, 0.03), 0, 0.06, 0))
+  fridge.add(at(block(0.06, H, W, mint, 0.02), D / 2 - 0.03, H / 2, 0))
+  for (const side of [-1, 1]) fridge.add(at(block(D, H, 0.06, mint, 0.02), 0, H / 2, side * (W / 2 - 0.03)))
+  const interior = toon('#f3f6f4')
+  fridge.add(at(block(0.02, H - 0.2, W - 0.12, interior, 0.005, 0.006), D / 2 - 0.07, H / 2, 0))
+  const shelfYs = [0.55, 0.95, 1.35]
+  for (const y of shelfYs) fridge.add(at(block(D - 0.12, 0.02, W - 0.12, toon('#dfe8e6'), 0.005, 0.006), 0.02, y, 0))
+
+  // Aluminum cans: label wraps the side, silver lid + tab on top
+  const label = canArt ? tex.wrapTexture(canArt) : tex.canLabel()
+  const canSide = toon('#ffffff', { map: label })
+  const canMetal = toon('#c9ccd2')
+  const makeCan = () => {
+    const can = new THREE.Group()
+    can.add(at(inked(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 24, 1, true), canSide, 0.008), 0, 0.1, 0))
+    can.add(at(inked(new THREE.CylinderGeometry(0.052, 0.06, 0.025, 24), canMetal, 0.006), 0, 0.212, 0))
+    can.add(at(inked(new THREE.CylinderGeometry(0.06, 0.05, 0.02, 24), canMetal, 0.006), 0, -0.008, 0))
+    can.add(at(block(0.03, 0.006, 0.05, canMetal, 0.003, 0.003), 0, 0.227, 0.01))
+    return can
+  }
+  const cans = new THREE.Group()
+  for (const [i, y] of shelfYs.entries()) {
+    for (let k = 0; k < (i === 1 ? 4 : 3); k++) {
+      const can = makeCan()
+      can.position.set(-0.12 + (k % 2) * 0.12, y + 0.02, -0.28 + k * 0.18)
+      can.rotation.y = -Math.PI / 2 + (k - 1) * 0.3
+      cans.add(can)
+    }
+  }
+  // The hero can, front and center
+  const hero = makeCan()
+  hero.scale.setScalar(1.25)
+  hero.position.set(-0.22, 0.97, 0.02)
+  hero.rotation.y = -Math.PI / 2
+  cans.add(hero)
+  cans.add(at(hitbox(0.6, 1.4, 0.8), -0.05, 0.35, 0))
+  fridge.add(hotspot('brewing', cans))
+
+  // Door hinged on the back-right edge, swings out toward the room
+  const fridgeHinge = at(new THREE.Group(), -D / 2, 0, W / 2)
+  const fridgeDoor = new THREE.Group()
+  fridgeDoor.add(at(block(0.1, H - 0.04, W, mint, 0.06), -0.05, H / 2, -W / 2))
+  fridgeDoor.add(at(block(0.04, 0.5, 0.05, fridgeChrome, 0.02, 0.01), -0.13, 1.15, -W + 0.1))
+  fridgeDoor.add(at(inked(new THREE.CylinderGeometry(0.08, 0.08, 0.02, 20).rotateZ(Math.PI / 2), fridgeChrome, 0.008), -0.11, 1.65, -W / 2))
+  fridgeDoor.add(at(block(0.02, 0.06, 0.3, toon('#c8322a'), 0.01, 0.006), -0.11, 1.45, -W / 2))
+  for (const y of [0.45, 0.85, 1.25]) fridgeDoor.add(at(block(0.12, 0.08, W - 0.16, toon('#dfe8e6'), 0.02, 0.006), 0.07, y, -W / 2))
+  fridgeHinge.add(fridgeDoor)
+  fridge.add(hotspot('fridge', fridgeHinge))
+  const fridgeLight = new THREE.PointLight('#e8f6ff', 0, 2.2, 1.5)
+  fridgeLight.position.set(-0.1, 1.2, 0)
+  fridge.add(fridgeLight)
+  add(at(fridge, 5.6, 0, 4.12))
+  collide(5.15, 6, 3.65, 4.6)
 
   // ---------- Sofa ----------
   const sofa = new THREE.Group()
@@ -568,6 +622,8 @@ export function buildRoom({ drawings = [], screenArt } = {}) {
     fireLight,
     steam,
     doorHinge,
+    fridgeHinge,
+    fridgeLight,
     flame,
     glassMaterial,
     shadeMaterial,

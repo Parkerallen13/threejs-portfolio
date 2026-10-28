@@ -17,7 +17,7 @@ export const TOUR = [
   { key: 'ouro', cam: [-0.3, 2.1, -0.9], look: [-1.6, 1.1, -4.6], stand: [-0.2, -3.0], lens: 0.25, tint: '#e8b46a', grade: 0 },
   { key: 'aldente', cam: [1.3, 2.1, 0.4], look: [5.3, 1.1, 2.0], stand: [4.75, 1.0], face: [5.6, 1.0], lens: 0.22, tint: '#d9874a', grade: 0.15 },
   { key: 'resume', cam: [1.9, 2.1, 0.3], look: [5.15, 2.0, -2.0], stand: [3.6, -0.9], lens: 0.2, tint: '#5f8a6e', grade: 0.15 },
-  { key: 'brewing', cam: [2.2, 2.2, -1.2], look: [5.1, 1.6, -3.8], stand: [2.6, -4.3], lens: 0.22, tint: '#b5773b', grade: 0.15 },
+  { key: 'brewing', cam: [2.3, 1.75, 2.3], look: [5.4, 1.0, 4.0], stand: [4.5, 1.9], face: [5.2, 4.1], lens: 0.22, tint: '#b5773b', grade: 0.15 },
   { key: 'contact', cam: [-1.8, 2.1, 1.2], look: [0.3, 1.3, 5.0], stand: [-0.4, 3.8], lens: 0.2, tint: '#6b88b0', grade: 0.18 },
   { key: 'outro', via: [0.3, 1.9, 5.6], cam: [-3.0, 3.6, 20], look: [0.3, 2.2, 4.0], stand: [0.3, 3.8], lens: 0.15, tint: '#9fb4c8', grade: 0.12 },
 ]

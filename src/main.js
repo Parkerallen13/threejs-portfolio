@@ -11,6 +11,11 @@ const drawings = Object.entries(
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([, url]) => url)
 
+// Flat Bad Decisions Brewing label art (src/assets/brewing/can-label.png) wraps the cans in the fridge
+const canArt = Object.values(
+  import.meta.glob('./assets/brewing/can-label.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }),
+)[0]
+
 const MODE_KEY = 'portfolio-mode'
 const root = document.documentElement
 const modeButton = document.querySelector('[data-mode-toggle]')
@@ -150,6 +155,7 @@ const world = new World(document.querySelector('#world'), {
   lines: LINES,
   mode,
   drawings,
+  canArt,
   onActivate: (id) => (id === 'lamp' ? toggleMode() : openHotspot(id)),
 })
 if (import.meta.env.DEV) window.__world = world // for poking at the scene from the console

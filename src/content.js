@@ -73,6 +73,7 @@ export const ACTION_LABELS = {
   lamp: 'Lights!',
   candle: 'Blow me out',
   fire: 'Warm your hands',
+  fridge: 'Open the fridge',
   plant: 'Water me',
   dog: 'Pet me!',
 }
@@ -92,7 +93,7 @@ export const CHAPTERS = {
   drawings: { blurb: 'Procreate pieces hung all over the house, even the rug.' },
   aldente: { blurb: 'My capstone is cooking right now. Watch your noodles around the dog.' },
   resume: { blurb: 'Where I have worked and what I have learned.' },
-  brewing: { blurb: 'A product design assignment with a good name.' },
+  brewing: { blurb: 'Cold ones in the fridge. Click a can to crack it open.' },
   outro: { kicker: 'Thanks for stopping by', title: 'See you around', blurb: 'Click the lamp to flip the lights. Say hi to the husky on your way out.' },
 }
 
@@ -107,6 +108,6 @@ export const LINES = {
   drawings: "These are my drawings. Even the rug!",
   aldente: "I'm making pasta! Al Dente is my capstone, and it's cooking too.",
   resume: "Those books? That's my experience.",
-  brewing: "Careful, that's Bad Decisions Brewing.",
+  brewing: "Grab a can! That's Bad Decisions Brewing, a product I designed.",
   outro: "Thanks for visiting! Come back soon.",
 }

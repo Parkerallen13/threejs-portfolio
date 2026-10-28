@@ -298,3 +298,35 @@ export function coverTexture(url, aspect) {
   texture.anisotropy = 4
   return texture
 }
+
+// Label that wraps the can, from a flat label image (full 360° wrap, left edge to right edge)
+export function wrapTexture(url) {
+  const texture = new THREE.TextureLoader().load(url)
+  texture.colorSpace = THREE.SRGBColorSpace
+  texture.anisotropy = 8
+  return texture
+}
+
+// Stand-in can label until the real Bad Decisions Brewing artwork is added
+export const canLabel = () =>
+  canvasTexture(512, 256, (ctx, w, h) => {
+    ctx.fillStyle = '#1f2a44'
+    ctx.fillRect(0, 0, w, h)
+    ctx.fillStyle = '#f2b632'
+    ctx.fillRect(0, 22, w, 8)
+    ctx.fillRect(0, h - 30, w, 8)
+    ctx.fillStyle = '#f4ecd8'
+    ctx.textAlign = 'center'
+    ctx.font = 'bold 44px "Arial Black", sans-serif'
+    ctx.fillText('BAD', w * 0.25, 110)
+    ctx.fillText('DECISIONS', w * 0.25, 160)
+    ctx.font = 'bold 20px "Courier New", monospace'
+    ctx.fillText('BREWING CO.', w * 0.25, 196)
+    ctx.fillStyle = '#e0482f'
+    ctx.beginPath()
+    ctx.arc(w * 0.75, h / 2, 54, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#f4ecd8'
+    ctx.font = 'bold 22px "Courier New", monospace'
+    ctx.fillText('12 FL OZ', w * 0.75, h / 2 + 8)
+  })

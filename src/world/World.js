@@ -31,7 +31,7 @@ const BEG_SPOT = new THREE.Vector3(4.0, 0, 1.9)
 const COUCH = { approach: new THREE.Vector3(-1.5, 0, 0.3), seat: new THREE.Vector3(-2.5, 0.62, -0.2) }
 
 export class World {
-  constructor(canvas, { bubble, say, labels, lines, mode, drawings, onActivate }) {
+  constructor(canvas, { bubble, say, labels, lines, mode, drawings, canArt, onActivate }) {
     this.canvas = canvas
     this.bubble = bubble
     this.say = say
@@ -71,7 +71,7 @@ export class World {
     this.sun.position.set(-2, 6, 4)
     this.scene.add(this.ambient, this.sun)
 
-    this.room = buildRoom({ drawings })
+    this.room = buildRoom({ drawings, canArt })
     this.scene.add(this.room.group)
     this.forest = buildForest()
     this.scene.add(this.forest.group)
@@ -93,6 +93,8 @@ export class World {
     this.run = { mode: 'waitDoor', step: -1, timer: 0, t: Math.PI / 2, speed: DOG_PATH.speed, woofAt: -10, woofText: 'WOOF!', from: new THREE.Vector3(), laps: 0, hasNoodle: false }
     this.dog.root.position.copy(DOOR_INSIDE)
     this.candleLit = true
+    this.fridgeOpen = 0
+    this.fridgeWanted = false
     this.fireBoostAt = -10
 
     const shadowMat = new THREE.MeshBasicMaterial({ map: blobShadow(), transparent: true, depthWrite: false })
@@ -197,6 +199,10 @@ export class World {
       this.actionText = this.candleLit ? 'Lit!' : 'Poof!'
       this.actionAt = this.elapsed
       this.actionId = 'candle'
+      return
+    }
+    if (id === 'fridge') {
+      this.fridgeWanted = this.fridgeOpen < 0.5
       return
     }
     if (id === 'fire') {
@@ -581,6 +587,15 @@ export class World {
       f.rotation.z = Math.sin(frame * 0.9 + i) * 0.12
     })
     this.room.fireLight.intensity = this.fireIntensity * (0.85 + Math.sin(frame * 2.1) * 0.15) * boost
+
+    // Fridge swings open at the Bad Decisions stop (or when clicked), light on inside
+    const atFridge = TOUR[this.chapterIndex()].key === 'brewing' && Math.abs(this.progress - this.chapterIndex()) < 0.3
+    const wantOpen = this.fridgeWanted || atFridge
+    this.fridgeOpen = THREE.MathUtils.lerp(this.fridgeOpen, wantOpen ? 1 : 0, Math.min(1, dt * 4))
+    this.room.fridgeHinge.rotation.y = this.fridgeOpen * 1.9
+    this.room.fridgeLight.intensity = this.fridgeOpen * 2.5
+    if (!atFridge && this.wasAtFridge) this.fridgeWanted = false
+    this.wasAtFridge = atFridge
 
     // Steam curling up off the pasta pot
     for (const puff of this.room.steam) {
