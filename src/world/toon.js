@@ -54,7 +54,7 @@ export function toon(color, options = {}) {
 
 // Cottage log walls: rounded horizontal logs computed in world space, so every wall
 // piece (and the gables) lines up log-for-log no matter how it's cut
-export function logs(color) {
+export function logs(color, rowHeight = 0.34) {
   const material = toon(color)
   const brush = material.onBeforeCompile
   material.onBeforeCompile = (shader) => {
@@ -62,13 +62,13 @@ export function logs(color) {
     shader.fragmentShader = shader.fragmentShader.replace(
       'diffuseColor.rgb *= 0.84 + brush * 0.26;',
       `diffuseColor.rgb *= 0.84 + brush * 0.26;
-      float logRow = floor(vBrushPos.y / 0.34);
-      float band = fract(vBrushPos.y / 0.34);
+      float logRow = floor(vBrushPos.y / ${rowHeight.toFixed(3)});
+      float band = fract(vBrushPos.y / ${rowHeight.toFixed(3)});
       diffuseColor.rgb *= 0.58 + 0.42 * smoothstep(0.0, 0.4, sin(band * 3.14159));
       diffuseColor.rgb *= 0.92 + 0.14 * bHash(vec3(logRow, 3.0, 7.0));`,
     )
   }
-  material.customProgramCacheKey = () => 'brush-logs'
+  material.customProgramCacheKey = () => `brush-logs-${rowHeight}`
   return material
 }
 
@@ -97,8 +97,8 @@ function wonk(geometry) {
 }
 
 // Inverted-hull outline with even thickness on every axis, so boxes ink as nicely as spheres
-export function inked(geometry, material, thickness = 0.028) {
-  wonk(geometry)
+export function inked(geometry, material, thickness = 0.028, wobble = true) {
+  if (wobble) wonk(geometry)
   const mesh = new THREE.Mesh(geometry, material)
   geometry.computeBoundingBox()
   const size = geometry.boundingBox.getSize(new THREE.Vector3())
@@ -116,9 +116,9 @@ export function inked(geometry, material, thickness = 0.028) {
   return mesh
 }
 
-export function block(w, h, d, material, radius = 0.04, thickness) {
+export function block(w, h, d, material, radius = 0.04, thickness, wobble = true) {
   const r = Math.max(0.002, Math.min(radius, w / 2 - 0.001, h / 2 - 0.001, d / 2 - 0.001))
-  return inked(new RoundedBoxGeometry(w, h, d, 2, r), material, thickness)
+  return inked(new RoundedBoxGeometry(w, h, d, 2, r), material, thickness, wobble)
 }
 
 export function at(object, x, y, z) {

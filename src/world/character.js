@@ -15,12 +15,27 @@ const C = {
   lips: '#c9707a',
 }
 
-// Chibi Parker: wavy light-brown bob, white puff-sleeve blouse with a
-// peter pan collar, gold chain necklace, long brown skirt. Faces +z.
-export function createCharacter() {
+export const CHARACTER_STYLES = {
+  storybook: 'Storybook',
+  chibi: 'Chibi',
+  rubberhose: '1930s',
+  paper: 'Paper doll',
+}
+
+// Parker: wavy light-brown bob, white puff-sleeve blouse with a peter pan collar,
+// gold chain necklace, long brown skirt. Faces +z. Four drawing styles:
+//  storybook  - lanky Reccardi proportions, sleepy lidded eyes (the default)
+//  chibi      - big round head on a little body, big sparkly eyes
+//  rubberhose - 1930s cartoon: black noodle arms, white gloves, pie-cut eyes, big shoes
+//  paper      - a flat paper-doll cutout on a little stand that always faces you
+export function createCharacter(style = 'storybook') {
   const root = new THREE.Group()
+  const figure = new THREE.Group() // everything; the paper doll flattens this
   const body = new THREE.Group()
-  root.add(body)
+  root.add(figure)
+  figure.add(body)
+  const hose = style === 'rubberhose'
+  const chibi = style === 'chibi'
 
   const skin = toon(C.skin)
   const blouse = toon(C.blouse)
@@ -30,9 +45,9 @@ export function createCharacter() {
   const skirt = inked(new THREE.CylinderGeometry(0.13, 0.36, 0.88, 24), toon(C.skirt))
   body.add(at(skirt, 0, 0.48, 0))
   for (const x of [-0.09, 0.09]) {
-    const shoe = inked(new THREE.SphereGeometry(0.07, 12, 8), toon(C.shoe), 0.015)
-    shoe.scale.set(1, 0.6, 1.5)
-    body.add(at(shoe, x, 0.05, 0.1))
+    const shoe = inked(new THREE.SphereGeometry(0.07, 12, 8), toon(hose ? '#141414' : C.shoe), 0.015)
+    shoe.scale.set(hose ? 1.6 : 1, hose ? 0.8 : 0.6, hose ? 2.6 : 1.5)
+    body.add(at(shoe, x * (hose ? 1.3 : 1), 0.05, hose ? 0.16 : 0.1))
   }
 
   // Blouse, puff sleeves, collar + bow
@@ -44,7 +59,12 @@ export function createCharacter() {
   // Arms swing from the shoulders
   const arms = [-1, 1].map((side) => {
     const pivot = at(new THREE.Group(), side * 0.21, 1.2, 0)
-    pivot.add(at(inked(new THREE.CapsuleGeometry(0.03, 0.36, 4, 8), skin, 0.015), side * 0.02, -0.26, 0))
+    if (hose) {
+      pivot.add(at(inked(new THREE.CapsuleGeometry(0.022, 0.4, 4, 8), toon('#141414'), 0.01), side * 0.03, -0.28, 0))
+      const glove = inked(new THREE.SphereGeometry(0.07, 12, 8), toon('#ffffff'), 0.015)
+      glove.scale.set(1, 0.9, 0.8)
+      pivot.add(at(glove, side * 0.04, -0.52, 0.02))
+    } else pivot.add(at(inked(new THREE.CapsuleGeometry(0.03, 0.36, 4, 8), skin, 0.015), side * 0.02, -0.26, 0))
     body.add(pivot)
     return pivot
   })
@@ -59,6 +79,8 @@ export function createCharacter() {
   // Head
   const head = at(new THREE.Group(), 0, 1.72, 0)
   head.scale.set(0.94, 1.1, 0.96) // egg-shaped, Reccardi style
+  if (chibi) head.scale.set(1.5, 1.45, 1.5)
+  if (hose) head.scale.set(1.12, 1.05, 1.08)
   body.add(head)
   head.add(inked(new THREE.SphereGeometry(0.29, 24, 18), skin))
 
@@ -83,11 +105,32 @@ export function createCharacter() {
 
   // Face
   const eyeMat = new THREE.MeshBasicMaterial({ color: C.eyes })
+  const white = new THREE.MeshBasicMaterial({ color: '#ffffff' })
   for (const x of [-0.1, 0.1]) {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.034, 12, 8), eyeMat)
-    eye.scale.set(1, 1.3, 0.5)
-    head.add(at(eye, x, 0.0, 0.27))
-    head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.01, 6, 4), new THREE.MeshBasicMaterial({ color: '#ffffff' })), x + 0.012, -0.012, 0.288))
+    if (hose) {
+      // Pie-cut eyes: tall black ovals with a little white wedge
+      eye.scale.set(0.9, 2.3, 0.5)
+      head.add(at(eye, x * 0.85, 0.03, 0.27))
+      const wedge = new THREE.Mesh(new THREE.CircleGeometry(0.018, 3), white)
+      head.add(at(wedge, x * 0.85 + 0.008, 0.06, 0.29))
+    } else if (chibi) {
+      // Big sparkly eyes
+      eye.scale.set(1.5, 1.9, 0.5)
+      head.add(at(eye, x * 1.05, -0.01, 0.27))
+      head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.016, 6, 4), white), x * 1.05 + 0.018, 0.02, 0.29))
+      head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.008, 6, 4), white), x * 1.05 - 0.012, -0.03, 0.29))
+    } else {
+      eye.scale.set(1, 1.3, 0.5)
+      head.add(at(eye, x, 0.0, 0.27))
+      head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.01, 6, 4), white), x + 0.012, -0.012, 0.288))
+    }
+    if (hose || chibi) {
+      const blush = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), new THREE.MeshBasicMaterial({ color: C.blush, transparent: true, opacity: 0.7 }))
+      blush.scale.set(1.3, 0.7, 0.3)
+      head.add(at(blush, x * 1.6, -0.07, 0.235))
+      continue
+    }
     // Heavy, sleepy lids with a flick of lashes
     const lid = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), skin)
     lid.scale.set(1.08, 1.0, 0.62)
@@ -115,16 +158,35 @@ export function createCharacter() {
   head.add(at(mouth, 0, -0.13, 0.27))
   head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), skin), 0, -0.05, 0.29))
 
+  if (chibi) {
+    // Little body, big head
+    for (const child of body.children) if (child !== head) child.scale.multiply(new THREE.Vector3(1, 0.62, 1))
+    for (const child of body.children) if (child !== head) child.position.y *= 0.62
+    head.position.y = 1.28
+  }
+  if (style === 'paper') {
+    // Flat cardboard cutout with a little easel stand behind
+    figure.scale.z = 0.1
+    const stand = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.9, 3), toon('#b08a5a'))
+    stand.scale.z = 0.3
+    root.add(at(stand, 0, 0.45, -0.12))
+  }
+
   let phase = 0
   let elapsed = 0
   return {
     root,
+    style,
+    // The paper doll always turns to face the viewer
+    billboard: style === 'paper',
     // amount: 0 = idle, 1 = full walk
     update(dt, amount) {
       elapsed += dt
       phase += dt * 10 * amount
-      const swing = Math.sin(phase) * amount
-      body.position.y = Math.abs(Math.sin(phase)) * 0.06 * amount + Math.sin(elapsed * 2) * 0.008
+      const swing = Math.sin(phase) * amount * (hose ? 1.6 : 1)
+      // Rubber hose bounces way more, even standing still
+      const bob = hose ? 0.12 : 0.06
+      body.position.y = Math.abs(Math.sin(phase)) * bob * amount + Math.sin(elapsed * (hose ? 6 : 2)) * (hose ? 0.02 : 0.008)
       body.rotation.x = 0.07 * amount
       arms[0].rotation.x = swing * 0.7
       arms[1].rotation.x = -swing * 0.7

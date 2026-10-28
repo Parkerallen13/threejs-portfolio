@@ -1,5 +1,6 @@
 import './style.css'
 import { World } from './world/World.js'
+import { CHARACTER_STYLES } from './world/character.js'
 import { TOUR } from './world/tour.js'
 import { HOTSPOTS, ACTION_LABELS, INDEX_ORDER, CHAPTERS, LINES } from './content.js'
 import { PROJECTS, projectUrl } from './projects.js'
@@ -39,6 +40,9 @@ function write(key, value) {
 }
 
 let mode = read(MODE_KEY) ?? 'dark'
+const LOOK_KEY = 'portfolio-character'
+let look = read(LOOK_KEY) ?? 'storybook'
+if (!CHARACTER_STYLES[look]) look = 'storybook'
 
 function renderMode() {
   root.dataset.mode = mode
@@ -156,8 +160,25 @@ const world = new World(document.querySelector('#world'), {
   mode,
   drawings,
   canArt,
-  onActivate: (id) => (id === 'lamp' ? toggleMode() : openHotspot(id)),
+  characterStyle: look,
+  onActivate: openHotspot,
 })
+// Character style buttons
+const looksEl = document.querySelector('.looks')
+looksEl.innerHTML =
+  '<span>You:</span>' +
+  Object.entries(CHARACTER_STYLES)
+    .map(([id, name]) => `<button type="button" data-look="${id}" aria-pressed="${id === look}">${name}</button>`)
+    .join('')
+looksEl.addEventListener('click', (e) => {
+  const button = e.target.closest('[data-look]')
+  if (!button) return
+  look = button.dataset.look
+  write(LOOK_KEY, look)
+  looksEl.querySelectorAll('[data-look]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.look === look)))
+  world.setCharacterStyle(look)
+})
+
 if (import.meta.env.DEV) window.__world = world // for poking at the scene from the console
 window.addEventListener('scroll', onScroll, { passive: true })
 window.addEventListener('resize', onScroll)

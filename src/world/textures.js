@@ -23,7 +23,7 @@ export const woodFloor = () =>
     512,
     512,
     (ctx, w, h) => {
-      const tones = ['#b5703b', '#ad6a36', '#bb7741', '#b06c38']
+      const tones = ['#c8955f', '#c08b56', '#cf9e69', '#c4915b'] // pale oak
       const cols = 4
       const colW = w / cols
       for (let c = 0; c < cols; c++) {
@@ -52,12 +52,12 @@ export const woodFloor = () =>
     [2, 1.6],
   )
 
-export const brick = () =>
+export const brick = (painted = false) =>
   canvasTexture(
     256,
     256,
     (ctx, w, h) => {
-      ctx.fillStyle = '#d8c2a4'
+      ctx.fillStyle = painted ? '#d8d2c8' : '#d8c2a4'
       ctx.fillRect(0, 0, w, h)
       const rows = 10
       const rowH = h / rows
@@ -65,7 +65,7 @@ export const brick = () =>
       for (let r = 0; r < rows; r++) {
         const offset = r % 2 ? brickW / 2 : 0
         for (let b = -1; b < 5; b++) {
-          ctx.fillStyle = pick(['#a4503a', '#9a4632', '#b25c42', '#8f412f'])
+          ctx.fillStyle = pick(painted ? ['#f1ede6', '#ebe6dd', '#f4f1eb', '#e6e0d6'] : ['#a4503a', '#9a4632', '#b25c42', '#8f412f'])
           ctx.fillRect(b * brickW + offset + 3, r * rowH + 3, brickW - 6, rowH - 6)
         }
       }
@@ -92,9 +92,10 @@ export const blanketStripes = () =>
 
 export const rug = () =>
   canvasTexture(256, 192, (ctx, w, h) => {
-    ctx.fillStyle = '#767d92'
+    // Faded vintage rug: terracotta field, rose and cream pattern
+    ctx.fillStyle = '#c4917a'
     ctx.fillRect(0, 0, w, h)
-    ctx.strokeStyle = '#9aa0b4'
+    ctx.strokeStyle = '#d9b9a2'
     ctx.lineWidth = 3
     for (let x = -h; x < w + h; x += 28) {
       ctx.beginPath()
@@ -104,7 +105,7 @@ export const rug = () =>
       ctx.lineTo(x, h)
       ctx.stroke()
     }
-    ctx.strokeStyle = '#575d70'
+    ctx.strokeStyle = '#9c5f48'
     ctx.lineWidth = 14
     ctx.strokeRect(10, 10, w - 20, h - 20)
   })
@@ -329,4 +330,28 @@ export const canLabel = () =>
     ctx.fillStyle = '#f4ecd8'
     ctx.font = 'bold 22px "Courier New", monospace'
     ctx.fillText('12 FL OZ', w * 0.75, h / 2 + 8)
+  })
+
+// Geometric bedroom rug: warm triangles
+export const geoRug = () =>
+  canvasTexture(256, 192, (ctx, w, h) => {
+    ctx.fillStyle = '#efe4d2'
+    ctx.fillRect(0, 0, w, h)
+    const colors = ['#c9733f', '#d9a43a', '#6b4428', '#efe4d2', '#b5522f']
+    const size = 32
+    for (let y = 0; y < h; y += size)
+      for (let x = 0; x < w; x += size) {
+        ctx.fillStyle = colors[(x / size + y / size * 2) % colors.length]
+        ctx.beginPath()
+        if (((x + y) / size) % 2) {
+          ctx.moveTo(x, y)
+          ctx.lineTo(x + size, y)
+          ctx.lineTo(x, y + size)
+        } else {
+          ctx.moveTo(x + size, y)
+          ctx.lineTo(x + size, y + size)
+          ctx.lineTo(x, y + size)
+        }
+        ctx.fill()
+      }
   })

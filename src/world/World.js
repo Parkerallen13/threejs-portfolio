@@ -7,31 +7,34 @@ import { createCharacter } from './character.js'
 import { createDog } from './dog.js'
 import { createBird } from './birds.js'
 import { buildForest } from './forest.js'
+import { buildSky } from './sky.js'
 import { blobShadow } from './textures.js'
 import { TOUR, DOOR_OPEN_AT } from './tour.js'
 import { createLensPass, lensDistort, lensUndistort, lens } from './lensPass.js'
 
-// Pale overcast snow by day, deep blue winter night with warm windows
+// Clear Colorado winter day, or a deep starry night with warm windows
 const MODES = {
-  light: { background: '#dfe6ec', ambient: ['#f4f6ff', 1.5], sun: 2.0, lamp: 0, candle: 0.6, glass: '#e6f2ff', shade: 0, fire: 3 },
-  dark: { background: '#1a2335', ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#ffcf7a', shade: 0.7, fire: 6 },
+  light: { background: '#a9c8e6', fog: '#cfdde9', ambient: ['#f4f6ff', 1.5], sun: 2.0, lamp: 0, candle: 0.6, glass: '#e6f2ff', shade: 0, fire: 3, stars: false },
+  dark: { background: '#121a30', fog: '#1a2338', stars: true, ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#ffcf7a', shade: 0.7, fire: 6 },
 }
 
 const WALK_SPEED = 2.4
 const RADIUS = 0.28
 const POSE_FPS = 12 // character poses update "on twos", like limited TV animation
-const DOG_PATH = { x: 0.4, z: 3.1, rx: 3.6, rz: 1.1, speed: 0.4 }
+const DOG_PATH = { x: 0.9, z: 3.1, rx: 3.0, rz: 1.1, speed: 0.4 } // laps between the dining table and the kitchen
 const DOG_ROUTINE = ['loop', 'roll', 'loop', 'toCouch', 'jumpUp', 'lounge', 'jumpDown', 'toLoop']
 // When the front door opens the husky bolts outside, does laps in the snow, then trots back in
 const DOOR_INSIDE = new THREE.Vector3(0.3, 0, 3.8)
 const DOOR_OUTSIDE = new THREE.Vector3(0.3, 0, 6.4)
-const YARD = { x: -2.5, z: 7.0, r: 1.6 }
+const STEP_BOTTOM = new THREE.Vector3(0.3, 0, 9.8)
+const YARD = { x: -3.5, z: 12.5, r: 1.8 }
+const GROUND_Y = -0.44
 // Where the husky sits to beg for a noodle while Parker cooks
 const BEG_SPOT = new THREE.Vector3(4.0, 0, 1.9)
 const COUCH = { approach: new THREE.Vector3(-1.5, 0, 0.3), seat: new THREE.Vector3(-2.5, 0.62, -0.2) }
 
 export class World {
-  constructor(canvas, { bubble, say, labels, lines, mode, drawings, canArt, onActivate }) {
+  constructor(canvas, { bubble, say, labels, lines, mode, drawings, canArt, characterStyle, onActivate }) {
     this.canvas = canvas
     this.bubble = bubble
     this.say = say
@@ -51,8 +54,8 @@ export class World {
 
     this.scene = new THREE.Scene()
     this.scene.background = new THREE.Color()
-    this.scene.fog = new THREE.Fog('#dfe6ec', 16, 55)
-    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.05, 100)
+    this.scene.fog = new THREE.Fog('#cfdde9', 60, 260)
+    this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.05, 400)
     this.camPos = new THREE.Vector3(...TOUR[0].cam)
     this.camLook = new THREE.Vector3(...TOUR[0].look)
 
@@ -75,6 +78,8 @@ export class World {
     this.scene.add(this.room.group)
     this.forest = buildForest()
     this.scene.add(this.forest.group)
+    this.sky = buildSky()
+    this.scene.add(this.sky.group)
 
     this.birds = [0, 1].map((i) => {
       const bird = createBird()
@@ -83,10 +88,11 @@ export class World {
     })
     this.colliders = this.room.colliders
 
-    this.character = createCharacter()
+    this.character = createCharacter(characterStyle)
     this.character.root.position.set(...[TOUR[0].stand[0], 0, TOUR[0].stand[1]])
     this.scene.add(this.character.root)
     this.walkAmount = 0
+    this.floor = 0
 
     this.dog = createDog()
     this.scene.add(this.dog.root)
@@ -126,7 +132,8 @@ export class World {
   setMode(mode) {
     const m = MODES[mode] ?? MODES.dark
     this.scene.background.set(m.background)
-    this.scene.fog.color.set(m.background)
+    this.scene.fog.color.set(m.fog)
+    this.sky.group.visible = m.stars
     this.fireIntensity = m.fire
     this.ambient.color.set(m.ambient[0])
     this.ambient.intensity = m.ambient[1]
@@ -135,6 +142,19 @@ export class World {
     this.candleIntensity = m.candle
     this.room.glassMaterial.color.set(m.glass)
     this.room.shadeMaterial.emissiveIntensity = m.shade
+  }
+
+  // Swap Parker's drawing style in place (same spot, same pose)
+  setCharacterStyle(style) {
+    const old = this.character.root
+    this.character = createCharacter(style)
+    this.character.root.position.copy(old.position)
+    this.character.root.rotation.copy(old.rotation)
+    this.character.root.userData.hotspot = 'me'
+    this.scene.remove(old)
+    this.scene.add(this.character.root)
+    const entry = this.hotspots.find((h) => h.object === old)
+    if (entry) entry.object = this.character.root
   }
 
   // 0 = first chapter, TOUR.length - 1 = last
@@ -225,6 +245,12 @@ export class World {
   }
 
   blocked(x, z) {
+    if (this.floor === 1) {
+      const b = this.room.upstairs.bounds
+      const bed = this.room.upstairs.bed
+      if (x < b.minX + RADIUS || x > b.maxX - RADIUS || z < b.minZ + RADIUS || z > b.maxZ - RADIUS) return true
+      return x > bed.minX - RADIUS && x < bed.maxX + RADIUS && z > bed.minZ - RADIUS && z < bed.maxZ + RADIUS
+    }
     if (x < BOUNDS.minX + RADIUS || x > BOUNDS.maxX - RADIUS) return true
     if (z < BOUNDS.minZ + RADIUS || z > BOUNDS.maxZ - RADIUS) return true
     return this.colliders.some(
@@ -235,7 +261,21 @@ export class World {
   // Parker walks over to whatever the current chapter is about
   moveCharacter(dt) {
     const pos = this.character.root.position
-    const [tx, tz] = TOUR[this.chapterIndex()].stand
+    const chapter = TOUR[this.chapterIndex()]
+    let [tx, tz] = chapter.stand
+    // Changing floors: walk to the spiral stairs, then pop up (or down) them
+    const wantFloor = chapter.floor ?? 0
+    if (wantFloor !== this.floor) {
+      const stairs = this.room.stairs
+      const spot = this.floor === 0 ? stairs.bottom : stairs.top
+      if (Math.hypot(pos.x - spot.x, pos.z - spot.z) < 0.12) {
+        this.floor = wantFloor
+        pos.y = wantFloor ? this.room.upstairs.floor : 0
+      } else {
+        tx = spot.x
+        tz = spot.z
+      }
+    }
     const input = new THREE.Vector3(tx - pos.x, 0, tz - pos.z)
     const rot = this.character.root.rotation
     let walking = 0
@@ -270,13 +310,14 @@ export class World {
       const fz = face ? face[1] : this.camera.position.z
       facing = Math.atan2(fx - pos.x, fz - pos.z)
     }
+    if (this.character.billboard) facing = Math.atan2(this.camera.position.x - pos.x, this.camera.position.z - pos.z)
     const diff = Math.atan2(Math.sin(facing - rot.y), Math.cos(facing - rot.y))
     rot.y += diff * Math.min(1, dt * 8)
 
     // Don't let the husky run through Parker
     const dogPos = this.dog.root.position
     const away = new THREE.Vector3(pos.x - dogPos.x, 0, pos.z - dogPos.z)
-    if (dogPos.y < 0.1 && away.length() < 0.65) {
+    if (this.floor === 0 && dogPos.y < 0.1 && away.length() < 0.65) {
       away.setLength(0.65)
       if (!this.blocked(dogPos.x + away.x, dogPos.z + away.z)) pos.set(dogPos.x + away.x, 0, dogPos.z + away.z)
     }
@@ -287,7 +328,7 @@ export class World {
       this.character.update(this.poseClock, this.walkAmount)
       this.poseClock = 0
     }
-    this.characterShadow.position.set(pos.x, 0.04, pos.z)
+    this.characterShadow.position.set(pos.x, pos.y + 0.04, pos.z)
   }
 
   dogPoint(t, out = new THREE.Vector3()) {
@@ -337,11 +378,15 @@ export class World {
       root.rotation.y = 0
       if (doorOpen > 0.75) {
         r.mode = 'out'
+        r.wp = 0
         r.timer = 0
       }
     } else if (r.mode === 'out') {
       pace = 1.3
-      if (this.dogWalkTo(DOOR_OUTSIDE, dt, 3.2)) {
+      // Across the porch, down the steps, then off into the snow
+      const arrived = this.dogWalkTo(r.wp === 1 ? STEP_BOTTOM : DOOR_OUTSIDE, dt, 3.2)
+      if (arrived && r.wp !== 1) r.wp = 1
+      else if (arrived) {
         r.mode = 'yard'
         r.timer = 0
         r.yardT = Math.PI / 2 + Math.PI
@@ -349,7 +394,7 @@ export class World {
     } else if (r.mode === 'yard') {
       // Zoomies in the snow
       r.yardT += dt * 1.6
-      root.position.set(YARD.x + Math.cos(r.yardT) * YARD.r, 0, YARD.z + Math.sin(r.yardT) * YARD.r * 0.8)
+      root.position.set(YARD.x + Math.cos(r.yardT) * YARD.r, GROUND_Y, YARD.z + Math.sin(r.yardT) * YARD.r * 0.8)
       root.rotation.y = Math.atan2(-Math.sin(r.yardT), Math.cos(r.yardT) * 0.8)
       pace = 1.3
       if (r.timer > 1.2 && r.timer < 1.3 && this.elapsed - r.woofAt > 2) {
@@ -364,13 +409,13 @@ export class World {
     } else if (r.mode === 'backIn') {
       // Out of the yard to the doorstep, then through the door
       pace = 1
-      const waypoint = r.wp === 1 ? DOOR_INSIDE : DOOR_OUTSIDE
+      const waypoint = [STEP_BOTTOM, DOOR_OUTSIDE, DOOR_INSIDE][r.wp]
       if (this.dogWalkTo(waypoint, dt, 2.6)) {
-        if (r.wp === 1) {
+        if (r.wp === 2) {
           r.step = DOG_ROUTINE.indexOf('toLoop')
           r.mode = 'toLoop'
           r.timer = 0
-        } else r.wp = 1
+        } else r.wp++
       }
     } else if (r.mode === 'beg') {
       pace = 1
@@ -430,6 +475,8 @@ export class World {
       if (r.timer > 6) next()
     }
 
+    if (['out', 'yard', 'backIn'].includes(r.mode)) root.position.y = root.position.z > 8.6 ? GROUND_Y : 0
+
     // Cartoon physics on twos: trot bounce, lean into turns, hop when woofing
     const sinceWoof = this.elapsed - r.woofAt
     const frame = Math.floor(this.elapsed * POSE_FPS)
@@ -458,15 +505,13 @@ export class World {
     }
   }
 
-  // Straight line between stops, or a curve that threads the front door when `via` is set
+  // Straight line between stops, or two legs through `via` (the front door, the stair hole)
   cameraPath(a, b, t) {
     const from = new THREE.Vector3(...a.cam)
     const to = new THREE.Vector3(...b.cam)
-    const via = (b.via ?? a.via) && new THREE.Vector3(...(b.via ?? a.via))
-    if (!via || a.via === b.via) return from.lerp(to, t)
-    const control = via.clone().multiplyScalar(2).sub(from.clone().add(to).multiplyScalar(0.5))
-    const u = 1 - t
-    return from.multiplyScalar(u * u).add(control.multiplyScalar(2 * u * t)).add(to.multiplyScalar(t * t))
+    if (!b.via) return from.lerp(to, t)
+    const via = new THREE.Vector3(...b.via)
+    return t < 0.5 ? from.lerp(via, t * 2) : via.lerp(to, (t - 0.5) * 2)
   }
 
   updateCamera(dt) {
