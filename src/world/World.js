@@ -298,7 +298,14 @@ export class World {
       const fz = face ? face[1] : this.camera.position.z
       facing = Math.atan2(fx - pos.x, fz - pos.z)
     }
-    if (this.character.billboard) facing = Math.atan2(this.camera.position.x - pos.x, this.camera.position.z - pos.z)
+    if (this.character.billboard) {
+      // The flat cutout always faces you, and flips to face the way it's walking
+      if (walking > 0.2) {
+        const right = new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld, 0)
+        this.character.setFlip?.(input.x * right.x + input.z * right.z < 0)
+      }
+      facing = Math.atan2(this.camera.position.x - pos.x, this.camera.position.z - pos.z)
+    }
     const diff = Math.atan2(Math.sin(facing - rot.y), Math.cos(facing - rot.y))
     rot.y += diff * Math.min(1, dt * 8)
 

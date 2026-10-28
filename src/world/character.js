@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { toon, inked, at } from './toon.js'
+import { createReccardiCharacter } from './reccardi.js'
 
 export const CHARACTER_STYLES = {
+  reccardi: 'Reccardi',
   anime: 'Anime',
   animated: '3D Animated',
   clay: 'Claymation',
@@ -316,7 +318,8 @@ function hairPieces(look, mat, matLight) {
 
 // Parker: wavy light-brown bob with a side part, white puff-sleeve blouse with a
 // peter pan collar, gold chain with a jade pendant, long brown A-line skirt. Faces +z.
-export function createCharacter(style = 'anime') {
+export function createCharacter(style = 'reccardi') {
+  if (style === 'reccardi') return createReccardiCharacter()
   if (!LOOKS[style]) style = 'anime'
   const look = LOOKS[style]
   const seg = (n) => Math.max(5, Math.round(n * look.segments))

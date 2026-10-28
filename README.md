@@ -25,7 +25,7 @@ src/world/World.js         renderer, camera tour, Parker + the husky, hover/clic
 src/world/coast.js         the beach outside: ocean, waves, palms, lifeguard tower, street
 src/world/tour.js          scroll chapters: camera position, look target, lens + color wash
 src/world/room.js          the living room, piece by piece, and which objects are clickable
-src/world/character.js     Parker in four looks (anime, 3D animated, claymation, low poly)
+src/world/character.js     Parker in five looks; reccardi.js paints the default flat 60s-style cutout
 src/world/dog.js           the black-and-white husky
 src/world/lensPass.js      fisheye + line boil, dry-brush mottling, paper grain, palette wash
 src/world/toon.js          toon materials, ink outlines, hand-drawn wobble
