@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { toon, inked, at } from './toon.js'
 
-// Little Snow White bluebirds that flutter around the cottage. Faces +z.
+// Seagulls drifting around the beach house. Faces +z.
 export function createBird() {
   const root = new THREE.Group()
-  const blue = toon('#5b8fd4')
-  const belly = toon('#f1e2c4')
+  const blue = toon('#c9ced4') // gull grey
+  const belly = toon('#f6f6f2')
 
   const body = inked(new THREE.SphereGeometry(0.09, 12, 10), blue, 0.012)
   body.scale.set(0.9, 0.85, 1.25)
@@ -14,7 +14,7 @@ export function createBird() {
   chest.scale.set(0.9, 0.8, 1)
   root.add(at(chest, 0, -0.025, 0.04))
   root.add(at(inked(new THREE.SphereGeometry(0.065, 12, 10), blue, 0.012), 0, 0.06, 0.09))
-  const beak = inked(new THREE.ConeGeometry(0.018, 0.06, 6), toon('#f2a33a'), 0.006)
+  const beak = inked(new THREE.ConeGeometry(0.018, 0.06, 6), toon('#f2c230'), 0.006)
   beak.rotation.x = Math.PI / 2
   root.add(at(beak, 0, 0.055, 0.17))
   for (const x of [-0.03, 0.03]) root.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.011, 6, 4), new THREE.MeshBasicMaterial({ color: '#141414' })), x, 0.08, 0.145))

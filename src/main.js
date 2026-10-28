@@ -41,8 +41,8 @@ function write(key, value) {
 
 let mode = read(MODE_KEY) ?? 'dark'
 const LOOK_KEY = 'portfolio-character'
-let look = read(LOOK_KEY) ?? 'storybook'
-if (!CHARACTER_STYLES[look]) look = 'storybook'
+let look = read(LOOK_KEY) ?? 'anime'
+if (!CHARACTER_STYLES[look]) look = 'anime'
 
 function renderMode() {
   root.dataset.mode = mode

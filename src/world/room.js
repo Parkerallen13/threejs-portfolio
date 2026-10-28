@@ -63,10 +63,10 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   add(at(block(12.4, 0.4, 10.2, toon('#5a3a22'), 0.05), 0, -0.23, -0.1))
 
   // ---------- Mid-century modern cabin: board siding, low roof with deep overhangs ----------
-  const wallMat = logs('#8a5a36', 0.18)
+  const wallMat = toon('#f4f1ea') // white stucco
   const WALL_H = 4.2 // tall, airy ceilings
   const RISE = 1.0 // low-slung roof
-  const plaster = toon('#e8dac6') // limewash
+  const plaster = toon('#f7f4ee') // bright white plaster
   // Each wall piece is siding outside with a warm plaster lining inside
   const wallPiece = (x0, x1, y0, y1, z) => {
     const inward = -Math.sign(z)
@@ -110,27 +110,20 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   wallWithHoles(5.1, [FRONT_WINDOWS[0], DOOR, FRONT_WINDOWS[1]])
   // Sides: windows between the posters on the left; one by the fireplace and one over the kitchen counter on the right
   const LEFT_WINDOWS = [{ z0: -4.9, z1: -3.25, y0: 0.4, y1: 3.8 }, { z0: 1.6, z1: 4.9, y0: 0.4, y1: 3.8 }]
-  const RIGHT_WINDOWS = [{ z0: -1.05, z1: 0.45, y0: 0.4, y1: 3.8 }, { z0: 1.0, z1: 3.5, y0: 1.1, y1: 3.8 }]
+  const RIGHT_WINDOWS = [{ z0: -1.05, z1: 0.45, y0: 0.4, y1: 3.8 }]
   sideWallWithHoles(-6.1, LEFT_WINDOWS)
   sideWallWithHoles(6.1, RIGHT_WINDOWS)
 
-  // Flat roof (warm planks underneath, snow on top) with a hole for the spiral stairs
+  // Flat roof: warm planks underneath, a light roof membrane on top, overhanging the porch
   const planks = toon('#7a4e30')
-  const snow = toon('#f3f6f9')
+  const snow = toon('#e9e4da') // light roof membrane (was snow)
   const ROOF_T = 0.25
-  const F2 = WALL_H + ROOF_T // second floor level
+  const F2 = WALL_H + ROOF_T // top of the roof
   const roofUnder = () => WALL_H - 0.02
-  const STAIR = { x: -5.3, z: -4.3, hole: { x0: -6.0, x1: -4.5, z0: -5.0, z1: -3.5 } }
-  const roofSlab = (x0, x1, z0, z1, withSnow = true) => {
-    add(at(block(x1 - x0, ROOF_T, z1 - z0, planks, 0.02, undefined, false), (x0 + x1) / 2, WALL_H + ROOF_T / 2, (z0 + z1) / 2))
-    if (withSnow) add(at(block(x1 - x0, 0.14, z1 - z0, snow, 0.06, undefined, false), (x0 + x1) / 2, F2 + 0.06, (z0 + z1) / 2))
-  }
-  roofSlab(-6.6, 6.6, STAIR.hole.z1, 8.6)
-  roofSlab(STAIR.hole.x1, 6.6, -5.6, STAIR.hole.z1)
-  roofSlab(-6.6, STAIR.hole.x0, -5.6, STAIR.hole.z1)
-  roofSlab(STAIR.hole.x0, STAIR.hole.x1, -5.6, STAIR.hole.z0)
+  add(at(block(13.2, ROOF_T, 14.2, planks, 0.02, undefined, false), 0, WALL_H + ROOF_T / 2, 1.5))
+  add(at(block(13.2, 0.14, 14.2, snow, 0.06, undefined, false), 0, F2 + 0.06, 1.5))
   // Exposed beams inside
-  const beamMat = toon('#8a6440') // warm oak beams
+  const beamMat = toon('#d8c7ad') // whitewashed oak beams
   for (const z of [-3.2, -1.1, 1.4, 3.9]) add(at(block(12.2, 0.22, 0.24, beamMat, 0.03), 0, WALL_H - 0.1, z))
   const trimMat = toon(C.trim)
   add(at(block(12, 0.14, 0.05, trimMat, 0.01), 0, 0.07, -4.98))
@@ -210,170 +203,9 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   for (const [x, list] of [[-6.1, LEFT_WINDOWS], [6.1, RIGHT_WINDOWS]])
     for (const w of list) gridWindow(x, (w.y0 + w.y1) / 2, (w.z0 + w.z1) / 2, w.z1 - w.z0, w.y1 - w.y0, true)
 
-  // ---------- Black steel spiral staircase up to the bedroom ----------
-  const steel = toon('#1f1d1c')
-  const tread = toon('#8a6440')
-  add(at(inked(new THREE.CylinderGeometry(0.06, 0.06, F2 + 1.0, 10), steel, 0.01), STAIR.x, (F2 + 1.0) / 2, STAIR.z))
-  const STEPS = 18
-  const railPoints = []
-  for (let i = 0; i < STEPS; i++) {
-    const a = (i / STEPS) * Math.PI * 1.75 + Math.PI * 0.25
-    const y = ((i + 1) / STEPS) * F2
-    const step = at(block(0.7, 0.06, 0.32, tread, 0.02, 0.01), STAIR.x + Math.cos(a) * 0.38, y, STAIR.z + Math.sin(a) * 0.38)
-    step.rotation.y = -a
-    add(step)
-    railPoints.push(new THREE.Vector3(STAIR.x + Math.cos(a) * 0.74, y + 0.9, STAIR.z + Math.sin(a) * 0.74))
-  }
-  add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(railPoints), 60, 0.025, 6), steel))
-
-  // ---------- Second story: Parker's room, super modern and geometric ----------
-  // A charcoal box perched on the roof, cantilevered out over the river side, with a
-  // glass wall to the back, skylights, a faceted ceiling, and warm light everywhere.
-  const UP = { x0: -6.2, x1: 1.2, z0: -6.4, z1: 1.6 }
-  const H2 = 3.4
-  const charcoal = toon('#2b2b2e')
-  const whitePlaster = toon('#f2ece2')
-  const upFloor = toon('#ffffff', { map: tex.woodFloor() })
-  // Floor (also covers the cantilever) with the stair opening
-  add(at(block(UP.x1 - UP.x0, 0.2, UP.z1 - STAIR.hole.z1, upFloor, 0.01, undefined, false), (UP.x0 + UP.x1) / 2, F2 + 0.1, (STAIR.hole.z1 + UP.z1) / 2))
-  add(at(block(UP.x1 - STAIR.hole.x1, 0.2, STAIR.hole.z1 - UP.z0, upFloor, 0.01, undefined, false), (STAIR.hole.x1 + UP.x1) / 2, F2 + 0.1, (UP.z0 + STAIR.hole.z1) / 2))
-  add(at(block(STAIR.hole.x1 - UP.x0, 0.2, STAIR.hole.z0 - UP.z0, upFloor, 0.01, undefined, false), (UP.x0 + STAIR.hole.x1) / 2, F2 + 0.1, (UP.z0 + STAIR.hole.z0) / 2))
-  // Charcoal underside where the room cantilevers out past the back wall
-  add(at(block(UP.x1 - UP.x0, 0.3, -5.2 - UP.z0, charcoal, 0.01, undefined, false), (UP.x0 + UP.x1) / 2, F2 - 0.05, (UP.z0 - 5.2) / 2))
-  const FL = F2 + 0.2 // standing height upstairs
-  // Glass railing around the stair opening
-  const railGlass = new THREE.MeshBasicMaterial({ color: '#d9eef5', transparent: true, opacity: 0.25, side: THREE.DoubleSide, depthWrite: false })
-  for (const [cx, cz, w, rot] of [[(STAIR.hole.x0 + STAIR.hole.x1) / 2, STAIR.hole.z1, STAIR.hole.x1 - STAIR.hole.x0, 0], [STAIR.hole.x1, (STAIR.hole.z0 + STAIR.hole.z1) / 2, STAIR.hole.z1 - STAIR.hole.z0, Math.PI / 2]]) {
-    const pane = new THREE.Mesh(new THREE.PlaneGeometry(w, 0.95), railGlass)
-    pane.rotation.y = rot
-    add(at(pane, cx, FL + 0.48, cz))
-    const cap = at(block(rot ? 0.05 : w, 0.04, rot ? w : 0.05, steel, 0.01, 0.006, false), cx, FL + 0.97, cz)
-    add(cap)
-  }
-  // Walls: charcoal outside / white plaster inside. Back is all glass; the front has a big
-  // square window; the sides have a tall slot and a triangle.
-  const upWall = (x0, x1, y0, y1, z) => {
-    const inward = -Math.sign(z - (UP.z0 + UP.z1) / 2)
-    add(at(block(x1 - x0, y1 - y0, 0.12, charcoal, 0.01, undefined, false), (x0 + x1) / 2, (y0 + y1) / 2, z - inward * 0.04))
-    add(at(block(x1 - x0, y1 - y0, 0.08, whitePlaster, 0.01, undefined, false), (x0 + x1) / 2, (y0 + y1) / 2, z + inward * 0.06))
-  }
-  const upSide = (z0, z1, y0, y1, x) => {
-    const inward = -Math.sign(x - (UP.x0 + UP.x1) / 2)
-    add(at(block(0.12, y1 - y0, z1 - z0, charcoal, 0.01, undefined, false), x - inward * 0.04, (y0 + y1) / 2, (z0 + z1) / 2))
-    add(at(block(0.08, y1 - y0, z1 - z0, whitePlaster, 0.01, undefined, false), x + inward * 0.06, (y0 + y1) / 2, (z0 + z1) / 2))
-  }
-  const Y0 = F2
-  const Y1 = F2 + H2
-  const FRONT_SQ = { x0: -3.6, x1: 0.4, y0: Y0 + 0.5, y1: Y1 - 0.4 }
-  upWall(UP.x0, FRONT_SQ.x0, Y0, Y1, UP.z1)
-  upWall(FRONT_SQ.x1, UP.x1, Y0, Y1, UP.z1)
-  upWall(FRONT_SQ.x0, FRONT_SQ.x1, Y0, FRONT_SQ.y0, UP.z1)
-  upWall(FRONT_SQ.x0, FRONT_SQ.x1, FRONT_SQ.y1, Y1, UP.z1)
-  upSide(UP.z0, -4.6, Y0, Y1, UP.x0)
-  upSide(-3.9, UP.z1, Y0, Y1, UP.x0)
-  upSide(-4.6, -3.9, Y0, Y0 + 0.3, UP.x0)
-  upSide(-4.6, -3.9, Y1 - 0.3, Y1, UP.x0)
-  upSide(UP.z0, -2.4, Y0, Y1, UP.x1)
-  upSide(-2.4, 0.2, Y0, Y0 + 1.0, UP.x1)
-  upSide(0.2, UP.z1, Y0, Y1, UP.x1)
-  const blackFrame = toon('#141414')
-  const upGlass = (cx, cy, cz, w, h, alongZ) => {
-    const g = new THREE.Mesh(new THREE.PlaneGeometry(w, h), glassMaterial)
-    if (alongZ) g.rotation.y = Math.PI / 2
-    add(at(g, cx, cy, cz))
-    const bar = (bw, bh, x, y, z) => add(at(alongZ ? block(0.16, bh, bw, blackFrame, 0.01, 0.008, false) : block(bw, bh, 0.16, blackFrame, 0.01, 0.008, false), x, y, z))
-    const n = Math.max(1, Math.round(w / 1.2))
-    for (let i = 0; i <= n; i++) {
-      const o = -w / 2 + (i / n) * w
-      bar(0.06, h, alongZ ? cx : cx + o, cy, alongZ ? cz + o : cz)
-    }
-    for (const o of [-h / 2, h / 2]) bar(w, 0.06, cx, cy + o, cz)
-  }
-  upGlass((UP.x0 + UP.x1) / 2, (Y0 + Y1) / 2, UP.z0, UP.x1 - UP.x0, H2, false) // glass wall to the river
-  upGlass((FRONT_SQ.x0 + FRONT_SQ.x1) / 2, (FRONT_SQ.y0 + FRONT_SQ.y1) / 2, UP.z1, FRONT_SQ.x1 - FRONT_SQ.x0, FRONT_SQ.y1 - FRONT_SQ.y0, false)
-  upGlass(UP.x0, (Y0 + Y1) / 2, -4.25, 0.7, H2 - 0.6, true) // tall slot
-  upGlass(UP.x1, Y0 + 1.0 + (H2 - 1.0) / 2, -1.1, 2.6, H2 - 1.0, true)
-  // Faceted roof: three tilted planes with skylight strips between them
-  const facets = [[UP.x0, -3.6, 0.18], [-3.2, -1.0, -0.14], [-0.6, UP.x1, 0.12]]
-  for (const [x0, x1, tilt] of facets) {
-    const panel = at(block(x1 - x0, 0.2, UP.z1 - UP.z0 + 0.6, charcoal, 0.02, undefined, false), (x0 + x1) / 2, Y1 + 0.2, (UP.z0 + UP.z1) / 2)
-    panel.rotation.z = tilt
-    add(panel)
-    const under = at(block(x1 - x0, 0.04, UP.z1 - UP.z0, whitePlaster, 0.01, undefined, false), (x0 + x1) / 2, Y1 + 0.08, (UP.z0 + UP.z1) / 2)
-    under.rotation.z = tilt
-    add(under)
-    const top = at(block(x1 - x0, 0.1, UP.z1 - UP.z0 + 0.6, snow, 0.05, undefined, false), (x0 + x1) / 2, Y1 + 0.34, (UP.z0 + UP.z1) / 2)
-    top.rotation.z = tilt
-    add(top)
-  }
-  for (const x of [-3.4, -0.8]) {
-    const sky = new THREE.Mesh(new THREE.PlaneGeometry(0.42, UP.z1 - UP.z0), glassMaterial)
-    sky.rotation.x = -Math.PI / 2
-    add(at(sky, x, Y1 + 0.25, (UP.z0 + UP.z1) / 2))
-  }
-
-  // Bedroom furniture: low walnut platform bed with linen, layered throws and pillows
-  const bed = new THREE.Group()
-  bed.add(at(block(2.3, 0.3, 2.5, toon('#6b4428'), 0.04), 0, 0.15, 0))
-  bed.add(at(block(2.0, 0.28, 2.1, toon('#f6f1e8'), 0.12), 0, 0.42, 0.1))
-  bed.add(at(block(2.05, 0.08, 1.2, toon('#c9733f'), 0.04), 0, 0.58, -0.35)) // rust throw
-  bed.add(at(block(2.3, 1.1, 0.12, toon('#6b4428'), 0.04), 0, 0.85, 1.2)) // headboard
-  for (const [x, color] of [[-0.55, '#f6f1e8'], [0.55, '#f6f1e8'], [-0.25, '#d9a43a'], [0.25, '#b5522f']])
-    bed.add(at(block(0.5, 0.3, 0.14, toon(color), 0.08), x, 0.7, 0.95 - (color === '#f6f1e8' ? 0 : 0.12)))
-  bed.add(hitbox(2.3, 1.3, 2.5))
-  bed.rotation.y = 0
-  add(hotspot('bedroom', at(bed, -1.7, FL, 0.1)))
-  // Floating nightstands with glowing globe lamps
-  const warmGlow = new THREE.MeshBasicMaterial({ color: '#ffcf8a' })
-  for (const x of [-3.2, -0.2]) {
-    add(at(block(0.55, 0.1, 0.45, toon('#6b4428'), 0.03), x, FL + 0.55, 1.15))
-    add(at(new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), warmGlow), x, FL + 0.82, 1.15))
-    add(at(inked(new THREE.CylinderGeometry(0.08, 0.1, 0.06, 12), brass, 0.008), x, FL + 0.64, 1.15))
-  }
-  // Cluster of warm globe pendants, staggered heights
-  for (let i = 0; i < 9; i++) {
-    const x = -5.2 + (i % 3) * 0.45
-    const z = -2.8 + Math.floor(i / 3) * 0.45
-    const drop = 0.6 + ((i * 7) % 5) * 0.25
-    add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, drop, 4), steel), x, Y1 - drop / 2, z))
-    add(at(new THREE.Mesh(new THREE.SphereGeometry(0.11 + (i % 2) * 0.04, 12, 8), warmGlow), x, Y1 - drop - 0.1, z))
-  }
-  // LED cove strips glowing along every wall top, and fairy lights across the ceiling
-  const cove = new THREE.MeshBasicMaterial({ color: '#ffb766' })
-  for (const [cx, cz, w, d] of [[(UP.x0 + UP.x1) / 2, UP.z1 - 0.12, UP.x1 - UP.x0, 0.04], [UP.x0 + 0.12, (UP.z0 + UP.z1) / 2, 0.04, UP.z1 - UP.z0], [UP.x1 - 0.12, (UP.z0 + UP.z1) / 2, 0.04, UP.z1 - UP.z0]])
-    add(at(new THREE.Mesh(new THREE.BoxGeometry(w, 0.04, d), cove), cx, Y1 - 0.08, cz))
-  for (let k = 0; k < 4; k++) {
-    for (let i = 0; i <= 18; i++) {
-      const t = i / 18
-      const x = UP.x0 + 0.3 + t * (UP.x1 - UP.x0 - 0.6)
-      const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 4), warmGlow)
-      add(at(bulb, x, Y1 - 0.25 - Math.sin(t * Math.PI) * 0.45, -5.2 + k * 1.8))
-    }
-  }
-  // A warm neon squiggle on the wall, a pillar-candle cluster, a geometric rug, a big round mirror
-  const neonPts = []
-  for (let i = 0; i <= 40; i++) neonPts.push(new THREE.Vector3(-5.2 + (i / 40) * 2.2, Y0 + 2.3 + Math.sin(i * 0.6) * 0.18, UP.z1 - 0.14))
-  add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(neonPts), 80, 0.025, 6), new THREE.MeshBasicMaterial({ color: '#ff9a52' })))
-  for (const [x, z, h] of [[0.6, -3.6, 0.35], [0.75, -3.45, 0.22], [0.45, -3.4, 0.28]]) {
-    add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, h, 12), toon('#f3ead8')), x, FL + h / 2, z))
-    const f = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: '#ffcf7a' }))
-    f.scale.y = 1.8
-    add(at(f, x, FL + h + 0.04, z))
-  }
-  const geoRug = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.4), toon('#ffffff', { map: tex.geoRug() }))
-  geoRug.rotation.x = -Math.PI / 2
-  add(at(geoRug, -1.7, FL + 0.01, -1.8))
-  const mirror = new THREE.Group()
-  mirror.add(inked(new THREE.TorusGeometry(0.55, 0.04, 8, 40), brass, 0.01))
-  mirror.add(new THREE.Mesh(new THREE.CircleGeometry(0.53, 40), new THREE.MeshBasicMaterial({ color: '#cfdde3' })))
-  mirror.rotation.y = -Math.PI / 2
-  add(at(mirror, UP.x1 - 0.1, Y0 + 1.6, -3.4))
-  // Warm lights that actually light the room
-  for (const [x, z, i] of [[-1.7, 0.6, 3], [-4.8, -2.4, 3], [-0.5, -4.5, 2]]) {
-    const l = new THREE.PointLight('#ffb36b', i, 6, 1.4)
-    l.position.set(x, Y0 + 2.2, z)
-    add(l)
-  }
+  // Parker can't walk through the front wall, only the doorway
+  collide(-6.2, DOOR.x0, 4.95, 5.25)
+  collide(DOOR.x1, 6.2, 4.95, 5.25)
 
   // ---------- Cozy covered porch ----------
   const deckMat = toon('#9a6a43')
@@ -438,8 +270,9 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   const porchPine = new THREE.Group()
   porchPine.add(at(inked(new THREE.CylinderGeometry(0.22, 0.18, 0.4, 14), toon('#c0643c')), 0, 0.2, 0))
   for (let i = 0; i < 3; i++) {
-    const cone = inked(new THREE.ConeGeometry(0.4 - i * 0.1, 0.5, 8), toon('#2e4d3a'), 0.015)
-    cone.position.y = 0.6 + i * 0.3
+    const cone = inked(new THREE.SphereGeometry(0.32 - i * 0.05, 10, 6), toon('#3f7a3f'), 0.015)
+    cone.scale.set(0.5, 1.4, 1.2)
+    cone.position.set((i - 1) * 0.12, 0.75 + i * 0.25, 0)
     porchPine.add(cone)
   }
   add(at(porchPine, 4.8, 0, 7.6))
@@ -586,11 +419,6 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   add(at(block(0.9, 2.6, 1.0, brickMat, 0.02), 5.6, WALL_H + 1.3, -2.7))
   const woodMat = toon('#6b4a30')
   add(at(block(0.5, 0.24, 3.4, woodMat, 0.03), 5.0, 2.15, -2.7)) // reclaimed beam mantel
-  // Firewood stacked beside the hearth
-  for (let i = 0; i < 9; i++) {
-    const log = inked(new THREE.CylinderGeometry(0.08, 0.08, 0.55, 8).rotateX(Math.PI / 2), toon(i % 2 ? '#6b4a30' : '#7a5636'), 0.012)
-    add(at(log, 5.55 - (i % 3) * 0.17, 0.08 + Math.floor(i / 3) * 0.15, -0.95))
-  }
   // The fire: crossed logs + flickering cartoon flames (animated in World)
   const fire = new THREE.Group()
   const logMat = toon('#5a3a22')
@@ -658,59 +486,145 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   for (const x of [-2.7, -2.86]) add(at(inked(new THREE.CylinderGeometry(0.07, 0.08, 0.4, 12), toon('#2c3329')), x, 0.2, 4.65))
   collide(-2.95, -0.7, 4.35, 5)
 
-  // ---------- Kitchen (right wall, front): Parker cooks pasta here ----------
-  const sage = toon('#a98463') // white oak
-  const butcher = toon('#e6dccb') // cream stone
-  add(at(block(0.75, 0.9, 2.1, sage, 0.03), 5.62, 0.45, 2.55))
-  for (const z of [1.85, 2.6, 3.35]) {
-    add(at(block(0.03, 0.7, 0.62, toon('#9c7857'), 0.02, 0.01), 5.23, 0.45, z))
+  // ---------- Kitchen: long counter run, glass-front uppers, range hood, big island ----------
+  // Parker is mid-way through making pasta: water boiling, sauce simmering, a batch
+  // draining in the sink, fresh pasta drying on a rack, prep all over the island.
+  const cabinet = toon('#f4f1ea') // white shaker
+  const quartz = toon('#efece6')
+  const zellige = toon('#5f9fbf') // ocean-blue tile backsplash
+  // Base cabinets + counter along the right wall
+  add(at(block(0.75, 0.9, 3.1, cabinet, 0.03), 5.62, 0.45, 2.1))
+  for (const z of [0.95, 1.7, 2.45, 3.2]) {
+    add(at(block(0.03, 0.7, 0.62, toon('#e8e3da'), 0.02, 0.01), 5.23, 0.45, z))
     add(at(block(0.02, 0.02, 0.22, brass, 0.008, 0.005), 5.2, 0.72, z))
   }
-  add(at(block(0.85, 0.07, 2.2, butcher, 0.02), 5.58, 0.935, 2.55))
-  // Enamel stove with a pot of pasta on the boil
+  add(at(block(0.85, 0.07, 3.2, quartz, 0.02), 5.58, 0.935, 2.1))
+  add(at(block(0.04, 1.0, 3.2, zellige, 0.01, undefined, false), 5.96, 1.48, 2.1))
+  // Glass-front upper cabinets with dishes inside
+  add(at(block(0.4, 1.0, 2.0, cabinet, 0.03), 5.78, 2.55, 2.6))
+  for (const z of [1.85, 2.35, 2.85, 3.35]) {
+    add(at(block(0.03, 0.85, 0.44, toon('#e8e3da'), 0.02, 0.01), 5.57, 2.55, z))
+    add(at(new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.7), new THREE.MeshBasicMaterial({ color: '#cfe4ea', transparent: true, opacity: 0.45 })).rotateY(-Math.PI / 2), 5.55, 2.55, z))
+    for (let k = 0; k < 3; k++) add(at(inked(new THREE.CylinderGeometry(0.09, 0.09, 0.02, 14).rotateZ(Math.PI / 2), toon('#f6f3ee'), 0.006), 5.8, 2.35, z - 0.08 + k * 0.08))
+    add(at(inked(new THREE.CylinderGeometry(0.05, 0.04, 0.12, 10), toon('#7fb7d6'), 0.006), 5.8, 2.72, z))
+  }
+  // Range: stainless stove with a white plaster hood above
   const stove = new THREE.Group()
-  stove.add(at(block(0.8, 0.9, 0.85, toon('#efe6d2'), 0.05), 0, 0.45, 0))
+  stove.add(at(block(0.8, 0.9, 0.85, toon('#c9ccd2'), 0.04), 0, 0.45, 0))
   stove.add(at(block(0.78, 0.04, 0.83, blackMat, 0.01), 0, 0.92, 0))
+  const burnerGlow = new THREE.MeshBasicMaterial({ color: '#ff7a3a' })
   for (const z of [-0.2, 0.2]) {
     stove.add(at(inked(new THREE.TorusGeometry(0.11, 0.015, 6, 16).rotateX(Math.PI / 2), blackMat, 0.008), 0.08, 0.95, z))
+    stove.add(at(new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.01, 4, 16).rotateX(Math.PI / 2), burnerGlow), 0.08, 0.945, z))
     stove.add(at(inked(new THREE.SphereGeometry(0.035, 8, 6), blackMat, 0.008), -0.42, 0.75, z))
   }
   stove.add(at(block(0.03, 0.3, 0.6, blackMat, 0.02, 0.01), -0.41, 0.4, 0))
-  add(at(stove, 5.6, 0, 1.0))
+  add(at(stove, 5.6, 0, 0.0))
+  const hood = new THREE.Group()
+  hood.add(at(inked(new THREE.CylinderGeometry(0.35, 0.6, 0.7, 4, 1).rotateY(Math.PI / 4), toon('#f4f1ea'), 0.02), 0, 0, 0))
+  hood.add(at(block(0.6, 1.3, 0.6, toon('#f4f1ea'), 0.03), 0, 1.0, 0))
+  add(at(hood, 5.65, 2.3, 0.0))
+  const hoodLight = new THREE.PointLight('#ffd9a0', 1.5, 3, 1.5)
+  hoodLight.position.set(5.4, 1.8, 0)
+  add(hoodLight)
+
+  // Big pot at a rolling boil, spaghetti softening into the water
   const pot = new THREE.Group()
-  pot.add(at(inked(new THREE.CylinderGeometry(0.2, 0.18, 0.26, 18, 1, true), toon('#b9bcc2', { side: THREE.DoubleSide })), 0, 0.13, 0))
-  pot.add(at(new THREE.Mesh(new THREE.CircleGeometry(0.19, 18).rotateX(-Math.PI / 2), toon('#cfe3ea')), 0, 0.22, 0))
-  for (const side of [-1, 1]) pot.add(at(block(0.06, 0.03, 0.1, blackMat, 0.01, 0.008), 0, 0.22, side * 0.24))
+  pot.add(at(inked(new THREE.CylinderGeometry(0.2, 0.18, 0.28, 18, 1, true), toon('#b9bcc2', { side: THREE.DoubleSide })), 0, 0.14, 0))
+  pot.add(at(new THREE.Mesh(new THREE.CircleGeometry(0.19, 18).rotateX(-Math.PI / 2), toon('#d6e9ee')), 0, 0.24, 0))
+  for (const side of [-1, 1]) pot.add(at(block(0.06, 0.03, 0.1, blackMat, 0.01, 0.008), 0, 0.24, side * 0.24))
   const noodleMat = toon('#f1c96b')
-  for (let i = 0; i < 9; i++) {
-    const noodle = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.36, 4), noodleMat)
-    noodle.rotation.set((i - 4) * 0.08, 0, 0.35 + (i % 3) * 0.08)
-    noodle.position.set(0.04, 0.32, -0.08 + i * 0.02)
+  for (let i = 0; i < 14; i++) {
+    const noodle = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.38, 4), noodleMat)
+    noodle.rotation.set((i - 7) * 0.06, 0, 0.3 + (i % 4) * 0.1)
+    noodle.position.set(0.05, 0.33, -0.1 + i * 0.015)
     pot.add(noodle)
+  }
+  const bubbleMat = new THREE.MeshBasicMaterial({ color: '#ffffff' })
+  const bubbles = []
+  for (let i = 0; i < 10; i++) {
+    const b = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 4), bubbleMat)
+    b.userData.phase = i / 10
+    b.userData.a = i * 2.4
+    pot.add(b)
+    bubbles.push(b)
   }
   const steamMat = new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.5, depthWrite: false })
   const steam = []
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     const puff = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), steamMat.clone())
-    puff.userData.phase = i / 5
+    puff.userData.phase = i / 7
     pot.add(puff)
     steam.push(puff)
   }
   pot.add(hitbox(0.5, 0.6, 0.5))
-  add(hotspot('aldente', at(pot, 5.52, 0.95, 0.8)))
-  // Shelf with jars and plates, and copper pans on a rail
-  add(at(block(0.32, 0.04, 1.9, butcher, 0.01), 5.82, 1.95, 2.6))
-  for (const [i, color] of ['#f1c96b', '#c8322a', '#e9d8b0', '#5fa055'].entries())
-    add(at(inked(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 10), toon(color), 0.01), 5.82, 2.07, 2.1 + i * 0.4))
-  for (let i = 0; i < 4; i++) add(at(inked(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 16).rotateZ(Math.PI / 2), toon('#f4ecd8'), 0.008), 5.9, 2.08, 3.2 + i * 0.05))
-  add(at(inked(new THREE.CylinderGeometry(0.012, 0.012, 1.4, 6).rotateX(Math.PI / 2), brass, 0.006), 5.9, 1.65, 3.0))
-  for (const [i, r] of [0.13, 0.1, 0.15].entries()) {
-    const pan = new THREE.Group()
-    pan.add(at(inked(new THREE.CylinderGeometry(r, r * 0.85, 0.06, 16).rotateZ(Math.PI / 2), toon('#c46e3a'), 0.01), 0, -0.2 - r, 0))
-    pan.add(at(block(0.02, 0.2, 0.03, toon('#c46e3a'), 0.005, 0.006), 0, -0.1, 0))
-    add(at(pan, 5.88, 1.65, 2.55 + i * 0.45))
+  add(hotspot('aldente', at(pot, 5.52, 0.95, -0.2)))
+  // Saute pan of tomato sauce simmering, wooden spoon resting in it
+  const sauce = new THREE.Group()
+  sauce.add(at(inked(new THREE.CylinderGeometry(0.17, 0.15, 0.06, 18), toon('#2b2b2b'), 0.008), 0, 0.03, 0))
+  sauce.add(at(new THREE.Mesh(new THREE.CircleGeometry(0.15, 18).rotateX(-Math.PI / 2), toon('#b8322a')), 0, 0.062, 0))
+  sauce.add(at(block(0.3, 0.02, 0.03, toon('#2b2b2b'), 0.01, 0.006), -0.28, 0.05, 0))
+  for (let i = 0; i < 6; i++) sauce.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 4), toon('#d9473a')), Math.cos(i * 1.7) * 0.08, 0.068, Math.sin(i * 1.7) * 0.08))
+  const spoon = at(block(0.36, 0.02, 0.03, toon('#b08a5a'), 0.01, 0.006), 0.05, 0.12, 0.05)
+  spoon.rotation.set(0, 0.6, 0.35)
+  sauce.add(spoon)
+  for (let i = 0; i < 4; i++) sauce.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 4), toon('#4f8a3f')), Math.cos(i * 2) * 0.06, 0.07, Math.sin(i * 2) * 0.06)) // basil
+  add(at(sauce, 5.55, 0.95, 0.22))
+  // Sink with a colander of drained spaghetti
+  add(at(block(0.5, 0.04, 0.7, toon('#c9ccd2'), 0.02, 0.01, false), 5.55, 0.97, 2.1))
+  add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.35, 6), toon('#c9ccd2')), 5.85, 1.15, 2.1))
+  add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.25, 6).rotateZ(Math.PI / 2), toon('#c9ccd2')), 5.73, 1.32, 2.1))
+  add(at(inked(new THREE.SphereGeometry(0.17, 16, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), toon('#e8e3da', { side: THREE.DoubleSide }), 0.008), 5.55, 1.13, 2.1))
+  const drained = inked(new THREE.TorusKnotGeometry(0.1, 0.025, 80, 8, 3, 7), noodleMat, 0.006)
+  drained.scale.y = 0.4
+  add(at(drained, 5.55, 1.08, 2.1))
+  // Countertop bits: olive oil, salt, garlic, a spaghetti box
+  add(at(inked(new THREE.CylinderGeometry(0.04, 0.05, 0.26, 10), toon('#5f7a2f'), 0.008), 5.7, 1.1, 0.7))
+  add(at(inked(new THREE.CylinderGeometry(0.07, 0.05, 0.06, 12), toon('#f6f3ee'), 0.006), 5.65, 1.0, 0.9))
+  add(at(block(0.08, 0.28, 0.2, toon('#2f5fb0'), 0.01, 0.006), 5.75, 1.1, 1.3))
+
+  // Island with three counter stools; fresh pasta drying on a rack, prep in progress
+  const island = new THREE.Group()
+  island.add(at(block(1.1, 0.9, 2.0, cabinet, 0.04), 0, 0.45, 0))
+  island.add(at(block(1.3, 0.08, 2.25, quartz, 0.03), 0, 0.94, 0))
+  for (const z of [-0.65, 0, 0.65]) {
+    const stool = new THREE.Group()
+    stool.add(at(inked(new THREE.CylinderGeometry(0.2, 0.2, 0.06, 16), toon('#c9a46a'), 0.01), 0, 0.72, 0))
+    for (const [lx, lz] of [[-0.12, -0.12], [0.12, -0.12], [-0.12, 0.12], [0.12, 0.12]]) stool.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 0.7, 4), toon('#6b4428')), lx, 0.35, lz))
+    island.add(at(stool, -0.9, 0, z))
   }
-  collide(5.15, 6, 0.55, 3.65)
+  // Cutting board: tomatoes, chopped basil, garlic, a knife
+  island.add(at(block(0.4, 0.03, 0.55, toon('#b08a5a'), 0.01), 0.15, 0.995, -0.45))
+  for (const [x, z] of [[0.1, -0.6], [0.22, -0.52], [0.15, -0.38]]) island.add(at(inked(new THREE.SphereGeometry(0.045, 10, 8), toon('#d9473a'), 0.006), x, 1.04, z))
+  for (let i = 0; i < 8; i++) island.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.012, 5, 4), toon('#4f8a3f')), 0.05 + (i % 4) * 0.05, 1.02, -0.3 + Math.floor(i / 4) * 0.04))
+  for (const x of [0.25, 0.32]) island.add(at(inked(new THREE.SphereGeometry(0.03, 8, 6), toon('#f3ead8'), 0.006), x, 1.02, -0.25))
+  island.add(at(block(0.03, 0.01, 0.24, toon('#c9ccd2'), 0.004, 0.004), 0.28, 1.02, -0.6))
+  // Pasta drying rack with fresh ribbons
+  const dryingRack = new THREE.Group()
+  dryingRack.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.55, 6), toon('#b08a5a')), 0, 0.27, 0))
+  for (let k = 0; k < 3; k++) {
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.45, 4).rotateZ(Math.PI / 2), toon('#b08a5a'))
+    arm.rotation.y = (k / 3) * Math.PI
+    arm.position.y = 0.52
+    dryingRack.add(arm)
+    for (let n = 0; n < 4; n++) {
+      const strand = new THREE.Mesh(new THREE.PlaneGeometry(0.03, 0.35), toon('#f3d98a', { side: THREE.DoubleSide }))
+      const off = -0.18 + n * 0.12
+      strand.position.set(Math.cos((k / 3) * Math.PI) * off, 0.36, -Math.sin((k / 3) * Math.PI) * off)
+      strand.rotation.y = (k / 3) * Math.PI
+      dryingRack.add(strand)
+    }
+  }
+  island.add(at(dryingRack, 0.1, 0.98, 0.35))
+  // Flour dusting, parmesan wedge + grater, a stack of bowls
+  const flour = new THREE.Mesh(new THREE.CircleGeometry(0.22, 16).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#fbf8f1', transparent: true, opacity: 0.8 }))
+  island.add(at(flour, -0.15, 0.985, 0.35))
+  island.add(at(inked(new THREE.CylinderGeometry(0.1, 0.1, 0.07, 3), toon('#f2d38a'), 0.006), -0.25, 1.02, 0.75))
+  island.add(at(inked(new THREE.CylinderGeometry(0.035, 0.05, 0.22, 4), toon('#c9ccd2'), 0.006), -0.05, 1.09, 0.8))
+  for (let k = 0; k < 3; k++) island.add(at(inked(new THREE.CylinderGeometry(0.12 - k * 0.01, 0.08, 0.06, 16), toon('#f6f3ee'), 0.006), 0.3, 1.0 + k * 0.06, 0.8))
+  add(at(island, 3.4, 0, 2.2))
+  collide(2.75, 4.05, 1.1, 3.3)
+  collide(5.15, 6, -0.45, 3.65)
 
   // ---------- Retro fridge full of Bad Decisions Brewing cans ----------
   const mint = toon('#a8d5c2')
@@ -777,12 +691,12 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
 
   // ---------- Sofa ----------
   const sofa = new THREE.Group()
-  const sofaMat = toon('#e2d6c3') // oatmeal linen
+  const sofaMat = toon('#f2ede4') // white linen
   sofa.add(at(block(1.1, 0.4, 2.5, sofaMat, 0.1), 0, 0.3, 0))
   for (const z of [-0.6, 0.6]) sofa.add(at(block(0.85, 0.16, 1.15, sofaMat, 0.07), 0.08, 0.58, z))
   sofa.add(at(block(0.3, 0.65, 2.5, sofaMat, 0.12), -0.42, 0.75, 0))
   for (const z of [-1.3, 1.3]) sofa.add(at(block(1.1, 0.62, 0.28, sofaMat, 0.12), 0, 0.41, z))
-  for (const [z, r, color] of [[-0.85, 0.15, '#b5522f'], [-0.35, -0.08, '#c9a46a'], [0.4, 0.1, '#7d8450'], [0.85, -0.12, '#efe6d2']]) {
+  for (const [z, r, color] of [[-0.85, 0.15, '#2f7fa6'], [-0.35, -0.08, '#d9c4a0'], [0.4, 0.1, '#e07a5f'], [0.85, -0.12, '#7fb7d6']]) {
     const pillow = at(block(0.16, 0.42, 0.42, toon(color), 0.1), -0.18, 0.85, z)
     pillow.rotation.x = r
     sofa.add(pillow)
@@ -795,7 +709,7 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
 
   // ---------- Big paper lanterns (Noguchi-style) ----------
   const paper = toon('#f6efe2', { emissive: '#ffe2b0', emissiveIntensity: 0.35 })
-  const rib = toon('#e3d8c4')
+  const rib = toon('#b58a55') // rattan ribs
   const paperLantern = (radius, stretch) => {
     const g = new THREE.Group()
     g.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 2.0, 4), toon('#2b2b2b')), 0, 1.0 + radius * stretch, 0))
@@ -826,13 +740,13 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   add(at(fig, 2.5, 0, 4.5))
   collide(2.2, 2.8, 4.2, 4.8)
 
-  // ---------- Thanksgiving table: long oak table, cane chairs, tapers, pumpkins ----------
+  // ---------- Dining: long light-oak table, cane chairs, tapers, a bowl of lemons ----------
   const dining = new THREE.Group()
-  const oak = toon('#8a6440')
+  const oak = toon('#c9a77e') // light oak
   dining.add(at(block(1.05, 0.1, 3.0, oak, 0.03), 0, 0.76, 0))
   for (const [x, z] of [[-0.4, -1.3], [0.4, -1.3], [-0.4, 1.3], [0.4, 1.3]]) dining.add(at(block(0.12, 0.72, 0.12, oak, 0.03), x, 0.36, z))
   dining.add(at(block(0.36, 0.02, 2.6, toon('#c9a46a'), 0.01, 0.006), 0, 0.82, 0)) // linen runner
-  const leafColors = ['#b5522f', '#d9772f', '#c9a46a', '#7d6a3c']
+  const leafColors = ['#5f8a4f', '#7da36a', '#4f7a45', '#9ab88a'] // olive branch runner
   for (let i = 0; i < 22; i++) {
     const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), toon(leafColors[i % 4]))
     leaf.scale.set(1, 0.35, 1.4)
@@ -854,7 +768,7 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
       dining.add(at(new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.12, 8), new THREE.MeshBasicMaterial({ color: '#d9e6ea', transparent: true, opacity: 0.5 })), x * 1.25, 0.88, z + 0.15))
     }
   }
-  for (const [x, z, r, color] of [[0.05, -1.35, 0.11, '#d9772f'], [-0.08, 1.38, 0.09, '#efe2c8'], [0.1, 1.2, 0.07, '#c96a2b']]) {
+  for (const [x, z, r, color] of [[0.05, -1.35, 0.08, '#f2c230'], [-0.08, 1.38, 0.08, '#f2c230'], [0.1, 1.2, 0.07, '#f5a623']]) {
     const pumpkin = inked(new THREE.SphereGeometry(r, 14, 10), toon(color), 0.01)
     pumpkin.scale.y = 0.7
     dining.add(at(pumpkin, x, 0.81 + r * 0.7, z))
@@ -926,9 +840,9 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
   pasta.add(hitbox(0.5, 0.4, 0.5))
   add(hotspot('aldente', at(pasta, 0.25, 0.5, -1.35)))
 
-  // ---------- Cognac leather lounge chair with a white throw ----------
+  // ---------- Rattan lounge chair with a white throw ----------
   const lounge = new THREE.Group()
-  const mustardMat = toon('#9a5b34') // cognac leather
+  const mustardMat = toon('#c9a46a') // rattan
   lounge.add(at(block(1.1, 0.38, 1.0, mustardMat, 0.18), 0, 0.19, 0))
   const loungeBack = at(block(1.1, 0.95, 0.45, mustardMat, 0.2), 0, 0.6, -0.4)
   loungeBack.rotation.x = -0.35
@@ -998,11 +912,10 @@ export function buildRoom({ drawings = [], screenArt, canArt } = {}) {
     hotspots,
     lampLight,
     candleLight,
-    upstairs: { floor: F2 + 0.2, bounds: { minX: -6.0, maxX: 1.0, minZ: -6.2, maxZ: 1.4 }, bed: { minX: -2.85, maxX: -0.55, minZ: -1.15, maxZ: 1.35 } },
-    stairs: { bottom: new THREE.Vector3(-4.2, 0, -3.1), top: new THREE.Vector3(-4.2, 0, -3.2) },
     flames,
     fireLight,
     steam,
+    bubbles,
     doorHinge,
     porchLight,
     fridgeHinge,

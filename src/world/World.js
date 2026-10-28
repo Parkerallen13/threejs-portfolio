@@ -6,22 +6,23 @@ import { buildRoom, BOUNDS } from './room.js'
 import { createCharacter } from './character.js'
 import { createDog } from './dog.js'
 import { createBird } from './birds.js'
-import { buildForest } from './forest.js'
+import { buildCoast } from './coast.js'
 import { buildSky } from './sky.js'
 import { blobShadow } from './textures.js'
 import { TOUR, DOOR_OPEN_AT } from './tour.js'
 import { createLensPass, lensDistort, lensUndistort, lens } from './lensPass.js'
 
-// Clear Colorado winter day, or a deep starry night with warm windows
+// Sunny San Diego day, or a warm dusky evening with glowing windows
 const MODES = {
-  light: { background: '#a9c8e6', fog: '#cfdde9', ambient: ['#f4f6ff', 1.5], sun: 2.0, lamp: 0, candle: 0.6, glass: '#e6f2ff', shade: 0, fire: 3, stars: false },
-  dark: { background: '#121a30', fog: '#1a2338', stars: true, ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#ffcf7a', shade: 0.7, fire: 6 },
+  light: { background: '#8fcdf0', fog: '#d6edf7', ambient: ['#f4f6ff', 1.5], sun: 2.0, lamp: 0, candle: 0.6, glass: '#e6f2ff', shade: 0, fire: 3, stars: false },
+  dark: { background: '#2a2748', fog: '#5a4a68', stars: true, ambient: ['#7d8cc0', 0.6], sun: 0.35, lamp: 7, candle: 1.4, glass: '#ffcf7a', shade: 0.7, fire: 6 },
 }
 
 const WALK_SPEED = 2.4
 const RADIUS = 0.28
+const PORCH_EDGE = 8.1 // Parker can step out onto the porch, but not off it
 const POSE_FPS = 12 // character poses update "on twos", like limited TV animation
-const DOG_PATH = { x: 0.9, z: 3.1, rx: 3.0, rz: 1.1, speed: 0.4 } // laps between the dining table and the kitchen
+const DOG_PATH = { x: 0.4, z: 3.1, rx: 2.2, rz: 1.1, speed: 0.4 } // laps between the dining table and the kitchen island
 const DOG_ROUTINE = ['loop', 'roll', 'loop', 'toCouch', 'jumpUp', 'lounge', 'jumpDown', 'toLoop']
 // When the front door opens the husky bolts outside, does laps in the snow, then trots back in
 const DOOR_INSIDE = new THREE.Vector3(0.3, 0, 3.8)
@@ -30,7 +31,7 @@ const STEP_BOTTOM = new THREE.Vector3(0.3, 0, 9.8)
 const YARD = { x: -3.5, z: 12.5, r: 1.8 }
 const GROUND_Y = -0.44
 // Where the husky sits to beg for a noodle while Parker cooks
-const BEG_SPOT = new THREE.Vector3(4.0, 0, 1.9)
+const BEG_SPOT = new THREE.Vector3(4.4, 0, 0.6)
 const COUCH = { approach: new THREE.Vector3(-1.5, 0, 0.3), seat: new THREE.Vector3(-2.5, 0.62, -0.2) }
 
 export class World {
@@ -54,7 +55,7 @@ export class World {
 
     this.scene = new THREE.Scene()
     this.scene.background = new THREE.Color()
-    this.scene.fog = new THREE.Fog('#cfdde9', 60, 260)
+    this.scene.fog = new THREE.Fog('#d6edf7', 60, 260)
     this.camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.05, 400)
     this.camPos = new THREE.Vector3(...TOUR[0].cam)
     this.camLook = new THREE.Vector3(...TOUR[0].look)
@@ -76,7 +77,7 @@ export class World {
 
     this.room = buildRoom({ drawings, canArt })
     this.scene.add(this.room.group)
-    this.forest = buildForest()
+    this.forest = buildCoast()
     this.scene.add(this.forest.group)
     this.sky = buildSky()
     this.scene.add(this.sky.group)
@@ -92,7 +93,6 @@ export class World {
     this.character.root.position.set(...[TOUR[0].stand[0], 0, TOUR[0].stand[1]])
     this.scene.add(this.character.root)
     this.walkAmount = 0
-    this.floor = 0
 
     this.dog = createDog()
     this.scene.add(this.dog.root)
@@ -245,14 +245,8 @@ export class World {
   }
 
   blocked(x, z) {
-    if (this.floor === 1) {
-      const b = this.room.upstairs.bounds
-      const bed = this.room.upstairs.bed
-      if (x < b.minX + RADIUS || x > b.maxX - RADIUS || z < b.minZ + RADIUS || z > b.maxZ - RADIUS) return true
-      return x > bed.minX - RADIUS && x < bed.maxX + RADIUS && z > bed.minZ - RADIUS && z < bed.maxZ + RADIUS
-    }
     if (x < BOUNDS.minX + RADIUS || x > BOUNDS.maxX - RADIUS) return true
-    if (z < BOUNDS.minZ + RADIUS || z > BOUNDS.maxZ - RADIUS) return true
+    if (z < BOUNDS.minZ + RADIUS || z > PORCH_EDGE - RADIUS) return true
     return this.colliders.some(
       (c) => x > c.minX - RADIUS && x < c.maxX + RADIUS && z > c.minZ - RADIUS && z < c.maxZ + RADIUS,
     )
@@ -263,19 +257,13 @@ export class World {
     const pos = this.character.root.position
     const chapter = TOUR[this.chapterIndex()]
     let [tx, tz] = chapter.stand
-    // Changing floors: walk to the spiral stairs, then pop up (or down) them
-    const wantFloor = chapter.floor ?? 0
-    if (wantFloor !== this.floor) {
-      const stairs = this.room.stairs
-      const spot = this.floor === 0 ? stairs.bottom : stairs.top
-      if (Math.hypot(pos.x - spot.x, pos.z - spot.z) < 0.12) {
-        this.floor = wantFloor
-        pos.y = wantFloor ? this.room.upstairs.floor : 0
-      } else {
-        tx = spot.x
-        tz = spot.z
-      }
-    }
+    // Going between the porch and the house? Route through the front door
+    const DOOR_X = 0.3
+    const inside = pos.z < 5.05
+    if (inside !== tz < 5.05 && Math.abs(pos.x - DOOR_X) > 0.25) {
+      tx = DOOR_X
+      tz = inside ? 4.5 : 5.7
+    } else if (inside !== tz < 5.05) tx = DOOR_X
     const input = new THREE.Vector3(tx - pos.x, 0, tz - pos.z)
     const rot = this.character.root.rotation
     let walking = 0
@@ -317,7 +305,7 @@ export class World {
     // Don't let the husky run through Parker
     const dogPos = this.dog.root.position
     const away = new THREE.Vector3(pos.x - dogPos.x, 0, pos.z - dogPos.z)
-    if (this.floor === 0 && dogPos.y < 0.1 && away.length() < 0.65) {
+    if (dogPos.y < 0.1 && away.length() < 0.65) {
       away.setLength(0.65)
       if (!this.blocked(dogPos.x + away.x, dogPos.z + away.z)) pos.set(dogPos.x + away.x, 0, dogPos.z + away.z)
     }
@@ -505,7 +493,7 @@ export class World {
     }
   }
 
-  // Straight line between stops, or two legs through `via` (the front door, the stair hole)
+  // Straight line between stops, or two legs through `via` (the front door)
   cameraPath(a, b, t) {
     const from = new THREE.Vector3(...a.cam)
     const to = new THREE.Vector3(...b.cam)
@@ -641,6 +629,13 @@ export class World {
     this.room.fridgeLight.intensity = this.fridgeOpen * 2.5
     if (!atFridge && this.wasAtFridge) this.fridgeWanted = false
     this.wasAtFridge = atFridge
+
+    // Rolling boil in the pasta pot
+    for (const b of this.room.bubbles) {
+      const k = (this.elapsed * 1.6 + b.userData.phase) % 1
+      b.position.set(Math.cos(b.userData.a) * 0.12 * (1 - k * 0.3), 0.245 + Math.sin(k * Math.PI) * 0.025, Math.sin(b.userData.a) * 0.12)
+      b.scale.setScalar(0.5 + Math.sin(k * Math.PI))
+    }
 
     // Steam curling up off the pasta pot
     for (const puff of this.room.steam) {

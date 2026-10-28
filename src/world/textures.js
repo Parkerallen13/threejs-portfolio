@@ -331,27 +331,3 @@ export const canLabel = () =>
     ctx.font = 'bold 22px "Courier New", monospace'
     ctx.fillText('12 FL OZ', w * 0.75, h / 2 + 8)
   })
-
-// Geometric bedroom rug: warm triangles
-export const geoRug = () =>
-  canvasTexture(256, 192, (ctx, w, h) => {
-    ctx.fillStyle = '#efe4d2'
-    ctx.fillRect(0, 0, w, h)
-    const colors = ['#c9733f', '#d9a43a', '#6b4428', '#efe4d2', '#b5522f']
-    const size = 32
-    for (let y = 0; y < h; y += size)
-      for (let x = 0; x < w; x += size) {
-        ctx.fillStyle = colors[(x / size + y / size * 2) % colors.length]
-        ctx.beginPath()
-        if (((x + y) / size) % 2) {
-          ctx.moveTo(x, y)
-          ctx.lineTo(x + size, y)
-          ctx.lineTo(x, y + size)
-        } else {
-          ctx.moveTo(x + size, y)
-          ctx.lineTo(x + size, y + size)
-          ctx.lineTo(x, y + size)
-        }
-        ctx.fill()
-      }
-  })

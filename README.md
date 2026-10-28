@@ -1,6 +1,6 @@
 # threejs-portfolio
 
-Parker Allen's portfolio: a scroll-through tour of a cartoon version of my living room,
+Parker Allen's portfolio: a scroll-through tour of a San Diego beach house,
 built with [Three.js](https://threejs.org) and [Vite](https://vite.dev).
 
 ## Getting started
@@ -22,9 +22,10 @@ src/projects.js            project page content: meta, sections, links
 src/style.css              cartoon-dark UI (Fraunces + Pinyon Script + Space Mono)
 src/assets/drawings/       drop images here: they hang on the walls, mantel and rug in filename order
 src/world/World.js         renderer, camera tour, Parker + the husky, hover/click, day/night
+src/world/coast.js         the beach outside: ocean, waves, palms, lifeguard tower, street
 src/world/tour.js          scroll chapters: camera position, look target, lens + color wash
 src/world/room.js          the living room, piece by piece, and which objects are clickable
-src/world/character.js     Parker, built from primitives, animated on twos
+src/world/character.js     Parker in four looks (anime, 3D animated, claymation, low poly)
 src/world/dog.js           the black-and-white husky
 src/world/lensPass.js      fisheye + line boil, dry-brush mottling, paper grain, palette wash
 src/world/toon.js          toon materials, ink outlines, hand-drawn wobble

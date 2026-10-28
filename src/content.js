@@ -66,14 +66,6 @@ export const HOTSPOTS = {
   },
 }
 
-HOTSPOTS.bedroom = {
-  bubble: 'My room',
-  kicker: 'Upstairs',
-  title: 'My Room',
-  body: '<p>Where I sleep, dream, and draw. Warm light, big windows, and the river rushing by outside.</p>',
-  links: [],
-}
-
 HOTSPOTS.me = { ...HOTSPOTS.about, bubble: "Hi, I'm Parker!" }
 
 // Things that do something in the room instead of opening a panel
@@ -85,30 +77,28 @@ export const ACTION_LABELS = {
   dog: 'Pet me!',
 }
 
-export const INDEX_ORDER = ['typeface', 'ouro', 'resume', 'about', 'drawings', 'aldente', 'brewing', 'contact', 'bedroom']
+export const INDEX_ORDER = ['typeface', 'ouro', 'resume', 'about', 'drawings', 'aldente', 'brewing', 'contact']
 
 // Scroll chapters, in TOUR order (see world/tour.js). Chapters that match a hotspot
 // reuse its kicker/title; `blurb` is the short line on the scroll card.
 export const CHAPTERS = {
-  intro: { kicker: 'A cabin in the redwoods', title: 'Design by Parker Allen', blurb: 'Scroll to walk up to the door. Hover anything that catches your eye.' },
-  door: { kicker: 'Knock knock', title: 'Come on in', blurb: 'Mind the husky, it has places to be.' },
-  inside: { kicker: 'Make yourself at home', title: 'The whole place', blurb: 'Fire is going, lamp is on. Everything with a bubble is clickable.' },
+  intro: { kicker: 'A beach house in San Diego', title: 'Design by Parker Allen', blurb: 'Scroll to walk up to the door. Hover anything that catches your eye.' },
+  door: { kicker: 'Knock knock', title: 'Come on in', blurb: 'Mind the husky, it has a beach to run on.' },
+  inside: { kicker: 'Make yourself at home', title: 'The whole place', blurb: 'Ocean out back, sun pouring in. Everything with a bubble is clickable.' },
   about: { blurb: 'Designer and illustrator. Pull up a chair by the lamp.' },
   typeface: { blurb: 'Letterforms I drew from scratch.' },
   contact: { blurb: 'The door is always open.' },
   ouro: { blurb: 'A home online for a music collective.' },
   drawings: { blurb: 'That one over the fireplace is mine. So are the rest, even the rug.' },
-  aldente: { blurb: 'My capstone is cooking right now. Watch your noodles around the dog.' },
+  aldente: { blurb: 'Pasta mid-cook, and my capstone too. Watch your noodles around the dog.' },
   resume: { blurb: 'Where I have worked and what I have learned.' },
   brewing: { blurb: 'Cold ones in the fridge. Click a can to crack it open.' },
-  stairs: { kicker: 'Going up', title: 'Spiral stairs', blurb: 'Follow me up. My room is at the top.' },
-  bedroom: { blurb: 'Super modern, very geometric, and glowing warm. The river is right outside.' },
   outro: { kicker: 'Thanks for stopping by', title: 'See you around', blurb: 'Flip the lights with the moon button up top. Say hi to the husky on your way out.' },
 }
 
 // What Parker says to you at each stop of the tour
 export const LINES = {
-  door: "Oh hi! Come on in, it's freezing out there.",
+  door: "Oh hi! Come on in, the ocean breeze is lovely today.",
   inside: "Make yourself at home. Go ahead, poke around!",
   about: "My reading lamp and my favorite chair. Want to know about me?",
   typeface: "I drew this typeface letter by letter.",
@@ -118,7 +108,5 @@ export const LINES = {
   aldente: "I'm making pasta! Al Dente is my capstone, and it's cooking too.",
   resume: "Flip through those books. That's my experience.",
   brewing: "Grab a can! That's Bad Decisions Brewing, a product I designed.",
-  stairs: "Come on up, watch your step!",
-  bedroom: "And this is my room. Isn't the light cozy?",
   outro: "Thanks for visiting! Come back soon.",
 }
