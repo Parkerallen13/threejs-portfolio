@@ -2,6 +2,7 @@ import './style.css'
 import { World } from './world/World.js'
 import { TOUR } from './world/tour.js'
 import { HOTSPOTS, ACTION_LABELS, INDEX_ORDER, CHAPTERS, LINES } from './content.js'
+import { PROJECTS, projectUrl } from './projects.js'
 
 // Drop images into src/assets/drawings and they're hung around the room in filename order
 const drawings = Object.entries(
@@ -58,9 +59,9 @@ function openPanel(html) {
 function openHotspot(id) {
   const item = HOTSPOTS[id]
   if (!item) return
-  const links = item.links
-    .map((l) => `<a class="btn" href="${l.href}" target="_blank" rel="noopener">${l.label} &rarr;</a>`)
-    .join('')
+  const page = PROJECTS[id] ? `<a class="btn btn--page" href="${projectUrl(id)}">Project page &rarr;</a>` : ''
+  const links =
+    page + item.links.map((l) => `<a class="btn" href="${l.href}" target="_blank" rel="noopener">${l.label} &rarr;</a>`).join('')
   const gallery =
     id === 'drawings' && drawings.length
       ? `<div class="gallery">${drawings.map((src) => `<img src="${src}" alt="" loading="lazy" />`).join('')}</div>`
@@ -106,7 +107,10 @@ chaptersEl.innerHTML = TOUR.map(({ key }, i) => {
   const kicker = copy.kicker ?? item?.kicker ?? ''
   const title = copy.title ?? item?.title ?? ''
   const number = String(i).padStart(2, '0')
-  const open = item ? `<button type="button" class="btn" data-open="${key}">Open &rarr;</button>` : ''
+  const open = [
+    item ? `<button type="button" class="btn" data-open="${key}">Open &rarr;</button>` : '',
+    PROJECTS[key] ? `<a class="btn btn--page" href="${projectUrl(key)}">Project page &rarr;</a>` : '',
+  ].join(' ')
   const side = i % 2 ? 'right' : 'left'
   return `
     <section class="chapter chapter--${side}" data-chapter="${i}">

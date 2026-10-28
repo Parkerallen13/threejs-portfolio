@@ -100,6 +100,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .actions button:hover,
 .btn:hover { transform: translate(-1px, -1px) rotate(-1deg); }
 .actions__mode { min-width: 2.6rem; font-size: 1rem !important; }
+.btn--page { background: var(--secondary); color: var(--ink); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 
 /* Scroll progress, drawn like a pencil line down the right edge */
 .progress {

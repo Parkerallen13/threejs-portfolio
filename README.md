@@ -17,6 +17,8 @@ npm run build    # production build into dist/
 index.html                 page shell: top bar, scroll chapters, speech bubble, panel dialog
 src/main.js                boots the world, builds the scroll chapters, opens panels
 src/content.js             all the words: hotspot bubbles + panels, chapter blurbs
+projects/*.html            one page per project (retro style), rendered by src/project.js
+src/projects.js            project page content: meta, sections, links
 src/style.css              cartoon-dark UI (Fraunces + Pinyon Script + Space Mono)
 src/assets/drawings/       drop images here: they hang on the walls, mantel and rug in filename order
 src/world/World.js         renderer, camera tour, Parker + the husky, hover/click, day/night
