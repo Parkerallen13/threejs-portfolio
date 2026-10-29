@@ -1,34 +1,9 @@
 import './project.css'
 import { PROJECTS, PROJECT_ORDER, projectUrl } from './projects.js'
+import { initThemeToggle } from './theme.js'
 
-// Drawings dropped into src/assets/drawings show up in the drawings gallery
-const drawings = Object.entries(
-  import.meta.glob('./assets/drawings/*.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }),
-)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([, url]) => url)
-
-const MODE_KEY = 'portfolio-mode'
-const root = document.documentElement
 const slug = document.body.dataset.project
 const project = PROJECTS[slug]
-
-function readMode() {
-  try {
-    return localStorage.getItem(MODE_KEY) ?? 'dark'
-  } catch {
-    return 'dark'
-  }
-}
-
-let mode = readMode()
-
-function renderMode() {
-  root.dataset.mode = mode
-  const button = document.querySelector('[data-mode-toggle]')
-  button.textContent = mode === 'dark' ? '☾' : '☀'
-  button.setAttribute('aria-label', mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')
-}
 
 const home = import.meta.env.BASE_URL
 const nextSlug = PROJECT_ORDER[(PROJECT_ORDER.indexOf(slug) + 1) % PROJECT_ORDER.length]
@@ -48,25 +23,78 @@ const sections = project.sections
   )
   .join('')
 
-const gallery = project.gallery
-  ? `<section class="block">
-      <h2>Gallery</h2>
-      ${
-        drawings.length
-          ? `<div class="gallery">${drawings.map((src) => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy" /></a>`).join('')}</div>`
-          : '<p class="note">New drawings are being hung. Peek at Instagram in the meantime.</p>'
-      }
-    </section>`
-  : ''
-
 const specimen = project.specimen
   ? `<section class="block specimen">
+      <p class="specimen__note">Layout preview only: the custom font file has not been added yet, so the finished typeface specimen is still to come.</p>
       <p class="specimen__big">Aa</p>
       <p class="specimen__set">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br />abcdefghijklmnopqrstuvwxyz<br />0123456789 &amp;!?</p>
       <p class="specimen__waterfall" style="font-size: 3rem">Bad decisions make good stories.</p>
       <p class="specimen__waterfall" style="font-size: 2rem">Bad decisions make good stories.</p>
       <p class="specimen__waterfall" style="font-size: 1.25rem">Bad decisions make good stories.</p>
     </section>`
+  : ''
+
+const screenshots = project.screenshots?.length
+  ? `<section class="block screenshot-section">
+      <h2>${project.screenshotHeading ?? 'Screenshots'}</h2>
+      ${project.screenshotNote ? `<p class="note">${project.screenshotNote}</p>` : ''}
+      <div class="case-gallery">
+        ${project.screenshots.map((shot) => `
+          <figure class="case-gallery__item">
+            <a href="${shot.src}" target="_blank" rel="noopener">
+              <img src="${shot.src}" alt="${shot.alt}" loading="lazy" decoding="async" />
+            </a>
+            <figcaption>${shot.caption}</figcaption>
+          </figure>`).join('')}
+      </div>
+    </section>`
+  : ''
+
+const live = project.live
+  ? `<section class="block live-preview">
+      <h2>${project.live.heading}</h2>
+      <p class="note">${project.live.note}</p>
+      <a class="live-preview__link" href="${project.live.href}" target="_blank" rel="noopener noreferrer">${project.live.label} &rarr;<span class="visually-hidden"> (opens in a new tab)</span></a>
+    </section>`
+  : ''
+
+// The video's src is attached only as it nears the viewport, so the page never downloads it up front.
+const video = project.video
+  ? `<section class="block demo-video">
+      <h2>${project.video.heading}</h2>
+      <figure class="demo-video__frame">
+        <video data-src="${project.video.src}" poster="${project.video.poster}" preload="none" controls muted loop playsinline aria-label="${project.video.label}" data-lazy-video></video>
+        <figcaption>${project.video.caption}</figcaption>
+      </figure>
+    </section>`
+  : ''
+
+const identity = project.identity
+  ? `<section class="block identity">
+      <h2>${project.identity.heading}</h2>
+      ${project.identity.note ? `<p>${project.identity.note}</p>` : ''}
+      <div class="identity__logos">
+        ${project.identity.logos.map((logo) => `
+          <figure class="identity__logo">
+            <div style="--logo-bg: ${logo.bg}"><img src="${logo.src}" alt="${logo.alt}" loading="lazy" decoding="async" /></div>
+            <figcaption>${logo.caption}</figcaption>
+          </figure>`).join('')}
+      </div>
+      ${project.identity.sheet ? `
+        <figure class="case-gallery__item identity__sheet">
+          <a href="${project.identity.sheet.src}" target="_blank" rel="noopener">
+            <img src="${project.identity.sheet.src}" alt="${project.identity.sheet.alt}" loading="lazy" decoding="async" />
+          </a>
+          <figcaption>${project.identity.sheet.caption}</figcaption>
+        </figure>` : ''}
+    </section>`
+  : ''
+
+const shot = project.image
+  ? `<figure class="shot">
+      <img src="${project.image.src}" alt="${project.image.alt}" />
+      ${project.logo ? `<span class="shot__logo" style="--logo-bg: ${project.logo.bg}"><img src="${project.logo.src}" alt="${project.logo.alt}" /></span>` : ''}
+    </figure>`
   : ''
 
 const links = project.links
@@ -76,14 +104,14 @@ const links = project.links
 document.title = `${project.title} — Parker Allen`
 document.querySelector('#app').innerHTML = `
   <header class="topbar">
-    <a class="back" href="${home}">&larr; Back to the cottage</a>
+    <a class="back" href="${home}">&larr; All projects</a>
     <p class="brand"><span class="brand__script">Design by</span> <span class="brand__name">Parker Allen</span></p>
-    <button type="button" class="mode" data-mode-toggle>☾</button>
   </header>
+  <button type="button" class="lamp-toggle" data-mode-toggle aria-label="Switch to light mode" title="Switch to light mode"></button>
 
   <main class="page tone-${project.tone}">
     <section class="hero">
-      <p class="script">Now showing</p>
+      <p class="script">Case study</p>
       <p class="kicker"><span>(${number})</span> ${project.kicker}</p>
       <h1>${project.title}</h1>
       <p class="lede">${project.tagline}</p>
@@ -91,34 +119,44 @@ document.querySelector('#app').innerHTML = `
 
     <div class="ticket">
       <dl class="ticket__main">${meta}</dl>
-      <div class="ticket__stub"><span>Admit</span><strong>${number}</strong><span>One</span></div>
+      <div class="ticket__stub"><span>Project</span><strong>${number}</strong></div>
     </div>
 
-    ${project.image ? `<figure class="shot"><img src="${project.image.src}" alt="${project.image.alt}" /></figure>` : ''}
+    ${shot}
+    ${live}
+    ${video}
     ${sections}
+    ${identity}
     ${specimen}
-    ${gallery}
+    ${screenshots}
     ${links ? `<section class="poster"><p>Take a look for yourself</p>${links}</section>` : ''}
 
     <a class="next ticket" href="${projectUrl(nextSlug)}">
-      <div class="ticket__main"><p class="kicker">Next feature</p><h3>${next.title}</h3></div>
+      <div class="ticket__main"><p class="kicker">Next project</p><h3>${next.title}</h3></div>
       <div class="ticket__stub"><span>Next</span><strong>&rarr;</strong></div>
     </a>
   </main>
 `
 
-renderMode()
-document.querySelector('[data-mode-toggle]').addEventListener('click', () => {
-  mode = mode === 'dark' ? 'light' : 'dark'
-  try {
-    localStorage.setItem(MODE_KEY, mode)
-  } catch {}
-  renderMode()
-})
+initThemeToggle(document.querySelector('[data-mode-toggle]'))
 
-// Your typeface, if added to public/fonts/
-const base = import.meta.env.BASE_URL
-new FontFace('ParkerType', `url(${base}fonts/typeface.woff2) format('woff2'), url(${base}fonts/typeface.otf) format('opentype')`)
-  .load()
-  .then((face) => document.fonts.add(face))
-  .catch(() => {})
+const lazyVideos = document.querySelectorAll('[data-lazy-video]')
+const attachSource = (v) => { if (!v.src) v.src = v.dataset.src }
+if (!('IntersectionObserver' in window)) {
+  lazyVideos.forEach(attachSource)
+} else {
+  const loader = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) { attachSource(target); loader.unobserve(target) }
+    })
+  }, { rootMargin: '300px 0px' })
+  // Muted autoplay while on screen, unless the visitor prefers reduced motion.
+  const player = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) { attachSource(target); target.play().catch(() => {}) }
+      else target.pause()
+    })
+  }, { threshold: 0.35 })
+  const autoplay = !matchMedia('(prefers-reduced-motion: reduce)').matches
+  lazyVideos.forEach((v) => { loader.observe(v); if (autoplay) player.observe(v) })
+}

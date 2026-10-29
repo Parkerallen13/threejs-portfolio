@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 600" role="img">
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1">
+      <stop stop-color="#f9edce"/>
+      <stop offset="1" stop-color="#e6c982"/>
+    </linearGradient>
+  </defs>
+  <path fill="#9cbbb2" d="M0 0h760v600H0z"/>
+  <path fill="url(#paper)" d="M92 48h576v504H92z"/>
+  <path d="M124 92h512" stroke="#26251f" stroke-width="3"/>
+  <text x="126" y="133" fill="#b44935" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="5">TYPE STUDY · IN PROGRESS</text>
+  <text x="102" y="409" fill="#26251f" font-family="Georgia,serif" font-size="342" letter-spacing="-34">Aa</text>
+  <path d="M126 448h512" stroke="#26251f" stroke-width="2" opacity=".5"/>
+  <text x="127" y="492" fill="#26251f" font-family="Arial,sans-serif" font-size="20" letter-spacing="4">LETTERFORMS, DRAWN FROM SCRATCH</text>
+  <text x="127" y="522" fill="#6b6251" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">SPECIMEN PREVIEW · CUSTOM FONT FILE NOT YET ADDED</text>
+</svg>

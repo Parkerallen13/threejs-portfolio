@@ -3,37 +3,171 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parker Allen — Design</title>
-    <meta name="description" content="Portfolio of designer and illustrator Parker Allen: a scroll-through tour of a cartoon version of my living room." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=Pinyon+Script&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
+    <meta
+      name="description"
+      content="Portfolio of Parker Allen, a Creative Technology and Design student at CU Boulder's ATLAS Institute working in UX research, prototyping, interaction design, and front-end development."
     />
+    <meta name="theme-color" content="#1d1a16" />
+    <title>Parker Allen — UX Research, Design + Front-end</title>
   </head>
   <body>
-    <canvas id="world" aria-label="A cartoon of Parker's living room"></canvas>
-
+    <a class="skip-link" href="#projects">Skip to projects</a>
+    <button type="button" class="lamp-toggle" data-mode-toggle aria-label="Switch to light mode" title="Switch to light mode"></button>
     <header class="topbar">
-      <p class="brand"><span class="brand__script">Design by</span> <span class="brand__name">Parker Allen</span></p>
-      <nav class="actions">
-        <button type="button" data-index>Index</button>
-        <button type="button" class="actions__mode" data-mode-toggle>☾</button>
-      </nav>
-      <nav class="looks" aria-label="Character style"></nav>
+      <a class="brand" href="./" aria-label="Parker Allen home">Parker Allen<span> / ATLAS · CU Boulder</span></a>
     </header>
 
-    <div class="progress" aria-hidden="true"></div>
-    <div id="bubble" class="bubble" aria-hidden="true"></div>
-    <div id="say" class="bubble bubble--say" aria-live="polite"></div>
+    <main id="content">
+      <section class="intro" aria-labelledby="intro-title">
+        <div class="intro__copy-block">
+          <p class="eyebrow">Creative Technology &amp; Design · ATLAS Institute</p>
+          <h1 id="intro-title">Parker Allen</h1>
+          <p class="intro__role">I research, prototype, and build interfaces people enjoy using.</p>
+          <p class="intro__copy">I'm a Creative Technology and Design student at CU Boulder, graduating May 2027. After studying environmental design and spending 5+ years in restaurants and cafes, most recently at Bucatino, I bring an eye for place and a habit of listening closely to people to my work in UX research, design, and front-end development.</p>
+          <a class="text-link" href="#projects">See the projects <span aria-hidden="true">↓</span></a>
+        </div>
+        <figure class="portrait">
+          <img src="/src/assets/about/parker-portrait.jpg" alt="Parker Allen smiling outdoors in a pink striped shirt" width="900" height="1125" />
+        </figure>
+      </section>
 
-    <main id="chapters"></main>
+      <section class="focus" aria-labelledby="focus-title">
+        <div class="section-heading">
+          <p class="eyebrow">What I focus on</p>
+          <h2 id="focus-title">Listen, prototype, build.</h2>
+        </div>
+        <ol class="focus__list">
+          <li class="focus-card">
+            <span class="focus-card__index" aria-hidden="true">01</span>
+            <h3>UX research</h3>
+            <p>Interview guides, affinity mapping, heuristic reviews, and accessibility audits that turn what people say into design decisions.</p>
+            <p class="focus-card__seen">Seen in <a href="#" data-project="aldente">Al Dente</a>, <a href="#" data-project="ux-audit">DonorsChoose UX Audit</a></p>
+          </li>
+          <li class="focus-card">
+            <span class="focus-card__index" aria-hidden="true">02</span>
+            <h3>Figma &amp; prototyping</h3>
+            <p>Paper sketches first, then Figma prototypes that change as research findings come in.</p>
+            <p class="focus-card__seen">Seen in <a href="#" data-project="aldente">Al Dente</a></p>
+          </li>
+          <li class="focus-card">
+            <span class="focus-card__index" aria-hidden="true">03</span>
+            <h3>Interaction design</h3>
+            <p>Clear hierarchy, readable flows, and accessible controls for the tools people rely on.</p>
+            <p class="focus-card__seen">Seen in <a href="#" data-project="hyperdrive">Hyperdrive</a>, <a href="#" data-project="ouro">Ouro Room</a></p>
+          </li>
+          <li class="focus-card">
+            <span class="focus-card__index" aria-hidden="true">04</span>
+            <h3>Front-end development</h3>
+            <p>Responsive, accessible interfaces in HTML, CSS, and JavaScript, with React on team and client sites.</p>
+            <p class="focus-card__seen">Seen in <a href="#" data-project="ouro">Ouro Room</a>, <a href="#" data-project="hyperdrive">Hyperdrive</a></p>
+          </li>
+        </ol>
+        <aside class="atlas" aria-labelledby="atlas-title">
+          <div>
+            <p class="eyebrow" id="atlas-title">B.S. Creative Technology &amp; Design · CU Boulder ATLAS</p>
+            <p class="atlas__copy">A project-based program that integrates engineering, computation, creative technology, and design.</p>
+          </div>
+          <ul class="atlas__core" aria-label="The ATLAS core courses">
+            <li>Image</li>
+            <li>Web</li>
+            <li>Text</li>
+            <li>Form</li>
+            <li>Sound</li>
+            <li>Object</li>
+          </ul>
+          <a class="atlas__link" href="https://www.colorado.edu/atlas/academics/undergraduate/ctd-curriculum" target="_blank" rel="noopener noreferrer">About the curriculum <span aria-hidden="true">↗</span></a>
+        </aside>
+      </section>
 
-    <dialog id="panel" aria-labelledby="panel-title">
-      <form method="dialog"><button class="panel__close" aria-label="Close">&times;</button></form>
-      <div id="panel-body"></div>
-    </dialog>
+      <section class="work" aria-labelledby="projects-title">
+        <div class="section-heading">
+          <p class="eyebrow">Projects</p>
+          <h2 id="projects-title">Selected work.</h2>
+        </div>
+        <div id="projects" class="projects" tabindex="-1"></div>
+      </section>
+
+      <section id="experience" class="experience" aria-labelledby="experience-title">
+        <div class="section-heading">
+          <p class="eyebrow">Experience</p>
+          <h2 id="experience-title">Design with people in mind.</h2>
+        </div>
+        <div class="experience__list">
+          <article class="experience-card">
+            <div class="experience-card__heading">
+              <div>
+                <p class="eyebrow">Hyperloop at CU Boulder</p>
+                <h3>Brand &amp; Marketing Designer</h3>
+              </div>
+              <p class="experience-card__date">Spring 2024 — Present</p>
+            </div>
+            <p>I created a brand style guide that brought more personality and consistency to the club's communications, then carried that system across sponsorship materials, newsletters, merch, and social content.</p>
+            <ul class="impact-list">
+              <li><strong>$231,801</strong><span>in sponsorships, supported by a packet I co-designed with the business development lead</span></li>
+              <li><strong>7 editions</strong><span>of a monthly newsletter sent to 200+ sponsors and supporters</span></li>
+            </ul>
+            <div class="experience-card__related">
+              <p class="eyebrow">Product &amp; web contribution · 2024–2025</p>
+              <p>I redesigned the club's finance and inventory tool for readability, accessibility, and brand consistency; built spending visualizations and documented the tool. Built with React, TypeScript, and Mantine.</p>
+            </div>
+            <p class="experience-card__social">
+              <span>Social media content I designed for the club, alongside merch and the sponsorship packet</span>
+              <a href="https://www.instagram.com/cuhyperloop/" target="_blank" rel="noopener noreferrer">See @cuhyperloop <span aria-hidden="true">↗</span></a>
+            </p>
+          </article>
+
+          <article class="experience-card">
+            <div class="experience-card__heading">
+              <div>
+                <p class="eyebrow">Kappa Theta Pi · CU Boulder</p>
+                <h3>Recruitment Marketing Designer</h3>
+              </div>
+              <p class="experience-card__date">Spring 2024 — Present</p>
+            </div>
+            <p>As one of two people on the marketing team and one of eight on the executive board, I led recruitment branding and designed marketing across social media and print.</p>
+            <ul class="impact-list">
+              <li><strong>7×</strong><span>growth in pledge applications, from 6 to 42, following the rush branding</span></li>
+              <li><strong>+38%</strong><span>follower growth through 120+ posts and posters over two semesters</span></li>
+            </ul>
+            <p class="experience-card__social">
+              <span>Recruitment posts and posters I designed in Photoshop and Canva</span>
+              <a href="https://www.instagram.com/ktpboulder/" target="_blank" rel="noopener noreferrer">See @ktpboulder <span aria-hidden="true">↗</span></a>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="artwork" class="artwork" aria-labelledby="artwork-title">
+        <div class="artwork__heading">
+          <div>
+            <p class="eyebrow">From the sketchbook</p>
+            <h2 id="artwork-title">Little worlds, drawn by hand.</h2>
+            <p class="artwork__intro">Illustrations, characters, and things I’ve noticed along the way.</p>
+          </div>
+          <a class="artwork__instagram" href="https://www.instagram.com/designbyparkerallen/" target="_blank" rel="noopener noreferrer">
+            More drawings on Instagram <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div class="artwork__carousel">
+          <div class="artwork__track" data-artwork-track aria-label="Scrollable drawings"></div>
+          <div class="artwork__empty" data-artwork-empty>
+            <p class="eyebrow">The sketchbook keeps going</p>
+            <p>Add drawing images to <code>src/assets/drawings</code> to feature them here, or visit Instagram to see the collection.</p>
+            <a href="https://www.instagram.com/designbyparkerallen/" target="_blank" rel="noopener noreferrer">Visit @designbyparkerallen <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="artwork__controls" data-artwork-controls hidden>
+            <button type="button" data-artwork-prev aria-label="Scroll to previous drawings">←</button>
+            <button type="button" data-artwork-next aria-label="Scroll to next drawings">→</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Have a project in mind?</p>
+      <a href="https://www.instagram.com/designbyparkerallen/" target="_blank" rel="noopener noreferrer">Say hello on Instagram <span aria-hidden="true">↗</span></a>
+      <span class="footer__credit">Designed and built by Parker Allen</span>
+    </footer>
 
     <script type="module" src="/src/main.js"></script>
   </body>

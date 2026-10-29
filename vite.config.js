@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('.', import.meta.url))
-const projects = ['ouro', 'aldente', 'brewing', 'drawings', 'typeface']
+const projects = ['ouro', 'hyperdrive', 'ux-audit', 'aldente', 'brewing', 'typeface']
 
 export default defineConfig(({ command }) => ({
   // GitHub Pages serves this repo at /threejs-portfolio/

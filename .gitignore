@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.log
 .env*
+
+# Full-size drawing sources; the site uses the optimized JPEGs one level up
+src/assets/drawings/originals/

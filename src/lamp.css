@@ -1,0 +1,83 @@
+/* The corner lamp that toggles dark/light mode: a tan bell shade with braided trim and fringe.
+   Lit in dark mode, switched off in light mode. */
+
+.lamp-toggle {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: clamp(6px, 3vw, 44px);
+  display: block;
+  width: 116px;
+  height: 184px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lamp-toggle svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.lamp-toggle:focus-visible {
+  border-radius: 10px;
+  outline: 3px solid var(--mustard);
+  outline-offset: 2px;
+}
+
+.lamp__halo { opacity: 0; transition: opacity 260ms ease; }
+.lamp__shade { fill: url(#lamp-shade); filter: drop-shadow(0 6px 8px rgb(0 0 0 / 22%)); }
+.lamp__shade-edge { stop-color: #c4a476; transition: stop-color 260ms ease; }
+.lamp__shade-mid { stop-color: #e2cca4; transition: stop-color 260ms ease; }
+.lamp__sprig { fill: url(#lamp-sprig); pointer-events: none; }
+#lamp-sprig path { fill: none; stroke: #8b6a3e; stroke-width: 0.6; stroke-linecap: round; opacity: 0.45; }
+
+.lamp__trim { fill: none; stroke: #4b2f1c; stroke-width: 2.6; stroke-linecap: round; }
+.lamp__trim--braid { stroke: #9a7346; stroke-width: 1.3; stroke-dasharray: 1.3 1.5; }
+
+.lamp__fringe {
+  fill: none;
+  stroke: #f3ead6;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: top;
+}
+.lamp__fringe--back { stroke: #d9cdb3; transform: translateX(0.9px); }
+
+.lamp__gadroon { fill: none; stroke: #f2dcae; stroke-width: 1.2; stroke-dasharray: 1 1.4; }
+
+.lamp__chain path { stroke: #b9955a; stroke-width: 1.3; stroke-dasharray: 1.4 1; }
+.lamp__chain circle { fill: #d4b27a; stroke: #6f5530; stroke-width: 0.8; }
+.lamp__chain { transform-box: fill-box; transform-origin: top; }
+
+/* Lit */
+[data-mode='dark'] .lamp__halo { opacity: 1; }
+[data-mode='dark'] .lamp__shade-edge { stop-color: #efd29a; }
+[data-mode='dark'] .lamp__shade-mid { stop-color: #fff6df; }
+[data-mode='dark'] .lamp__fringe { stroke: #fff8e8; }
+[data-mode='dark'] .lamp__shade { filter: drop-shadow(0 0 10px rgb(255 205 120 / 45%)); }
+
+@media (hover: hover) {
+  .lamp-toggle:hover .lamp__fringe { animation: lamp-sway 1.4s ease-in-out; }
+}
+.lamp-toggle.is-pulled .lamp__chain { animation: lamp-pull 420ms ease-out; }
+
+@keyframes lamp-sway {
+  25% { transform: skewX(4deg); }
+  60% { transform: skewX(-3deg); }
+  85% { transform: skewX(1deg); }
+}
+
+@keyframes lamp-pull {
+  35% { transform: translateY(5px); }
+}
+
+@media (max-width: 640px) {
+  .lamp-toggle { width: 74px; height: 118px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp-toggle .lamp__fringe,
+  .lamp-toggle .lamp__chain { animation: none !important; }
+}
