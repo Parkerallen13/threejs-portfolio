@@ -1,7 +1,8 @@
-/* The corner lamp that toggles dark/light mode: a tan bell shade with braided trim and fringe.
-   Lit in dark mode, switched off in light mode. */
+/* The corner lamp that toggles dark/light mode: a cartoon bell shade with inked outlines,
+   flat cel shading, and chunky fringe. Lit in dark mode, switched off in light mode. */
 
 .lamp-toggle {
+  --lamp-ink: #2b1d14;
   position: absolute;
   z-index: 20;
   top: 0;
@@ -21,56 +22,76 @@
 
 .lamp-toggle:focus-visible {
   border-radius: 10px;
-  outline: 3px solid var(--mustard);
+  outline: 3px solid var(--mustard, var(--tone-mustard));
   outline-offset: 2px;
 }
 
-.lamp__halo { opacity: 0; transition: opacity 260ms ease; }
-.lamp__shade { fill: url(#lamp-shade); filter: drop-shadow(0 6px 8px rgb(0 0 0 / 22%)); }
-.lamp__shade-edge { stop-color: #c4a476; transition: stop-color 260ms ease; }
-.lamp__shade-mid { stop-color: #e2cca4; transition: stop-color 260ms ease; }
-.lamp__sprig { fill: url(#lamp-sprig); pointer-events: none; }
-#lamp-sprig path { fill: none; stroke: #8b6a3e; stroke-width: 0.6; stroke-linecap: round; opacity: 0.45; }
+.lamp__glow { fill: #ffd98a; opacity: 0; transition: opacity 260ms ease; }
+.lamp__glow ellipse { fill-opacity: 0.13; }
 
-.lamp__trim { fill: none; stroke: #4b2f1c; stroke-width: 2.6; stroke-linecap: round; }
-.lamp__trim--braid { stroke: #9a7346; stroke-width: 1.3; stroke-dasharray: 1.3 1.5; }
-
-.lamp__fringe {
+.lamp__rays {
   fill: none;
-  stroke: #f3ead6;
-  stroke-width: 1.1;
+  stroke: #ffd36b;
+  stroke-width: 3.2;
   stroke-linecap: round;
-  transform-box: fill-box;
-  transform-origin: top;
+  opacity: 0;
+  transition: opacity 260ms ease;
 }
-.lamp__fringe--back { stroke: #d9cdb3; transform: translateX(0.9px); }
 
-.lamp__gadroon { fill: none; stroke: #f2dcae; stroke-width: 1.2; stroke-dasharray: 1 1.4; }
+.lamp__shade { fill: #e8d2a6; transition: fill 260ms ease; }
+.lamp__shadow { fill: #cfae7c; transition: fill 260ms ease; }
+.lamp__seam { fill: none; stroke: var(--lamp-ink); stroke-width: 1.8; stroke-linecap: round; opacity: 0.5; }
+.lamp__shine { fill: none; stroke: #fffaf0; stroke-width: 3; stroke-linecap: round; opacity: 0.8; }
+.lamp__outline { fill: none; stroke: var(--lamp-ink); stroke-width: 3; stroke-linejoin: round; }
+.lamp__rim { fill: #f6e6c4; stroke: var(--lamp-ink); stroke-width: 2.4; }
 
-.lamp__chain path { stroke: #b9955a; stroke-width: 1.3; stroke-dasharray: 1.4 1; }
-.lamp__chain circle { fill: #d4b27a; stroke: #6f5530; stroke-width: 0.8; }
+.lamp__trim-ink,
+.lamp__trim { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.lamp__trim-ink { stroke: var(--lamp-ink); stroke-width: 7.5; }
+.lamp__trim { stroke: #e5674e; stroke-width: 4; }
+
+.lamp__brass { fill: #d9a441; stroke: var(--lamp-ink); stroke-width: 2.2; stroke-linejoin: round; }
+
+.lamp__fringe { transform-box: fill-box; transform-origin: top; }
+.lamp__fringe-ink,
+.lamp__fringe-yarn { fill: none; stroke-linecap: round; }
+.lamp__fringe-ink { stroke: var(--lamp-ink); stroke-width: 4.6; }
+.lamp__fringe-yarn { stroke: #f3ead6; stroke-width: 2.4; transition: stroke 260ms ease; }
+
+.lamp__chain path { fill: none; stroke: var(--lamp-ink); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 0 4.2; }
+.lamp__chain circle { fill: #e5674e; stroke: var(--lamp-ink); stroke-width: 2; }
 .lamp__chain { transform-box: fill-box; transform-origin: top; }
 
+.lamp__body { transform-box: fill-box; transform-origin: 50% 100%; }
+
 /* Lit */
-[data-mode='dark'] .lamp__halo { opacity: 1; }
-[data-mode='dark'] .lamp__shade-edge { stop-color: #efd29a; }
-[data-mode='dark'] .lamp__shade-mid { stop-color: #fff6df; }
-[data-mode='dark'] .lamp__fringe { stroke: #fff8e8; }
-[data-mode='dark'] .lamp__shade { filter: drop-shadow(0 0 10px rgb(255 205 120 / 45%)); }
+[data-mode='dark'] .lamp__glow,
+[data-mode='dark'] .lamp__rays { opacity: 1; }
+[data-mode='dark'] .lamp__shade { fill: #fff4d6; }
+[data-mode='dark'] .lamp__shadow { fill: #f6d48e; }
+[data-mode='dark'] .lamp__fringe-yarn { stroke: #fffaf0; }
 
 @media (hover: hover) {
   .lamp-toggle:hover .lamp__fringe { animation: lamp-sway 1.4s ease-in-out; }
 }
 .lamp-toggle.is-pulled .lamp__chain { animation: lamp-pull 420ms ease-out; }
+.lamp-toggle.is-pulled .lamp__body { animation: lamp-boing 560ms ease-out; }
 
 @keyframes lamp-sway {
-  25% { transform: skewX(4deg); }
-  60% { transform: skewX(-3deg); }
-  85% { transform: skewX(1deg); }
+  25% { transform: skewX(6deg); }
+  60% { transform: skewX(-4deg); }
+  85% { transform: skewX(1.5deg); }
 }
 
 @keyframes lamp-pull {
   35% { transform: translateY(5px); }
+}
+
+/* Cartoon squash and stretch when the chain is pulled */
+@keyframes lamp-boing {
+  25% { transform: scale(1.07, 0.9); }
+  55% { transform: scale(0.96, 1.06); }
+  80% { transform: scale(1.02, 0.98); }
 }
 
 @media (max-width: 640px) {
@@ -79,5 +100,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .lamp-toggle .lamp__fringe,
-  .lamp-toggle .lamp__chain { animation: none !important; }
+  .lamp-toggle .lamp__chain,
+  .lamp-toggle .lamp__body { animation: none !important; }
 }

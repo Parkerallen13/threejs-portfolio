@@ -1,0 +1,693 @@
+{
+  "order": [
+    "ux-audit",
+    "ouro",
+    "hyperdrive",
+    "brewing",
+    "typeface",
+    "aldente"
+  ],
+  "projects": {
+    "ouro": {
+      "title": "Ouro Room",
+      "script": "Web developer / Creative director",
+      "kicker": "Website · Design + Build",
+      "tone": "teal",
+      "tagline": "A room for music, people, and the moment.",
+      "tldr": "I designed and built the Ouro Room website from scratch in React and TypeScript, and I handle the collective’s graphic design and social media. The October 2026 redesign gives each kind of content its own color, swaps placeholder records for real posters and photos, and lets the team add and publish content in a few clicks.",
+      "meta": [
+        [
+          "Type",
+          "Website, brand + social media"
+        ],
+        [
+          "Role",
+          "Web developer, graphic designer, social media manager"
+        ],
+        [
+          "Built with",
+          "React + TypeScript, Django REST API"
+        ],
+        [
+          "Timeline",
+          "2025 – present · Live"
+        ]
+      ],
+      "image": {
+        "src": "assets/projects/ouro-home.jpg",
+        "alt": "The Ouro Room homepage: upcoming events as poster cards on a starry black background"
+      },
+      "logo": {
+        "src": "assets/ouro/ouro-logo-record.png",
+        "alt": "Ouro Music Collective record logo",
+        "bg": "#fff4f8"
+      },
+      "titleLogo": {
+        "src": "assets/ouro/ouro-logo-record.png"
+      },
+      "embed": {
+        "src": "https://ouroroomcollective.com/opening",
+        "url": "ouroroomcollective.com",
+        "title": "The live Ouro Room website",
+        "ratio": "16 / 10",
+        "caption": "The live site. Click anywhere to enter, then browse events, artists, mixes, and the gallery."
+      },
+      "sections": [
+        {
+          "heading": "The collective",
+          "body": "<p>Ouro Room is a collective I helped found in 2024 after a Boiler Room show. It brings local artists of all kinds together, connecting them with each other and giving them a platform: we book DJs and bands, find venues for them to play, and help them grow their audiences.</p>"
+        },
+        {
+          "heading": "The name",
+          "body": "<p>Ouro comes from the ouroboros, the snake eating its own tail. Music is always changing, and we believe every ending is a new beginning.</p>"
+        },
+        {
+          "heading": "What I do",
+          "list": [
+            "<strong>Web development:</strong> I designed and built the site from scratch in React and TypeScript, with a Django REST API behind it.",
+            "<strong>Graphic design:</strong> I made the logo and visual identity.",
+            "<strong>Social media:</strong> I manage the collective’s social media."
+          ]
+        },
+        {
+          "type": "process",
+          "heading": "Process",
+          "body": "<p>The first version launched in June 2025. It worked, but every page looked alike: dark slate panels, one sky-blue accent, and the same vinyl record standing in for artists, mixes, and photos. This recording shows that original site.</p>",
+          "video": {
+            "src": "assets/ouro/ouro-original-site.mp4",
+            "poster": "assets/ouro/ouro-original-poster.jpg",
+            "caption": "The original site, before the October 2026 redesign",
+            "label": "Screen recording of the original Ouro Room website: events, DJs, mixes, about, gallery, contact, and admin forms"
+          },
+          "changesHeading": "What changed, and why",
+          "changes": [
+            {
+              "what": "Real posters, photos, and cover art instead of placeholder records",
+              "why": "Artists, mixes, and the gallery all used the same record graphic, so nothing stood out. Event posters, artist photos, and cover art now show the actual people and nights."
+            },
+            {
+              "what": "A color for each kind of content",
+              "why": "One accent made events, artists, and mixes look alike. Each type now has its own color, so you can tell what you’re looking at before you read a word."
+            },
+            {
+              "what": "Events up front, in a scrolling rail",
+              "why": "Upcoming shows are why most people visit, but each event used to take up a full-width panel. Poster cards now sit in a rail with a “Next up” tag, and past events have their own page with links to their photos."
+            },
+            {
+              "what": "“DJs” became “Artists”",
+              "why": "The collective is for artists of all kinds, not only DJs, so the menu now matches who we book."
+            },
+            {
+              "what": "Mixes that play in one shared player",
+              "why": "Mixes stream from SoundCloud or Spotify, where artists already publish, in a docked player that plays one mix at a time so sound never overlaps."
+            },
+            {
+              "what": "Gallery albums by event",
+              "why": "People come looking for photos from the night they were there, so photos are grouped into an album per event, with a viewer to enlarge, browse, and download them."
+            },
+            {
+              "what": "Admin out of the public menu",
+              "why": "The original menu showed “Admin” to every visitor. It now sits behind its own sign-in, and the admin itself was redesigned (more below)."
+            }
+          ]
+        },
+        {
+          "type": "palette",
+          "heading": "Color, before and after",
+          "body": "<p>Colors pulled from each version’s stylesheet. The original used one sky blue on dark slate panels, and its other colors were tied to button types: teal for back, plum for delete. The redesign keeps the black starfield and white type, and gives each kind of content its own neon accent.</p>",
+          "before": {
+            "label": "Original · 2025",
+            "colors": [
+              {
+                "name": "Black",
+                "use": "Starfield",
+                "hex": "#000000"
+              },
+              {
+                "name": "Slate",
+                "use": "Panels",
+                "hex": "#171F26"
+              },
+              {
+                "name": "White",
+                "use": "Type",
+                "hex": "#FFFFFF"
+              },
+              {
+                "name": "Sky blue",
+                "use": "Dates, submit",
+                "hex": "#71BFD7"
+              },
+              {
+                "name": "Deep teal",
+                "use": "Back buttons",
+                "hex": "#1A4F5F"
+              },
+              {
+                "name": "Plum",
+                "use": "Delete buttons",
+                "hex": "#BC315F"
+              }
+            ]
+          },
+          "after": {
+            "label": "Redesign · October 2026",
+            "colors": [
+              {
+                "name": "Black",
+                "use": "Starfield",
+                "hex": "#000000"
+              },
+              {
+                "name": "Ink",
+                "use": "Cards",
+                "hex": "#0C1016"
+              },
+              {
+                "name": "White",
+                "use": "Type",
+                "hex": "#FFFFFF"
+              },
+              {
+                "name": "Acid",
+                "use": "Events",
+                "hex": "#E8FF3E"
+              },
+              {
+                "name": "Pink",
+                "use": "Artists",
+                "hex": "#FF2E88"
+              },
+              {
+                "name": "Cyan",
+                "use": "Mixes",
+                "hex": "#00E5FF"
+              },
+              {
+                "name": "Orange",
+                "use": "Gallery",
+                "hex": "#FF5C1C"
+              }
+            ]
+          },
+          "list": [
+            "Color now tells you what something is (an event, an artist, a mix, an album) instead of what a button does",
+            "Near-black cards let the posters and photos carry the color instead of the panels",
+            "Louder neon on the same minimal space look matches the sci-fi magazine style of the new event posters"
+          ]
+        },
+        {
+          "heading": "UX principles",
+          "body": "<p>The redesign is built around helping people find what they came for quickly: the next show, an artist, a mix, or photos from a night.</p>",
+          "type": "dropdowns",
+          "items": [
+            {
+              "title": "Recognition over recall",
+              "body": "Each content type keeps the same color, label, and card layout everywhere, from the home page to the admin."
+            },
+            {
+              "title": "Consistency",
+              "body": "Every public card and panel shares one tile style, so once you learn one page you know them all."
+            },
+            {
+              "title": "Visibility of status",
+              "body": "A “Next up” tag marks the next event, past events show how many photos they have, and the docked player shows what’s playing."
+            },
+            {
+              "title": "Match the real world",
+              "body": "“DJs” became “Artists,” and events link straight to the photos from that night."
+            },
+            {
+              "title": "Fewer dead ends",
+              "body": "Artist profiles list their mixes, mix cards link back to the artist, and the photo viewer lets you enlarge, browse, and download without leaving the gallery."
+            }
+          ]
+        },
+        {
+          "heading": "The admin: adding and choosing content",
+          "body": "<p>The collective adds and updates everything themselves, so the admin had to be quick to learn. It opens on just two choices: <strong>Add content</strong> and <strong>Review &amp; publish</strong>.</p>",
+          "type": "dropdowns",
+          "items": [
+            {
+              "title": "Adding",
+              "body": "One form per content type (event, artist, mix, or gallery photos), with dropdowns instead of free typing: a genre list with an Other option, an artist picker for mixes, and an event picker for photos."
+            },
+            {
+              "title": "Drafts first",
+              "body": "New uploads stay drafts until someone publishes them, so nothing half-finished goes live by accident."
+            },
+            {
+              "title": "Choosing",
+              "body": "Each review page shows how many items are published, and the team picks what’s featured on the home page from there."
+            },
+            {
+              "title": "Editing in place",
+              "body": "Change a mix’s artist or genre, move photos between events, or filter the gallery by event right on the review cards, which save as you go."
+            },
+            {
+              "title": "Less noise",
+              "body": "Cover art on review cards, no internal ID numbers in labels, and a centered sign-in that’s no longer linked from the public menu."
+            }
+          ]
+        },
+        {
+          "type": "identity",
+          "heading": "The identity",
+          "body": "<p>I designed the logo and visual identity. The Illustrator board below is the messy middle: mood-board references, color swatches, and wordmark tests side by side. From there I narrowed down to the record logo and the motion wordmark, then revised with the team’s feedback.</p>",
+          "logos": [
+            {
+              "src": "assets/ouro/ouro-logo-record.png",
+              "alt": "OU·RO Music Collective logo: red italic letters on a pink record-shaped oval",
+              "caption": "Record logo",
+              "bg": "#fff"
+            },
+            {
+              "src": "assets/ouro/ouro-logo-motion.png",
+              "alt": "OURO wordmark in yellow italic letters with pink and orange motion offsets",
+              "caption": "Motion wordmark",
+              "bg": "#fff"
+            }
+          ],
+          "figures": [
+            {
+              "src": "assets/ouro/ouro-vision-board.jpg",
+              "alt": "Messy Illustrator board for Ouro: mood-board references, scattered color swatch squares, and pixel and outline OURO wordmark tests",
+              "caption": "Iterating in Illustrator, mess and all"
+            },
+            {
+              "src": "assets/ouro/ouro-logo-explorations.jpg",
+              "alt": "Illustrator sheet of Ouro logo explorations: the record logo in pink, blue, yellow, and green, plus italic wordmarks in yellow, light blue, gray, and pink",
+              "caption": "Narrowing down color and wordmark variations"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "ouroroomcollective.com",
+          "href": "https://ouroroomcollective.com/opening"
+        }
+      ],
+      "category": "ux"
+    },
+    "hyperdrive": {
+      "title": "Hyperdrive",
+      "kicker": "Web App · UX + Front-end",
+      "tone": "mustard",
+      "tagline": "Making a club’s finances and equipment easier to navigate.",
+      "tldr": "Hyperdrive is the internal tool CU Boulder’s Hyperloop team uses to track equipment, inventory, contacts, expenses, and budgets. It was built for function first. I brought a design eye to it: tables that line up, spending you can see at a glance, and a look that matches the Hyperloop brand.",
+      "meta": [
+        [
+          "Type",
+          "Internal web app"
+        ],
+        [
+          "Role",
+          "UI redesign, data visualization, documentation"
+        ],
+        [
+          "Built with",
+          "React, TypeScript + Mantine"
+        ],
+        [
+          "Team",
+          "Hyperloop at CU Boulder · 2024 – 2025"
+        ]
+      ],
+      "image": {
+        "src": "assets/hyperdrive/after-2-home.jpg",
+        "alt": "Hyperdrive home screen: Welcome to Hyperdrive over a photo of the tunnel boring machine, with buttons for each part of the tool"
+      },
+      "sections": [
+        {
+          "heading": "The problem",
+          "body": "<p>The team’s spreadsheets moved into Hyperdrive, but the tables were hard to read. Columns drifted out of line across the full width, so a part’s cost could sit under the wrong header, and expanding a row broke the layout. Spending only existed as rows of numbers.</p>"
+        },
+        {
+          "type": "compare",
+          "heading": "Before and after: the spreadsheets",
+          "pairs": [
+            {
+              "title": "Master Equipment List",
+              "before": {
+                "src": "assets/hyperdrive/before-4-MEL-misaligned.jpg",
+                "alt": "Before: the equipment table with values drifting out of their columns",
+                "caption": "Columns drift out of line"
+              },
+              "after": {
+                "src": "assets/hyperdrive/after-3-MEL-aligned.jpg",
+                "alt": "After: the equipment table with every column aligned under its header and a filter panel on top",
+                "caption": "Every column lines up"
+              },
+              "note": "I gave each column a fixed width so headers and values line up across the whole table. The list also gained a filter panel to search and narrow parts by school year."
+            },
+            {
+              "title": "Opening a part",
+              "before": {
+                "src": "assets/hyperdrive/before-5-MEL-row-expanded.jpg",
+                "alt": "Before: expanding a row pushes a blank gray bar through the table",
+                "caption": "Expanding a row breaks the table"
+              },
+              "after": {
+                "src": "assets/hyperdrive/after-5-MEL-row-expanded.jpg",
+                "alt": "After: expanding a row shows its purchases nested underneath, still aligned",
+                "caption": "Purchases nest underneath"
+              },
+              "note": "Opening a part now shows its purchases nested right under it, without breaking the rows around it."
+            }
+          ]
+        },
+        {
+          "type": "gallery",
+          "heading": "From rows to a picture: the data visualization",
+          "body": "<p>Expenses are logged one purchase at a time. The budget view turns that same money into a summary anyone on the team can read in seconds: what came in, what went out, and the balance over time.</p>",
+          "figures": [
+            {
+              "src": "assets/hyperdrive/after-9-expenses.jpg",
+              "alt": "Expenses: every purchase as a row in a table",
+              "caption": "Expenses: every purchase as a row"
+            },
+            {
+              "src": "assets/hyperdrive/after-7-budget.jpg",
+              "alt": "Budget: inflow, outflow, and net balance cards above a weekly line chart",
+              "caption": "Budget: the same money at a glance"
+            }
+          ]
+        },
+        {
+          "heading": "What I did",
+          "list": [
+            "Built visualizations of the club’s spending: summary totals and a chart of inflow, outflow, and balance",
+            "Redesigned the interface for accessibility and readability, using Mantine components",
+            "Fixed the Master Equipment List so its columns line up",
+            "Brought the tool in line with the Hyperloop brand I designed for the club’s marketing",
+            "Wrote documentation on what the tool is for, its features, and how it works"
+          ]
+        }
+      ],
+      "links": [],
+      "crossLink": {
+        "label": "See my social media work for Hyperloop",
+        "href": "#hyperloop"
+      },
+      "category": "ux",
+      "script": "Case study",
+      "tour": {
+        "url": "hyperdrive",
+        "caption": "Screens from the working tool with sample data. Pick a page to look around.",
+        "screens": [
+          {
+            "label": "Home",
+            "src": "assets/hyperdrive/after-2-home.jpg",
+            "alt": "Home: Welcome to Hyperdrive, with buttons for the equipment list, inventory, contacts, expenses, budget, and HyperMail"
+          },
+          {
+            "label": "Equipment list",
+            "src": "assets/hyperdrive/after-3-MEL-aligned.jpg",
+            "alt": "Master Equipment List: a filter panel above a table whose columns line up"
+          },
+          {
+            "label": "Inventory",
+            "src": "assets/hyperdrive/after-6-inventory.jpg",
+            "alt": "Inventory table with part numbers, subteams, quantities, and costs"
+          },
+          {
+            "label": "Budget",
+            "src": "assets/hyperdrive/after-7-budget.jpg",
+            "alt": "Budget summary: total inflow, outflow, and net balance above a weekly line chart"
+          },
+          {
+            "label": "Contacts",
+            "src": "assets/hyperdrive/after-8-contacts.jpg",
+            "alt": "Contacts table with company, primary contacts, total donated, tier, and status"
+          },
+          {
+            "label": "Expenses",
+            "src": "assets/hyperdrive/after-9-expenses.jpg",
+            "alt": "Expenses table with a Create Purchase button and columns for company, card, account, and total cost"
+          }
+        ]
+      }
+    },
+    "ux-audit": {
+      "title": "DonorsChoose UX Audit",
+      "kicker": "UX Research · Accessibility",
+      "tone": "teal",
+      "tagline": "Finding ways to make classroom giving easier to navigate.",
+      "tldr": "For UX Design 2, a course in my UX certificate, I audited DonorsChoose against Nielsen’s heuristics and WCAG. The site has strong foundations; the biggest opportunities are clearer wayfinding, consistent calls to action, and a handful of accessibility fixes.",
+      "image": {
+        "src": "public/images/ux-audit-cover.jpg",
+        "alt": "Title slide for the DonorsChoose UX audit presentation"
+      },
+      "embed": {
+        "src": "public/documents/donorschoose-ux-audit.pdf#view=FitH",
+        "url": "donorschoose-ux-audit.pdf",
+        "title": "The full DonorsChoose UX audit (PDF)",
+        "ratio": "4 / 3",
+        "caption": "The full audit, 25 pages. Scroll inside the frame to read it.",
+        "href": "public/documents/donorschoose-ux-audit.pdf",
+        "narrow": true
+      },
+      "meta": [
+        [
+          "Type",
+          "UX audit"
+        ],
+        [
+          "Role",
+          "Research and evaluation"
+        ],
+        [
+          "Methods",
+          "Heuristics, WCAG review, persona + user flow"
+        ],
+        [
+          "Context",
+          "UX Design 2 · UX certificate · April 2026"
+        ]
+      ],
+      "sections": [
+        {
+          "heading": "The question",
+          "body": "<p>How might DonorsChoose make it easier for teachers to find support and for donors to confidently fund a classroom? I reviewed key journeys through the public platform, with attention to the homepage, Find a Classroom, About Us, Partner with Us, and Help Center.</p>"
+        },
+        {
+          "heading": "How I evaluated it",
+          "list": [
+            "Reviewed the experience against Nielsen’s 10 usability heuristics",
+            "Evaluated screen-reader order, keyboard navigation, focus visibility, and color contrast",
+            "Mapped the information architecture and a donor’s path to supporting a classroom",
+            "Created a donor persona and reviewed visual design, content, and navigation"
+          ]
+        },
+        {
+          "heading": "What I found",
+          "list": [
+            "Strong foundations: clear typography, generous whitespace, helpful teacher information, and keyboard-accessible controls with visible focus",
+            "Wayfinding gaps: internal pages often lacked back navigation or clear location cues, making it hard to retrace a path",
+            "Unclear calls to action: similar actions used inconsistent labels, and some links led to overlapping information",
+            "Accessibility refinements: improve CTA hover contrast, remove redundant nested links and unhelpful status markers, and clarify filter behavior",
+            "Mobile opportunity: shorten long pages and address the map layering issue identified in the audit"
+          ]
+        },
+        {
+          "heading": "Priorities",
+          "body": "<p>I prioritized navigation dropdowns and page context, simpler and less repetitive content paths, visible back navigation, and clearer filter rules. Medium-priority improvements included standardizing CTA language, moving teacher stories higher, and increasing hover-state contrast. The audit also calls out strengths to preserve, including keyboard navigation, visible focus, and the platform’s warm visual language.</p>"
+        }
+      ],
+      "links": [],
+      "category": "ux"
+    },
+    "aldente": {
+      "title": "Al Dente",
+      "script": "In progress",
+      "kicker": "Capstone · UX Research",
+      "tone": "tomato",
+      "tagline": "A recipe app with an e-ink hardware extension, still cooking.",
+      "tldr": "In progress, wrapping up April 2027. My capstone team is building a recipe app for storing recipes, with an e-ink hardware extension. After user testing, we’ll evaluate what the community actually needs.",
+      "sticker": "Coming soon",
+      "titleLogo": {
+        "src": "assets/aldente/logo-wordmark-clear.png"
+      },
+      "meta": [
+        [
+          "Type",
+          "Capstone · team of 3"
+        ],
+        [
+          "Role",
+          "UX research lead"
+        ],
+        [
+          "Methods",
+          "Interviews, affinity mapping, Figma prototypes"
+        ],
+        [
+          "Status",
+          "In progress · done April 2027"
+        ]
+      ],
+      "sections": [
+        {
+          "heading": "What we’re building",
+          "body": "<p>Al Dente is a recipe app for storing your recipes, with an e-ink hardware extension. After user testing, we’ll evaluate what the community needs and shape the app around it.</p>"
+        },
+        {
+          "heading": "The goal",
+          "body": "<p>Have the app fully functioning on modern tech that keeps it efficient, with our focus on the implementation. Alongside it, we’re creating a mock brand through real beta testing, and documenting the iteration process thoroughly.</p>"
+        },
+        {
+          "type": "live",
+          "heading": "Follow along",
+          "body": "<p class=\"note\">The capstone team posts progress on Instagram while the app comes together.</p>",
+          "label": "@aldentecapstone on Instagram",
+          "href": "https://www.instagram.com/aldentecapstone/"
+        }
+      ],
+      "links": [],
+      "coverText": "Al Dente Capstone",
+      "category": "ux"
+    },
+    "brewing": {
+      "title": "Bad Decisions Brewing",
+      "kicker": "Packaging Design",
+      "tone": "mustard",
+      "tagline": "A bold, self-aware beer brand that comes in 3 variations.",
+      "tldr": "Packaging for a self-aware beer brand: a Blonde Ale that comes in 3 variations, shown here as 3D can renders.",
+      "meta": [
+        [
+          "Type",
+          "Packaging design"
+        ],
+        [
+          "Status",
+          "Packaging renders added · Case study in progress"
+        ]
+      ],
+      "image": {
+        "src": "assets/brewing/cans-angle.jpg",
+        "alt": "Angled 3D view of the three Bad Decisions Brewing can designs in pink, mint, and mango"
+      },
+      "sections": [
+        {
+          "heading": "A little bad, on purpose",
+          "body": "<p>Bad Decisions Brewing pairs a self-aware voice with a colorful Blonde Ale that comes in 3 variations: Golden Intent, Nonchalant Nectar, and Bold-Move Mango.</p><p class=\"note\">The cans above are 3D mockups of the label artwork, not photographs of printed cans.</p>"
+        }
+      ],
+      "links": [],
+      "category": "typography"
+    },
+    "typeface": {
+      "title": "My Typeface",
+      "script": "Coming soon",
+      "kicker": "Type Design",
+      "tone": "teal",
+      "tagline": "Letterforms I’m drawing from scratch. Coming soon.",
+      "tldr": "Coming soon. I’m drawing a typeface from scratch, and the specimen will live here once it’s finished.",
+      "sticker": "Coming soon",
+      "meta": [
+        [
+          "Type",
+          "Typeface"
+        ],
+        [
+          "Status",
+          "Coming soon"
+        ]
+      ],
+      "comingSoon": true,
+      "sections": [],
+      "links": [],
+      "coverText": "Experimental type",
+      "category": "typography"
+    },
+    "about": {
+      "title": "About me",
+      "script": "Hello!",
+      "kicker": "Creative Technology &amp; Design · CU Boulder ATLAS",
+      "tone": "tomato",
+      "tagline": "I research, iterate on, and build visually pleasing apps that people enjoy using.",
+      "tldr": "Creative Technology and Design student at CU Boulder, graduating May 2027. I design and build apps people enjoy using, across brand identity, UI/UX design, UX research, graphic design, and front-end development, and as a Learning Assistant for Meaning of Information Technology I care about the ethics of tech and our media habits.",
+      "meta": [
+        [
+          "Studying",
+          "B.S. Creative Technology &amp; Design"
+        ],
+        [
+          "Graduating",
+          "May 2027"
+        ],
+        [
+          "Based in",
+          "Boulder, Colorado"
+        ],
+        [
+          "Focus",
+          "UI/UX design, UX research, front-end"
+        ]
+      ],
+      "sections": [
+        {
+          "heading": "About me",
+          "body": "<p>I studied environmental design before switching to Creative Technology and Design, and years of working in restaurants taught me to notice what people need. Outside of school, I help run Ouro Room, a collective for local artists, and I draw.</p>"
+        },
+        {
+          "type": "dropdowns",
+          "heading": "Experience",
+          "items": [
+            {
+              "title": "UX Researcher · Al Dente capstone · 2026 – now",
+              "body": "Leading discovery research for a community recipe app: interview guide, interviews with home cooks, and affinity mapping."
+            },
+            {
+              "title": "Learning Assistant · Meaning of Information Technology, ATLAS",
+              "body": "Helping students think critically about the ethics of technology and our media habits."
+            },
+            {
+              "title": "Front-end developer &amp; marketing · Hyperloop · 2024 – now",
+              "body": "Internal tools in React and TypeScript, plus merch, social media, newsletters, and the sponsorship packet."
+            },
+            {
+              "title": "EVP of Marketing · Kappa Theta Pi · 2024 – now",
+              "body": "Recruitment branding, presentations, social posts, and posters."
+            },
+            {
+              "title": "Founding member · Ouro Room · 2024 – now",
+              "body": "Designed and built the website, the logo and identity, and the social media."
+            },
+            {
+              "title": "Restaurants · Bucatino, Naked Lunch · 2022 – now",
+              "body": "Fast-paced service and relaying guest feedback to the kitchen."
+            }
+          ]
+        },
+        {
+          "heading": "Skills",
+          "list": [
+            "<strong>Design:</strong> Figma, Photoshop, Illustrator, InDesign, Canva, Procreate, Glyphs",
+            "<strong>Image &amp; video:</strong> DSLR photography, After Effects, Premiere Pro",
+            "<strong>Research:</strong> interviews, interview guides, affinity mapping, heuristic reviews, WCAG audits",
+            "<strong>Web &amp; code:</strong> HTML, CSS, JavaScript, TypeScript, React, Python, Processing, p5.js, Docker",
+            "<strong>Sound, 3D &amp; fabrication:</strong> Ableton Live, Blender, Rhino 3D, Fusion 360, SolidWorks, PrusaSlicer, Arduino"
+          ]
+        }
+      ],
+      "linksLabel": "Say hello",
+      "links": [
+        {
+          "label": "My resume (PDF)",
+          "href": "public/documents/parker-allen-resume.pdf"
+        },
+        {
+          "label": "LinkedIn",
+          "href": "https://www.linkedin.com/in/parker-alllen"
+        },
+        {
+          "label": "parker.allen-1@colorado.edu",
+          "href": "mailto:parker.allen-1@colorado.edu"
+        }
+      ],
+      "titleStyle": "plain"
+    }
+  }
+}

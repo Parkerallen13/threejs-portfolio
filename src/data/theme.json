@@ -1,0 +1,36 @@
+{
+  "name": "Movie set",
+  "dots": false,
+  "fonts": {
+    "name": "Marquee",
+    "heading": "'Bebas Neue', 'Oswald', 'Arial Narrow', sans-serif",
+    "body": "'Manrope', Helvetica, Arial, sans-serif",
+    "accent": "'Cormorant Garamond', Georgia, serif",
+    "display": "'Bebas Neue', Impact, sans-serif",
+    "tracking": "0.01em",
+    "scale": 1.12,
+    "weight": 400,
+    "google": "family=Bebas+Neue&family=Manrope:wght@400;700&family=Cormorant+Garamond:ital,wght@1,500"
+  },
+  "dark": {
+    "bg": "#131313",
+    "fg": "#ece7df",
+    "muted": "#a8a29a",
+    "tomato": "#d06a55",
+    "mustard": "#d7a85a",
+    "teal": "#7fa3a6"
+  },
+  "light": {
+    "bg": "#ebe6de",
+    "fg": "#1a1918",
+    "muted": "#5d5852",
+    "tomato": "#9b3d2c",
+    "mustard": "#7a5718",
+    "teal": "#3c6266"
+  },
+  "tones": {
+    "tomato": "#cf7a64",
+    "mustard": "#d9ad62",
+    "teal": "#8fb1b3"
+  }
+}

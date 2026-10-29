@@ -1,0 +1,76 @@
+/* Motion layers from src/motion.js, shared by the homepage and project pages */
+
+/* The light-red glow under the cursor: a chain of soft blobs with a slow, breathing wobble */
+.aura {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease;
+}
+
+.aura.is-on { opacity: 1; }
+
+.aura__blob {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--blob-size);
+  height: var(--blob-size);
+  will-change: transform;
+}
+
+.aura__blob::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
+  background: rgb(255 112 102 / 9%);
+  filter: blur(34px);
+  animation: aura-breathe 9s ease-in-out infinite alternate var(--blob-delay, 0s);
+  content: '';
+}
+
+[data-mode='light'] .aura__blob::before { background: rgb(255 100 90 / 12%); }
+
+@keyframes aura-breathe {
+  0% { border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%; scale: 1; rotate: 0deg; }
+  50% { border-radius: 58% 42% 46% 54% / 54% 58% 42% 46%; scale: 1.08; rotate: 25deg; }
+  100% { border-radius: 42% 58% 52% 48% / 48% 42% 58% 52%; scale: 0.96; rotate: 50deg; }
+}
+
+/* Cut-out drawings drifting behind the homepage, faint enough to stay out of the way */
+.backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.backdrop__piece {
+  position: absolute;
+  width: calc(clamp(220px, 30vw, 440px) * var(--size, 1));
+  opacity: 0.16;
+  will-change: transform;
+}
+
+.backdrop__piece img { display: block; width: 100%; height: auto; }
+
+[data-mode='light'] .backdrop__piece { opacity: 0.2; }
+
+/* Components slide and fade in as they scroll into view. Variants: .reveal--left, .reveal--right,
+   .reveal--pop; --reveal-delay staggers groups. */
+.has-reveal .reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 700ms ease var(--reveal-delay, 0ms),
+    transform 800ms cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+}
+
+.has-reveal .reveal--left { transform: translateX(-48px); }
+.has-reveal .reveal--right { transform: translateX(48px); }
+.has-reveal .reveal--pop { transform: scale(0.92) rotate(-1.5deg); }
+.has-reveal .reveal.is-visible { opacity: 1; transform: none; }

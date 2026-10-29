@@ -1,0 +1,276 @@
+{
+  "intro": {
+    "eyebrow": "Creative Technology &amp; Design · ATLAS Institute",
+    "name": "Parker Allen",
+    "role": "I research, iterate on, and build visually pleasing apps that people enjoy using.",
+    "copy": "I'm a Creative Technology and Design student graduating in May 2027. I'm a detail-oriented, empathy-focused designer who pays attention to what's not working and provides thoughtful solutions. I mostly specialize in UI/UX design, UX research, graphic design, social media marketing, and front-end development.",
+    "cta": "See the projects",
+    "portrait": {
+      "src": "assets/about/parker-portrait.jpg",
+      "alt": "Parker Allen smiling outdoors in a pink striped shirt"
+    },
+    "badge": {
+      "title": "Designer ID",
+      "number": "No. 2027",
+      "fields": [
+        {
+          "label": "Name",
+          "value": "Parker Allen"
+        },
+        {
+          "label": "Occupation",
+          "value": "UI/UX designer"
+        },
+        {
+          "label": "Valid until",
+          "value": "May 2027 (graduation)"
+        }
+      ]
+    },
+    "ethics": "As a Learning Assistant for ATLAS’s Meaning of Information Technology course, I care about the ethics of technology and the media habits we build around it."
+  },
+  "focus": {
+    "eyebrow": "What I focus on",
+    "title": "Listen, prototype, build.",
+    "cards": [
+      {
+        "title": "Brand identity",
+        "body": "Logos, visual identities, and style guides that carry one look across web, social, print, and merch.",
+        "seen": "Seen in <a href=\"#\" data-project=\"ouro\">Ouro Room</a>, <a href=\"#\" data-project=\"brewing\">Bad Decisions Brewing</a>, <a href=\"#experience\">Hyperloop</a>"
+      },
+      {
+        "title": "Graphic design",
+        "body": "Posters, social posts, newsletters, merch, and packaging, designed for screen and print.",
+        "seen": "Seen in <a href=\"#experience\">Marketing</a>, <a href=\"#\" data-project=\"brewing\">Bad Decisions Brewing</a>"
+      },
+      {
+        "title": "UX research",
+        "body": "Interview guides, affinity mapping, heuristic reviews, and accessibility audits that turn what people say into design decisions.",
+        "seen": "Seen in <a href=\"#\" data-project=\"aldente\">Al Dente</a>, <a href=\"#\" data-project=\"ux-audit\">DonorsChoose UX Audit</a>"
+      },
+      {
+        "title": "Figma &amp; prototyping",
+        "body": "Paper sketches first, then Figma prototypes that change as research findings come in.",
+        "seen": "Seen in <a href=\"#\" data-project=\"aldente\">Al Dente</a>"
+      },
+      {
+        "title": "Front-end development",
+        "body": "Responsive, accessible interfaces in HTML, CSS, and JavaScript, with React on team and client sites.",
+        "seen": "Seen in <a href=\"#\" data-project=\"ouro\">Ouro Room</a>, <a href=\"#\" data-project=\"hyperdrive\">Hyperdrive</a>"
+      }
+    ]
+  },
+  "tools": {
+    "eyebrow": "Tools",
+    "title": "What I work in.",
+    "groups": [
+      {
+        "name": "Design",
+        "items": [
+          "Figma",
+          "Photoshop",
+          "Illustrator",
+          "InDesign",
+          "Canva",
+          "Procreate",
+          "Glyphs",
+          "Adobe Font Development Kit"
+        ]
+      },
+      {
+        "name": "Image &amp; video",
+        "items": [
+          "DSLR photography",
+          "After Effects",
+          "Premiere Pro"
+        ]
+      },
+      {
+        "name": "Development",
+        "items": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "TypeScript",
+          "React",
+          "Vite",
+          "Mantine",
+          "Docker",
+          "Python",
+          "Processing",
+          "p5.js"
+        ]
+      },
+      {
+        "name": "Sound, 3D &amp; fabrication",
+        "items": [
+          "Ableton Live",
+          "MIDI &amp; sound synthesis",
+          "Blender",
+          "Rhino 3D",
+          "Fusion 360",
+          "SolidWorks",
+          "PrusaSlicer",
+          "3D printing",
+          "Arduino",
+          "Circuit design"
+        ]
+      },
+      {
+        "name": "Research",
+        "items": [
+          "Interview guides",
+          "User interviews",
+          "Affinity mapping",
+          "Heuristic reviews",
+          "WCAG audits"
+        ]
+      },
+      {
+        "name": "Workspace",
+        "items": [
+          "Google Workspace",
+          "Microsoft Office",
+          "GitHub"
+        ]
+      }
+    ]
+  },
+  "ux": {
+    "eyebrow": "UX",
+    "title": "UX case studies."
+  },
+  "typography": {
+    "eyebrow": "Typography",
+    "title": "Type and package design."
+  },
+  "atlas": {
+    "title": "B.S. Creative Technology &amp; Design · CU Boulder ATLAS",
+    "copy": "A project-based program that integrates engineering, computation, creative technology, and design.",
+    "courses": [
+      "Image",
+      "Web",
+      "Text",
+      "Form",
+      "Sound",
+      "Object"
+    ],
+    "linkLabel": "About the curriculum",
+    "href": "https://www.colorado.edu/atlas/academics/undergraduate/ctd-curriculum"
+  },
+  "experience": {
+    "eyebrow": "Marketing",
+    "title": "Social media marketing.",
+    "orgs": [
+      {
+        "posts": "hyperloop",
+        "name": "Hyperloop at CU Boulder",
+        "role": "Front-End Web Developer &amp; Marketing Team Member · Fall 2024 — Present",
+        "made": "Posters, newsletters, merch, and social media for the club, plus its internal finance and equipment tool, <a href=\"#\" data-project=\"hyperdrive\">Hyperdrive</a>.",
+        "tools": [
+          "Photoshop",
+          "Illustrator",
+          "React",
+          "TypeScript",
+          "Mantine"
+        ],
+        "logo": {
+          "src": "assets/experience/hyperloop-logo.png",
+          "width": 800,
+          "height": 185
+        },
+        "instagram": {
+          "label": "@cuhyperloop on Instagram",
+          "href": "https://www.instagram.com/cuhyperloop/"
+        },
+        "crossLink": {
+          "label": "See my web dev work for Hyperloop",
+          "project": "hyperdrive"
+        }
+      },
+      {
+        "posts": "ktp",
+        "name": "Kappa Theta Pi",
+        "role": "Executive Vice President, Marketing · Spring 2024 — Present",
+        "made": "Rush branding, social media posts, and print posters for CU Boulder's technology fraternity.",
+        "tools": [
+          "Photoshop",
+          "Canva"
+        ],
+        "logo": {
+          "src": "assets/experience/ktp-logo.png",
+          "width": 600,
+          "height": 236
+        },
+        "instagram": {
+          "label": "@ktpboulder on Instagram",
+          "href": "https://www.instagram.com/ktpboulder/"
+        }
+      }
+    ]
+  },
+  "artwork": {
+    "title": "My drawings",
+    "instagram": {
+      "label": "More on Instagram",
+      "href": "https://www.instagram.com/designbyparkerallen/"
+    }
+  },
+  "footer": {
+    "prompt": "Have a project in mind?",
+    "resumeLabel": "My resume",
+    "resume": "public/documents/parker-allen-resume.pdf",
+    "linkedin": "https://www.linkedin.com/in/parker-alllen",
+    "credit": "Designed and built by Parker Allen"
+  },
+  "backdrop": [
+    {
+      "drawing": "02-botanical-linework.png",
+      "top": 4.82,
+      "left": 62.04,
+      "size": 1.25,
+      "speed": -0.28,
+      "turn": 18
+    },
+    {
+      "drawing": "05-blue-flourish.png",
+      "top": 13.92,
+      "left": 7.3,
+      "size": 1.45,
+      "speed": -0.26,
+      "turn": -10
+    },
+    {
+      "drawing": "06-gold-ornament.png",
+      "top": 32.75,
+      "left": 68.42,
+      "size": 0.8,
+      "speed": -0.16,
+      "turn": 45
+    },
+    {
+      "drawing": "08-coral-column.png",
+      "top": 39.94,
+      "left": 26.8,
+      "size": 1.15,
+      "speed": -0.38,
+      "turn": -45
+    },
+    {
+      "drawing": "09-red-flourish.png",
+      "top": 66.37,
+      "left": 69.96,
+      "size": 1,
+      "speed": -0.08,
+      "turn": 9
+    },
+    {
+      "drawing": "13-blue-linework.png",
+      "top": 72.15,
+      "left": 9.16,
+      "size": 1.1,
+      "speed": -0.4,
+      "turn": -36
+    }
+  ]
+}
