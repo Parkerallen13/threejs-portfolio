@@ -94,6 +94,7 @@ const editLinks = (data) => `
     <div class="link-grid">
       <a class="button" href="/?edit" target="_blank">Homepage</a>
       <a class="button" href="/about.html?edit" target="_blank">About me</a>
+      <a class="button button--quiet" href="/?drafts" target="_blank">Homepage with drafts</a>
       ${data.projects.order.map((slug) => `<a class="button button--quiet" href="/projects/${slug}.html?edit" target="_blank">${esc(data.projects.projects[slug].title)}</a>`).join('')}
     </div>
   </section>`
@@ -278,6 +279,7 @@ function renderAdmin() {
         <p>Saves straight to the project files on this computer. Push to GitHub to publish.</p>
       </div>
       <nav><a href="#edit">Edit</a><a href="#theme">Theme</a><a href="#projects">Projects</a><a href="#posts">Posts</a><a href="/" target="_blank">View site ↗</a></nav>
+      <button type="button" class="button button--quiet" data-undo${data.history.count ? ` title="Undo: ${esc(data.history.last)}"` : ' disabled'}>↶ Undo${data.history.count ? `<span class="undo-label">${esc(data.history.last)}</span>` : ''}</button>
       <button type="button" class="button button--quiet" data-logout>Log out</button>
     </header>
     ${editLinks(data)}
@@ -326,6 +328,12 @@ app.addEventListener('click', (event) => {
   if (!el) return
 
   if (el.matches('[data-logout]')) return api('logout', {}).then(boot)
+  if (el.matches('[data-undo]')) {
+    return act(async () => {
+      const { undone } = await api('undo', {})
+      toast(`Undid: ${undone}`)
+    }).then(reloadPreview)
+  }
 
   if (el.matches('[data-theme]')) {
     const { note, fonts, ...colors } = data.themes[Number(el.dataset.theme)]
@@ -444,7 +452,7 @@ app.addEventListener('submit', (event) => {
         image,
       })
       window.open(`/projects/${slug}.html?edit`, '_blank')
-    }, 'Project added. Its page opened in a new tab, ready to edit.')
+    }, 'Project added as a draft. Its page opened in a new tab, ready to edit.')
   }
 })
 

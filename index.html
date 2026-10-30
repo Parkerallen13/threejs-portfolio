@@ -9,6 +9,16 @@
     />
     <meta name="theme-color" content="#1d1a16" />
     <title>Parker Allen — UX Research, Design + Front-end</title>
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Parker Allen" />
+    <meta property="og:title" content="Parker Allen — Design" />
+    <meta property="og:description" content="I research, iterate on, and build visually pleasing apps that people enjoy using." />
+    <meta property="og:url" content="https://parkerallen13.github.io/threejs-portfolio/" />
+    <meta property="og:image" content="https://parkerallen13.github.io/threejs-portfolio/og/home.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <!-- Text, images, and links come from src/data/site.json (see main.js); the data-* hooks name each field. -->
   <body>
@@ -70,6 +80,15 @@
         <div class="tools__groups" data-tool-groups></div>
       </section>
 
+      <section id="ai" class="ai" aria-labelledby="ai-title">
+        <div class="ai__intro reveal reveal--left">
+          <p class="eyebrow" data-text="ai.eyebrow"></p>
+          <h2 id="ai-title" data-text="ai.title"></h2>
+          <p class="ai__lede" data-text="ai.intro"></p>
+        </div>
+        <ol class="ai__list" data-ai-items></ol>
+      </section>
+
       <section id="ux" class="work" aria-labelledby="ux-title">
         <div class="section-heading reveal">
           <p class="eyebrow" data-text="ux.eyebrow"></p>
@@ -119,6 +138,10 @@
     <footer class="footer reveal">
       <p data-text="footer.prompt"></p>
       <div class="footer__links">
+        <button type="button" class="copy-email" data-copy-email>
+          <span data-text="footer.email"></span>
+          <span class="copy-email__status" data-copy-status aria-live="polite">Copy</span>
+        </button>
         <a class="resume-button" data-href="footer.resume" target="_blank" rel="noopener"><span data-text="footer.resumeLabel"></span> <span aria-hidden="true">✦</span></a>
         <a class="linkedin-link" data-href="footer.linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

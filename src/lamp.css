@@ -95,7 +95,7 @@
 }
 
 @media (max-width: 640px) {
-  .lamp-toggle { width: 74px; height: 118px; }
+  .lamp-toggle { width: 58px; height: 92px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

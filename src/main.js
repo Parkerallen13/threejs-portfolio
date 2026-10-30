@@ -4,6 +4,7 @@ import { PROJECTS, PROJECT_ORDER, projectUrl } from './projects.js'
 import { assetUrl } from './assets.js'
 import { initThemeToggle } from './theme.js'
 import { initAura, initBackdrop, initReveal } from './motion.js'
+import { initAnalytics } from './analytics.js'
 
 // Image folders become galleries, ordered by filename; "01-fall-rush.jpg" is titled "Fall rush".
 const images = (modules) => Object.entries(modules)
@@ -15,7 +16,7 @@ const images = (modules) => Object.entries(modules)
   }))
 
 const artwork = images(import.meta.glob('./assets/drawings/*.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }))
-const cutouts = images(import.meta.glob('./assets/drawings/cutouts/*.png', { eager: true, query: '?url', import: 'default' }))
+const cutouts = images(import.meta.glob('./assets/drawings/cutouts/*.{png,webp}', { eager: true, query: '?url', import: 'default' }))
 const posts = {
   hyperloop: images(import.meta.glob('./assets/experience/hyperloop/*.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' })),
   ktp: images(import.meta.glob('./assets/experience/ktp/*.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' })),
@@ -64,6 +65,15 @@ document.querySelector('[data-tool-groups]').innerHTML = site.tools.groups.map((
     <ul class="tool-list"${editList(`tools.groups.${i}.items`)}>${group.items.map((item) => `<li>${item}</li>`).join('')}</ul>
   </div>`).join('')
 
+document.querySelector('[data-ai-items]').innerHTML = site.ai.items.map((item, i) => `
+  <li class="ai__item reveal" style="--reveal-delay: ${i * 80}ms">
+    <span class="ai__index" aria-hidden="true">${pad(i + 1)}</span>
+    <div>
+      <h3${edit(`ai.items.${i}.title`)}>${item.title}</h3>
+      <p${edit(`ai.items.${i}.body`)}>${item.body}</p>
+    </div>
+  </li>`).join('')
+
 // ---------- Projects ----------
 
 // Each work section lists its category's projects, in the admin's order
@@ -80,7 +90,7 @@ const projectCard = (id, index) => {
       <a class="project-card__link" href="${projectUrl(id)}" aria-label="View ${project.title}">
         <div class="project-card__cover project-card__cover--${project.tone}">
           ${cover}
-          ${project.sticker ? `<span class="project-card__sticker">${project.sticker}</span>` : ''}
+          ${project.draft ? '<span class="project-card__sticker project-card__sticker--draft">Draft</span>' : project.sticker ? `<span class="project-card__sticker">${project.sticker}</span>` : ''}
           ${project.logo ? `<span class="project-card__logo" style="--logo-bg: ${project.logo.bg}"><img src="${project.logo.src}" alt="" /></span>` : ''}
           <span class="project-card__arrow" aria-hidden="true">↗</span>
         </div>
@@ -115,7 +125,7 @@ document.querySelector('[data-orgs]').innerHTML = site.experience.orgs.map((org,
   return `
     <article class="experience-card reveal reveal--${i % 2 ? 'right' : 'left'}" id="${org.posts}">
       <header class="experience-card__heading">
-        <span class="experience-card__logo"><img src="${assetUrl(org.logo.src)}" alt="" width="${org.logo.width}" height="${org.logo.height}"${editImg(`${at}.logo.src`)} /></span>
+        <span class="experience-card__logo"><img src="${assetUrl(org.logo.src)}" alt="${org.logo.alt ?? ''}" width="${org.logo.width}" height="${org.logo.height}"${editImg(`${at}.logo.src`)} /></span>
         <div>
           <h3${edit(`${at}.name`)}>${org.name}</h3>
           <p class="experience-card__role"${edit(`${at}.role`)}>${org.role}</p>
@@ -179,8 +189,23 @@ if (DEV) {
     </a>`)
 }
 
+// ---------- Footer ----------
+
+// One click copies the email; if the clipboard is blocked, fall back to opening a new email
+document.querySelector('[data-copy-email]').addEventListener('click', async () => {
+  const status = document.querySelector('[data-copy-status]')
+  try {
+    await navigator.clipboard.writeText(site.footer.email)
+    status.textContent = 'Copied!'
+  } catch {
+    location.href = `mailto:${site.footer.email}`
+  }
+  setTimeout(() => { status.textContent = 'Copy' }, 2000)
+})
+
 initThemeToggle(document.querySelector('[data-mode-toggle]'))
 initBackdrop(document.querySelector('[data-backdrop]'), cutouts, site.backdrop)
 initReveal()
 initAura()
+initAnalytics()
 if (DEV) import('./edit.js').then(({ initEditMode }) => initEditMode())

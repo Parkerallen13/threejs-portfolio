@@ -50,6 +50,11 @@ function projectPage(slug) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parker Allen — Design</title>
+    <link rel="icon" href="%BASE_URL%favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Parker Allen" />
+    <meta property="og:image" content="https://parkerallen13.github.io/threejs-portfolio/og/home.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body data-project="${slug}">
     <div id="app"></div>
@@ -94,11 +99,30 @@ export function adminPlugin({ user, passwordHash } = {}) {
         if (quiet) quietWrites.add(file)
         writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`)
       }
-      // Vite can miss files added outside it, which leaves the image lists in src/assets.js and
-      // src/main.js stale; touching them re-runs their file globs
+      // Vite can miss files added outside it, which leaves the folder image lists in src/main.js
+      // (posts, drawings) stale; touching it re-runs those globs
       const refreshImageLists = () => {
         const now = new Date()
-        for (const file of ['src/assets.js', 'src/main.js']) utimesSync(at(file), now, now)
+        utimesSync(at('src/main.js'), now, now)
+      }
+
+      // Undo history: every change records what it replaced (file contents, or a file move), so
+      // "Undo" can put it back. Kept in the gitignored .admin-history.json, newest last.
+      const historyFile = at('.admin-history.json')
+      let history = []
+      try { history = JSON.parse(readFileSync(historyFile, 'utf8')) } catch { /* starts empty */ }
+      const saveHistory = () => writeFileSync(historyFile, JSON.stringify(history.slice(-50)))
+      const snapshot = (path) => ({ kind: 'write', path, before: existsSync(at(path)) ? readFileSync(at(path), 'utf8') : null })
+      const remember = (label, steps) => {
+        history = [...history, { label, steps }].slice(-50)
+        saveHistory()
+      }
+      const lastChange = () => ({ count: history.length, last: history.at(-1)?.label ?? null })
+      const describe = (body) => {
+        if (body.label) return body.label
+        if (!body.path) return body.file === 'theme' ? 'Change the theme' : `Update ${body.file}`
+        const words = body.path.split('.').filter((key) => Number.isNaN(Number(key)) && !['projects', 'sections', 'items'].includes(key))
+        return `Edit ${words.slice(-2).join(' ')}`
       }
       const listImages = (dir) => (existsSync(dir) ? readdirSync(dir).filter((f) => IMAGE_FILE.test(f)).sort() : [])
 
@@ -129,12 +153,13 @@ export function adminPlugin({ user, passwordHash } = {}) {
             posts[folder] = listImages(at('src/assets/experience', folder))
             hidden[folder] = listImages(at('src/assets/experience/_hidden', folder))
           }
-          return { site: readJson('site'), projects: readJson('projects'), theme: readJson('theme'), themes: readJson('themes').themes, posts, hidden }
+          return { site: readJson('site'), projects: readJson('projects'), theme: readJson('theme'), themes: readJson('themes').themes, posts, hidden, history: lastChange() }
         },
 
         // { file, path, value } sets one field ("" replaces the whole file); `quiet` skips the reload
         'POST /save': ({ body }) => {
           if (!DATA_FILES[body.file]) throw new Error('Unknown file')
+          remember(describe(body), [snapshot(DATA_FILES[body.file])])
           if (body.path) {
             const data = readJson(body.file)
             setAt(data, body.path, body.value)
@@ -143,7 +168,28 @@ export function adminPlugin({ user, passwordHash } = {}) {
             if (!body.value || typeof body.value !== 'object') throw new Error('Missing content')
             writeJson(body.file, body.value, body.quiet)
           }
-          return { ok: true }
+          return { ok: true, history: lastChange() }
+        },
+
+        'GET /history': () => lastChange(),
+
+        // Puts back whatever the most recent change replaced
+        'POST /undo': () => {
+          const entry = history.at(-1)
+          if (!entry) throw new Error('Nothing to undo')
+          for (const step of [...entry.steps].reverse()) {
+            if (step.kind === 'write') {
+              if (step.before === null) rmSync(at(step.path), { force: true })
+              else writeFileSync(at(step.path), step.before)
+            } else if (step.kind === 'move' && existsSync(at(step.to))) {
+              mkdirSync(dirname(at(step.from)), { recursive: true })
+              renameSync(at(step.to), at(step.from))
+            }
+          }
+          history = history.slice(0, -1)
+          saveHistory()
+          refreshImageLists()
+          return { undone: entry.label, ...lastChange() }
         },
 
         // { folder, name, data: "data:image/...;base64,..." } -> { path, url }
@@ -178,7 +224,10 @@ export function adminPlugin({ user, passwordHash } = {}) {
           const page = at('projects', `${slug}.html`)
           const data = readJson('projects')
           if (data.projects[slug] || existsSync(page)) throw new Error(`A project called "${slug}" already exists`)
+          remember(`Add ${body.title}`, [snapshot(DATA_FILES.projects), snapshot(`projects/${slug}.html`)])
+          // New projects start as drafts, so a half-written page never goes live by accident
           data.projects[slug] = {
+            draft: true,
             title: body.title,
             kicker: body.kicker || 'Project',
             tone: ['teal', 'tomato', 'mustard'].includes(body.tone) ? body.tone : 'teal',
@@ -200,6 +249,7 @@ export function adminPlugin({ user, passwordHash } = {}) {
         'POST /projects/delete': ({ body }) => {
           const data = readJson('projects')
           if (!data.projects[body.slug]) throw new Error('No such project')
+          remember(`Delete ${data.projects[body.slug].title}`, [snapshot(DATA_FILES.projects), snapshot(`projects/${body.slug}.html`)])
           delete data.projects[body.slug]
           data.order = data.order.filter((id) => id !== body.slug)
           writeJson('projects', data)
@@ -215,6 +265,7 @@ export function adminPlugin({ user, passwordHash } = {}) {
         const target = at('src/assets', to, folder, file)
         mkdirSync(dirname(target), { recursive: true })
         renameSync(source, target)
+        remember(`${to.endsWith('_hidden') ? 'Hide' : 'Restore'} ${file}`, [{ kind: 'move', from: `src/assets/${from}/${folder}/${file}`, to: `src/assets/${to}/${folder}/${file}` }])
         refreshImageLists()
         return { ok: true }
       }

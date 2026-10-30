@@ -2,7 +2,7 @@ import './edit.css'
 import { backdrop } from './motion.js'
 
 // Local edit mode (dev server only; main.js and project.js load it behind import.meta.env.DEV).
-// Click any outlined text to change it, click a dashed photo to replace it, and × a marketing post
+// Click any outlined text to change it, click a dashed photo to replace or describe it, and × a marketing post
 // to hide it. Each change saves to src/data/*.json through the admin API in admin/plugin.js.
 
 const KEY = 'portfolio-edit-mode'
@@ -99,6 +99,42 @@ async function replaceImage(img) {
   }
 }
 
+// Clicking an editable photo offers to replace it or describe it (its alt text, read aloud by
+// screen readers and shown if the image fails to load)
+function photoMenu(img, event) {
+  document.querySelector('.photo-menu')?.remove()
+  const menu = document.createElement('div')
+  menu.className = 'photo-menu'
+  menu.innerHTML = `
+    <button type="button" data-photo="replace">Replace photo</button>
+    <button type="button" data-photo="alt">Edit description</button>`
+  menu.style.left = `${Math.min(event.clientX, innerWidth - 200)}px`
+  menu.style.top = `${event.clientY + 8}px`
+  document.body.append(menu)
+  const close = () => { menu.remove(); removeEventListener('scroll', close) }
+  addEventListener('scroll', close, { once: true })
+  menu.addEventListener('click', async (click) => {
+    const choice = click.target.closest('[data-photo]')?.dataset.photo
+    close()
+    if (choice === 'replace') replaceImage(img)
+    if (choice === 'alt') editAlt(img)
+  })
+  setTimeout(() => document.addEventListener('click', (other) => { if (!menu.contains(other.target)) close() }, { once: true, capture: true }))
+}
+
+async function editAlt(img) {
+  const answer = prompt('Describe this image for people who can’t see it', img.alt)
+  if (answer === null || answer.trim() === img.alt) return
+  const { file, path } = target(img.dataset.editImg)
+  try {
+    await api('save', { file, path: path.replace(/\.src$/, '.alt'), value: answer.trim(), quiet: true, label: 'Edit an image description' })
+    img.alt = answer.trim()
+    toast('Description saved')
+  } catch (error) {
+    toast(error.message, 'error')
+  }
+}
+
 async function editList(list) {
   const current = [...list.querySelectorAll('li')].map((li) => li.textContent.trim())
   const answer = prompt('Edit the list, separated by commas', current.join(', '))
@@ -173,7 +209,7 @@ function renderPanel(panel) {
       <button type="button" data-arrange-remove>Remove this drawing</button>` : '<p><strong>No drawings yet.</strong></p>'}
     <div class="arrange-panel__row">
       <button type="button" data-arrange-add>+ Add a drawing</button>
-      <label class="arrange-panel__upload">Upload a cut-out PNG <input type="file" accept="image/png" data-arrange-upload /></label>
+      <label class="arrange-panel__upload">Upload a cut-out (PNG or WebP) <input type="file" accept="image/png,image/webp" data-arrange-upload /></label>
     </div>
     <button type="button" class="arrange-panel__done" data-arrange-done>Done arranging</button>`
 }
@@ -280,7 +316,7 @@ function start() {
     const img = event.target.closest('[data-edit-img]')
     const list = event.target.closest('[data-edit-list]')
     const link = event.target.closest('a, summary')
-    if (img) { event.preventDefault(); replaceImage(img); return }
+    if (img) { event.preventDefault(); photoMenu(img, event); return }
     if (list) { event.preventDefault(); editList(list); return }
     // Links stay put while editing so you can click into their text; ⌘/Ctrl-click still follows them
     if (link && !link.closest('.edit-bar') && !(event.metaKey || event.ctrlKey)) event.preventDefault()
@@ -304,6 +340,7 @@ export async function initEditMode() {
     bar.innerHTML = isOn()
       ? `<span><strong>Editing</strong> · click text or photos · saves automatically · ⌘-click follows links</span>
          ${backdrop.layer ? '<button type="button" data-arrange-on>Arrange drawings</button>' : ''}
+         <button type="button" data-undo>↶ Undo</button>
          <a href="/admin/">Admin</a>
          <button type="button" data-edit-off>Done</button>`
       : `<button type="button" data-edit-on>✎ Edit page</button> <a href="/admin/">Admin</a>`
@@ -314,6 +351,16 @@ export async function initEditMode() {
     if (event.target.closest('[data-edit-on]')) {
       sessionStorage.setItem(KEY, '1')
       location.reload()
+    }
+    if (event.target.closest('[data-undo]')) {
+      try {
+        const { undone } = await api('undo', {})
+        toast(`Undid: ${undone}`)
+        setTimeout(() => location.reload(), 500)
+      } catch (error) {
+        toast(error.message, 'error')
+      }
+      return
     }
     if (event.target.closest('[data-arrange-on]')) {
       startArranging()

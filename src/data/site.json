@@ -6,8 +6,8 @@
     "copy": "I'm a Creative Technology and Design student graduating in May 2027. I'm a detail-oriented, empathy-focused designer who pays attention to what's not working and provides thoughtful solutions. I mostly specialize in UI/UX design, UX research, graphic design, social media marketing, and front-end development.",
     "cta": "See the projects",
     "portrait": {
-      "src": "assets/about/parker-portrait.jpg",
-      "alt": "Parker Allen smiling outdoors in a pink striped shirt"
+      "src": "assets/about/parker-portrait.webp",
+      "alt": "Parker Allen smiling outdoors in a denim jacket, in front of green and yellow leaves"
     },
     "badge": {
       "title": "Designer ID",
@@ -136,6 +136,29 @@
       }
     ]
   },
+  "ai": {
+    "eyebrow": "Process",
+    "title": "How I use AI.",
+    "intro": "AI helps me build faster. It doesn’t replace research, judgment, or taste.",
+    "items": [
+      {
+        "title": "Building and debugging",
+        "body": "I use coding assistants like Claude Code to scaffold, refactor, and debug front-end work, then review and test every change myself. This site and the Ouro Room redesign were built that way."
+      },
+      {
+        "title": "Research stays human",
+        "body": "Interviews, synthesis, and design decisions come from real people. I don’t use AI to stand in for participants or to write findings."
+      },
+      {
+        "title": "Open about it",
+        "body": "I say when work is AI-assisted, and I can walk through the decisions behind it."
+      },
+      {
+        "title": "Thinking about the impact",
+        "body": "As a Learning Assistant for Meaning of Information Technology, I think about what AI means for privacy, creative work, and our media habits."
+      }
+    ]
+  },
   "ux": {
     "eyebrow": "UX",
     "title": "UX case studies."
@@ -221,11 +244,12 @@
     "resumeLabel": "My resume",
     "resume": "public/documents/parker-allen-resume.pdf",
     "linkedin": "https://www.linkedin.com/in/parker-alllen",
-    "credit": "Designed and built by Parker Allen"
+    "credit": "Designed and built by Parker Allen",
+    "email": "parker.allen-1@colorado.edu"
   },
   "backdrop": [
     {
-      "drawing": "02-botanical-linework.png",
+      "drawing": "02-botanical-linework.webp",
       "top": 4.82,
       "left": 62.04,
       "size": 1.25,
@@ -233,7 +257,7 @@
       "turn": 18
     },
     {
-      "drawing": "05-blue-flourish.png",
+      "drawing": "05-blue-flourish.webp",
       "top": 13.92,
       "left": 7.3,
       "size": 1.45,
@@ -241,7 +265,7 @@
       "turn": -10
     },
     {
-      "drawing": "06-gold-ornament.png",
+      "drawing": "06-gold-ornament.webp",
       "top": 32.75,
       "left": 68.42,
       "size": 0.8,
@@ -249,7 +273,7 @@
       "turn": 45
     },
     {
-      "drawing": "08-coral-column.png",
+      "drawing": "08-coral-column.webp",
       "top": 39.94,
       "left": 26.8,
       "size": 1.15,
@@ -257,7 +281,7 @@
       "turn": -45
     },
     {
-      "drawing": "09-red-flourish.png",
+      "drawing": "09-red-flourish.webp",
       "top": 66.37,
       "left": 69.96,
       "size": 1,
@@ -265,12 +289,15 @@
       "turn": 9
     },
     {
-      "drawing": "13-blue-linework.png",
+      "drawing": "13-blue-linework.webp",
       "top": 72.15,
       "left": 9.16,
       "size": 1.1,
       "speed": -0.4,
       "turn": -36
     }
-  ]
+  ],
+  "analytics": {
+    "goatcounter": ""
+  }
 }

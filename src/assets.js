@@ -1,17 +1,10 @@
+import files from 'virtual:content-assets'
+
 // Content files (src/data/*.json) point at media by path: "assets/ouro/logo.png" for files in
 // src/assets, "public/documents/audit.pdf" for files served as-is from public/. This turns those
-// paths into the URLs Vite serves, in dev and in the build.
-const files = import.meta.glob(
-  [
-    './assets/**/*.{png,jpg,jpeg,webp,gif,svg,mp4,webm}',
-    '!./assets/drawings/originals/**',
-    '!./assets/experience/_hidden/**',
-  ],
-  { eager: true, query: '?url', import: 'default' },
-)
-
+// paths into the URLs Vite serves, in dev and in the build (see plugins/content-assets.js).
 export function assetUrl(path) {
-  if (path.startsWith('assets/')) return files[`./${path}`] ?? path
+  if (path.startsWith('assets/')) return files[path] ?? path
   if (path.startsWith('public/')) return `${import.meta.env.BASE_URL}${path.slice('public/'.length)}`
   return path
 }

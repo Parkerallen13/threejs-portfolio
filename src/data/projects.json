@@ -34,7 +34,7 @@
         ]
       ],
       "image": {
-        "src": "assets/projects/ouro-home.jpg",
+        "src": "assets/projects/ouro-home.webp",
         "alt": "The Ouro Room homepage: upcoming events as poster cards on a starry black background"
       },
       "logo": {
@@ -75,7 +75,7 @@
           "body": "<p>The first version launched in June 2025. It worked, but every page looked alike: dark slate panels, one sky-blue accent, and the same vinyl record standing in for artists, mixes, and photos. This recording shows that original site.</p>",
           "video": {
             "src": "assets/ouro/ouro-original-site.mp4",
-            "poster": "assets/ouro/ouro-original-poster.jpg",
+            "poster": "assets/ouro/ouro-original-poster.webp",
             "caption": "The original site, before the October 2026 redesign",
             "label": "Screen recording of the original Ouro Room website: events, DJs, mixes, about, gallery, contact, and admin forms"
           },
@@ -199,7 +199,7 @@
         {
           "heading": "UX principles",
           "body": "<p>The redesign is built around helping people find what they came for quickly: the next show, an artist, a mix, or photos from a night.</p>",
-          "type": "dropdowns",
+          "type": "principles",
           "items": [
             {
               "title": "Recognition over recall",
@@ -270,16 +270,20 @@
           ],
           "figures": [
             {
-              "src": "assets/ouro/ouro-vision-board.jpg",
+              "src": "assets/ouro/ouro-vision-board.webp",
               "alt": "Messy Illustrator board for Ouro: mood-board references, scattered color swatch squares, and pixel and outline OURO wordmark tests",
               "caption": "Iterating in Illustrator, mess and all"
             },
             {
-              "src": "assets/ouro/ouro-logo-explorations.jpg",
+              "src": "assets/ouro/ouro-logo-explorations.webp",
               "alt": "Illustrator sheet of Ouro logo explorations: the record logo in pink, blue, yellow, and green, plus italic wordmarks in yellow, light blue, gray, and pink",
               "caption": "Narrowing down color and wordmark variations"
             }
           ]
+        },
+        {
+          "heading": "What I learned",
+          "body": "<p>How to build a brand around an idea the team cares about, how to take feedback without losing the core concept, and what it takes to start something from nothing.</p>"
         }
       ],
       "links": [
@@ -288,7 +292,11 @@
           "href": "https://ouroroomcollective.com/opening"
         }
       ],
-      "category": "ux"
+      "category": "ux",
+      "outcome": {
+        "value": "≈10 events",
+        "text": "since 2024, booking local artists from Boulder, Denver, and across Colorado, with a site the collective now runs themselves."
+      }
     },
     "hyperdrive": {
       "title": "Hyperdrive",
@@ -315,7 +323,7 @@
         ]
       ],
       "image": {
-        "src": "assets/hyperdrive/after-2-home.jpg",
+        "src": "assets/hyperdrive/after-2-home.webp",
         "alt": "Hyperdrive home screen: Welcome to Hyperdrive over a photo of the tunnel boring machine, with buttons for each part of the tool"
       },
       "sections": [
@@ -330,12 +338,12 @@
             {
               "title": "Master Equipment List",
               "before": {
-                "src": "assets/hyperdrive/before-4-MEL-misaligned.jpg",
+                "src": "assets/hyperdrive/before-4-MEL-misaligned.webp",
                 "alt": "Before: the equipment table with values drifting out of their columns",
                 "caption": "Columns drift out of line"
               },
               "after": {
-                "src": "assets/hyperdrive/after-3-MEL-aligned.jpg",
+                "src": "assets/hyperdrive/after-3-MEL-aligned.webp",
                 "alt": "After: the equipment table with every column aligned under its header and a filter panel on top",
                 "caption": "Every column lines up"
               },
@@ -344,12 +352,12 @@
             {
               "title": "Opening a part",
               "before": {
-                "src": "assets/hyperdrive/before-5-MEL-row-expanded.jpg",
+                "src": "assets/hyperdrive/before-5-MEL-row-expanded.webp",
                 "alt": "Before: expanding a row pushes a blank gray bar through the table",
                 "caption": "Expanding a row breaks the table"
               },
               "after": {
-                "src": "assets/hyperdrive/after-5-MEL-row-expanded.jpg",
+                "src": "assets/hyperdrive/after-5-MEL-row-expanded.webp",
                 "alt": "After: expanding a row shows its purchases nested underneath, still aligned",
                 "caption": "Purchases nest underneath"
               },
@@ -363,12 +371,12 @@
           "body": "<p>Expenses are logged one purchase at a time. The budget view turns that same money into a summary anyone on the team can read in seconds: what came in, what went out, and the balance over time.</p>",
           "figures": [
             {
-              "src": "assets/hyperdrive/after-9-expenses.jpg",
+              "src": "assets/hyperdrive/after-9-expenses.webp",
               "alt": "Expenses: every purchase as a row in a table",
               "caption": "Expenses: every purchase as a row"
             },
             {
-              "src": "assets/hyperdrive/after-7-budget.jpg",
+              "src": "assets/hyperdrive/after-7-budget.webp",
               "alt": "Budget: inflow, outflow, and net balance cards above a weekly line chart",
               "caption": "Budget: the same money at a glance"
             }
@@ -383,6 +391,10 @@
             "Brought the tool in line with the Hyperloop brand I designed for the club’s marketing",
             "Wrote documentation on what the tool is for, its features, and how it works"
           ]
+        },
+        {
+          "heading": "What I learned",
+          "body": "<p>How much small layout fixes, like column widths, change whether people trust a tool, and how to carry one brand from print into software.</p>"
         }
       ],
       "links": [],
@@ -398,35 +410,39 @@
         "screens": [
           {
             "label": "Home",
-            "src": "assets/hyperdrive/after-2-home.jpg",
+            "src": "assets/hyperdrive/after-2-home.webp",
             "alt": "Home: Welcome to Hyperdrive, with buttons for the equipment list, inventory, contacts, expenses, budget, and HyperMail"
           },
           {
             "label": "Equipment list",
-            "src": "assets/hyperdrive/after-3-MEL-aligned.jpg",
+            "src": "assets/hyperdrive/after-3-MEL-aligned.webp",
             "alt": "Master Equipment List: a filter panel above a table whose columns line up"
           },
           {
             "label": "Inventory",
-            "src": "assets/hyperdrive/after-6-inventory.jpg",
+            "src": "assets/hyperdrive/after-6-inventory.webp",
             "alt": "Inventory table with part numbers, subteams, quantities, and costs"
           },
           {
             "label": "Budget",
-            "src": "assets/hyperdrive/after-7-budget.jpg",
+            "src": "assets/hyperdrive/after-7-budget.webp",
             "alt": "Budget summary: total inflow, outflow, and net balance above a weekly line chart"
           },
           {
             "label": "Contacts",
-            "src": "assets/hyperdrive/after-8-contacts.jpg",
+            "src": "assets/hyperdrive/after-8-contacts.webp",
             "alt": "Contacts table with company, primary contacts, total donated, tier, and status"
           },
           {
             "label": "Expenses",
-            "src": "assets/hyperdrive/after-9-expenses.jpg",
+            "src": "assets/hyperdrive/after-9-expenses.webp",
             "alt": "Expenses table with a Create Purchase button and columns for company, card, account, and total cost"
           }
         ]
+      },
+      "outcome": {
+        "value": "At a glance",
+        "text": "equipment that lines up column by column, and a budget view that turns rows of purchases into inflow, outflow, and balance."
       }
     },
     "ux-audit": {
@@ -493,10 +509,18 @@
         {
           "heading": "Priorities",
           "body": "<p>I prioritized navigation dropdowns and page context, simpler and less repetitive content paths, visible back navigation, and clearer filter rules. Medium-priority improvements included standardizing CTA language, moving teacher stories higher, and increasing hover-state contrast. The audit also calls out strengths to preserve, including keyboard navigation, visible focus, and the platform’s warm visual language.</p>"
+        },
+        {
+          "heading": "What I learned",
+          "body": "<p>How to separate the strengths worth keeping from the problems, and how to turn a long list of findings into a few priorities a team can act on.</p>"
         }
       ],
       "links": [],
-      "category": "ux"
+      "category": "ux",
+      "outcome": {
+        "value": "4 priorities",
+        "text": "for DonorsChoose: navigation and page context, simpler content paths, visible back navigation, and clearer filter rules."
+      }
     },
     "aldente": {
       "title": "Al Dente",
@@ -537,16 +561,55 @@
           "body": "<p>Have the app fully functioning on modern tech that keeps it efficient, with our focus on the implementation. Alongside it, we’re creating a mock brand through real beta testing, and documenting the iteration process thoroughly.</p>"
         },
         {
+          "type": "table",
+          "heading": "Early findings",
+          "body": "<p>From our first interviews with home cooks, and what each finding changed.</p>",
+          "columns": [
+            "What we heard",
+            "What we designed"
+          ],
+          "rows": [
+            [
+              "Most recipes come from social media, scattered across Instagram saves, Pinterest, bookmarks, and docs, with no single home",
+              "Our first challenge: turning a social media post into a complete recipe stored in the app to revisit or reshare"
+            ],
+            [
+              "Most people cook from digital recipes, but scrolling between ingredients and steps, ads, and a screen that dims are frustrating",
+              "A step-by-step cook mode with ingredients inside each step, plus the e-ink cookbook for a calm, distraction-free page"
+            ],
+            [
+              "Family recipes came up in 3 of 4 early interviews and carry emotional weight",
+              "A space for family recipes with stories, photos, and loose measurements like “a handful”"
+            ],
+            [
+              "People already coordinate in WhatsApp, iMessage, and GroupMe and like them",
+              "Dinner invites that drop into existing group chats instead of replacing them"
+            ],
+            [
+              "A participant nearly started a fire by forgetting bread in the oven",
+              "Timers tied to specific steps and an “oven still on?” reminder at the end"
+            ]
+          ]
+        },
+        {
           "type": "live",
           "heading": "Follow along",
           "body": "<p class=\"note\">The capstone team posts progress on Instagram while the app comes together.</p>",
           "label": "@aldentecapstone on Instagram",
           "href": "https://www.instagram.com/aldentecapstone/"
+        },
+        {
+          "heading": "What I learned",
+          "body": "<p>How to ask questions without steering people, how a surprise finding can become a team’s first design problem, and how to recruit real participants beyond my own friends.</p>"
         }
       ],
       "links": [],
       "coverText": "Al Dente Capstone",
-      "category": "ux"
+      "category": "ux",
+      "outcome": {
+        "value": "Spring 2027",
+        "text": "beta with real community members, after App Store submission, to measure whether the app meets what people need."
+      }
     },
     "brewing": {
       "title": "Bad Decisions Brewing",
@@ -565,17 +628,25 @@
         ]
       ],
       "image": {
-        "src": "assets/brewing/cans-angle.jpg",
+        "src": "assets/brewing/cans-angle.webp",
         "alt": "Angled 3D view of the three Bad Decisions Brewing can designs in pink, mint, and mango"
       },
       "sections": [
         {
           "heading": "A little bad, on purpose",
           "body": "<p>Bad Decisions Brewing pairs a self-aware voice with a colorful Blonde Ale that comes in 3 variations: Golden Intent, Nonchalant Nectar, and Bold-Move Mango.</p><p class=\"note\">The cans above are 3D mockups of the label artwork, not photographs of printed cans.</p>"
+        },
+        {
+          "heading": "What I learned",
+          "body": "<p>Why defining the audience first makes every later design decision easier, and how to make humor feel intentional instead of messy.</p>"
         }
       ],
       "links": [],
-      "category": "typography"
+      "category": "typography",
+      "outcome": {
+        "value": "3 flavors",
+        "text": "one brand: Golden Intent, Nonchalant Nectar, and Bold-Move Mango, from name and voice to 3D can renders."
+      }
     },
     "typeface": {
       "title": "My Typeface",
@@ -596,7 +667,15 @@
         ]
       ],
       "comingSoon": true,
-      "sections": [],
+      "sections": [
+        {
+          "type": "typeTester",
+          "heading": "Try the typeface",
+          "body": "<p>Type anything to see it set in the font.</p>",
+          "font": "",
+          "sample": "Bad decisions make good stories."
+        }
+      ],
       "links": [],
       "coverText": "Experimental type",
       "category": "typography"

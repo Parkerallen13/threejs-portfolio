@@ -6,3 +6,6 @@ dist
 
 # Full-size drawing sources; the site uses the optimized JPEGs one level up
 src/assets/drawings/originals/
+
+# Local admin undo history
+.admin-history.json

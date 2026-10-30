@@ -2,6 +2,7 @@ import './project.css'
 import { PROJECTS, PROJECT_ORDER, projectUrl } from './projects.js'
 import { initThemeToggle } from './theme.js'
 import { initAura } from './motion.js'
+import { initAnalytics } from './analytics.js'
 
 const slug = document.body.dataset.project
 const project = PROJECTS[slug]
@@ -72,6 +73,37 @@ const BLOCKS = {
           </details>
         </li>`).join('')}
     </ol>`,
+  // Big, scannable principle names; each one's details open on hover or keyboard focus
+  principles: (s, p) => `
+    ${body(s, p)}
+    <p class="principles__hint" aria-hidden="true">Hover a principle for how it shows up</p>
+    <ul class="principles">
+      ${s.items.map((item, j) => `
+        <li class="principle" tabindex="0">
+          <span class="principle__title"${edit(`${p}.items.${j}.title`)}>${item.title}</span>
+          <span class="principle__desc"${edit(`${p}.items.${j}.body`)}>${item.body}</span>
+        </li>`).join('')}
+    </ul>`,
+  table: (s, p) => `
+    ${body(s, p)}
+    <div class="table-wrap">
+      <table class="findings">
+        <thead><tr>${s.columns.map((column, k) => `<th scope="col"${edit(`${p}.columns.${k}`)}>${column}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${s.rows.map((row, j) => `<tr>${row.map((cell, k) => `<td${edit(`${p}.rows.${j}.${k}`)}>${cell}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`,
+  // Only shows once a font file is set (`font`, e.g. "public/fonts/my-type.woff2")
+  typeTester: (s, p) => `
+    ${body(s, p)}
+    <div class="type-tester">
+      <label class="type-tester__controls">
+        <span>Size</span>
+        <input type="range" min="24" max="160" value="72" data-tester-size />
+      </label>
+      <p class="type-tester__preview" contenteditable="plaintext-only" spellcheck="false" aria-label="Type to try the typeface" data-tester>${s.sample}</p>
+    </div>`,
   dropdowns: (s, p) => `
     ${body(s, p)}
     <div class="dropdowns">
@@ -115,13 +147,35 @@ const BLOCKS = {
     <a class="live-preview__link" href="${s.href}" target="_blank" rel="noopener noreferrer"><span${edit(`${p}.label`)}>${s.label}</span> &rarr;<span class="visually-hidden"> (opens in a new tab)</span></a>`,
 }
 
-const sections = project.sections
-  .map((s, i) => `
-    <section class="block block--${s.type ?? 'text'}">
+// Sections that have something to show (a type tester waits for its font file)
+const shown = project.sections
+  .map((s, i) => ({ s, i, id: `section-${i}` }))
+  .filter(({ s }) => s.type !== 'typeTester' || s.font)
+
+const sections = shown
+  .map(({ s, i, id }) => `
+    <section class="block block--${s.type ?? 'text'}" id="${id}">
       <h2${edit(`sections.${i}.heading`)}>${s.heading}</h2>
       ${BLOCKS[s.type ?? 'text'](s, `sections.${i}`)}
     </section>`)
   .join('')
+
+// Jump links so a skimming reader can go straight to process, results, or learnings
+const plain = (html) => html.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&')
+const jump = shown.length >= 3
+  ? `<nav class="jump" aria-label="On this page">
+      <span>On this page</span>
+      ${shown.map(({ s, id }) => `<a href="#${id}">${plain(s.heading).replace(/:.*$/, '')}</a>`).join('')}
+    </nav>`
+  : ''
+
+const outcome = project.outcome
+  ? `<section class="outcome" aria-label="Outcome">
+      <p class="outcome__label">Outcome</p>
+      <p class="outcome__value"${edit('outcome.value')}>${project.outcome.value}</p>
+      <p class="outcome__text"${edit('outcome.text')}>${project.outcome.text}</p>
+    </section>`
+  : ''
 
 // A live site or document in a browser-style window, in place of a static screenshot
 const embed = project.embed
@@ -150,7 +204,7 @@ const tour = project.tour
           ${project.tour.screens.map((screen, i) => `<button type="button" data-tour-tab="${i}" aria-pressed="${i === 0}">${screen.label}</button>`).join('')}
         </div>
         <div class="tour__screen">
-          ${project.tour.screens.map((screen, i) => `<img src="${screen.src}" alt="${screen.alt}" data-tour-screen="${i}"${i ? ' hidden loading="lazy"' : ''} decoding="async" />`).join('')}
+          ${project.tour.screens.map((screen, i) => `<img src="${screen.src}" alt="${screen.alt}" data-tour-screen="${i}"${i ? ' hidden loading="lazy"' : ''} decoding="async"${editImg(`tour.screens.${i}.src`)} />`).join('')}
         </div>
       </div>
       <figcaption${edit('tour.caption')}>${project.tour.caption}</figcaption>
@@ -169,7 +223,7 @@ const comingSoon = project.comingSoon
   : ''
 
 const title = project.titleLogo
-  ? `<h1 class="title-logo"><img src="${project.titleLogo.src}" alt="${project.title}"${editImg('titleLogo.src')} /></h1>`
+  ? `<h1 class="title-logo"><img src="${project.titleLogo.src}" alt="${project.titleLogo.alt ?? project.title}"${editImg('titleLogo.src')} /></h1>`
   : `<h1${project.titleStyle === 'plain' ? ' class="title-plain"' : ''}${edit('title')}>${project.title}</h1>`
 
 const links = project.links
@@ -179,11 +233,13 @@ const links = project.links
 document.title = `${project.title} — Parker Allen`
 document.querySelector('#app').innerHTML = `
   <header class="topbar">
+    <span class="progress" aria-hidden="true"><span data-progress></span></span>
     <a class="back" href="${home}">&larr; All projects</a>
     <p class="brand"><span class="brand__script">Design by</span> <span class="brand__name">Parker Allen</span></p>
   </header>
   <button type="button" class="lamp-toggle" data-mode-toggle aria-label="Switch to light mode" title="Switch to light mode"></button>
 
+  ${import.meta.env.DEV && project.draft ? '<p class="draft-banner">Draft preview: only you can see this page. Post it from the admin when it’s ready.</p>' : ''}
   <main class="page tone-${project.tone}">
     <section class="hero">
       <p class="script"${edit('script')}>${project.script ?? 'Case study'}</p>
@@ -198,11 +254,14 @@ document.querySelector('#app').innerHTML = `
     </section>
     ${project.crossLink ? `<a class="cross-link" href="${home}${project.crossLink.href}"><span${edit('crossLink.label')}>${project.crossLink.label}</span> <span aria-hidden="true">&rarr;</span></a>` : ''}
 
+    ${outcome}
+
     <div class="ticket">
       <dl class="ticket__main">${meta}</dl>
       <div class="ticket__stub">${number ? `<span>Project</span><strong>${number}</strong>` : '<span>Hello</span><strong>✦</strong>'}</div>
     </div>
 
+    ${jump}
     ${embed || tour || shot}
     ${comingSoon}
     ${sections}
@@ -217,6 +276,7 @@ document.querySelector('#app').innerHTML = `
 
 initThemeToggle(document.querySelector('[data-mode-toggle]'))
 initAura()
+initAnalytics()
 if (import.meta.env.DEV) import('./edit.js').then(({ initEditMode }) => initEditMode())
 
 document.querySelector('.tour')?.addEventListener('click', (event) => {
@@ -227,6 +287,26 @@ document.querySelector('.tour')?.addEventListener('click', (event) => {
   tour.querySelectorAll('[data-tour-screen]').forEach((img) => { img.hidden = img.dataset.tourScreen !== tab.dataset.tourTab })
   tour.querySelector('[data-tour-url]').textContent = `${project.tour.url}/${tab.textContent.toLowerCase().replace(/\s+/g, '-')}`
 })
+
+// Reading progress along the bottom of the top bar
+const progress = document.querySelector('[data-progress]')
+let progressFrame = 0
+const showProgress = () => {
+  progressFrame = 0
+  const scrollable = document.documentElement.scrollHeight - innerHeight
+  progress.style.transform = `scaleX(${scrollable > 0 ? Math.min(1, scrollY / scrollable) : 0})`
+}
+addEventListener('scroll', () => { progressFrame ||= requestAnimationFrame(showProgress) }, { passive: true })
+showProgress()
+
+// Type tester: load the font file and let the slider set the size
+const tester = document.querySelector('[data-tester]')
+if (tester) {
+  const { font } = project.sections.find((s) => s.type === 'typeTester')
+  const face = new FontFace('PortfolioTypeface', `url(${font})`)
+  face.load().then((loaded) => { document.fonts.add(loaded); tester.style.fontFamily = 'PortfolioTypeface, var(--font-display)' }).catch(() => {})
+  document.querySelector('[data-tester-size]').addEventListener('input', (event) => { tester.style.fontSize = `${event.target.value}px` })
+}
 
 const lazyVideos = document.querySelectorAll('[data-lazy-video]')
 const attachSource = (v) => { if (!v.src) v.src = v.dataset.src }

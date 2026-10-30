@@ -154,6 +154,115 @@ h1 {
 }
 .tldr p:last-child { font-size: 1.1rem; line-height: 1.65; max-width: 62ch; }
 
+/* ---------- Outcome ---------- */
+
+.outcome {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 20px;
+  align-items: center;
+  padding: 1rem 1.3rem;
+  border: 3px solid var(--line);
+  background: var(--tone);
+  color: var(--ink);
+  box-shadow: 6px 6px 0 var(--line);
+}
+.outcome__label {
+  grid-column: 1 / -1;
+  font: 700 0.72rem/1.4 var(--mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.outcome__value {
+  font-family: var(--display);
+  font-size: calc(clamp(2rem, 6vw, 3.2rem) * var(--heading-scale, 1));
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.outcome__text { max-width: 52ch; font-size: 1.02rem; line-height: 1.55; }
+
+@media (max-width: 600px) {
+  .outcome { grid-template-columns: 1fr; }
+}
+
+/* ---------- Jump links + reading progress ---------- */
+
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.jump span {
+  margin-right: 4px;
+  color: var(--tone-text);
+  font: 700 0.72rem/1.4 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.jump a {
+  padding: 6px 12px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease;
+}
+.jump a:hover,
+.jump a:focus-visible { color: var(--ink); background: var(--tone); }
+.block { scroll-margin-top: 90px; }
+
+/* Sits just under the top bar on the page background, in a text-safe accent (theme.js checks it
+   against the background) over a faint track, so it reads clearly in both modes */
+.progress {
+  position: absolute;
+  right: 0;
+  bottom: -9px;
+  left: 0;
+  height: 6px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+}
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--tone-tomato-text, var(--tone-tomato));
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* ---------- Findings table ---------- */
+
+.table-wrap { overflow-x: auto; margin-top: 1rem; border: 2px solid var(--line); }
+.findings { width: 100%; border-collapse: collapse; font-size: 0.98rem; line-height: 1.55; }
+.findings th {
+  padding: 12px 16px;
+  color: var(--ink);
+  background: var(--tone);
+  font: 700 0.75rem/1.3 var(--mono);
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.findings td { width: 50%; padding: 14px 16px; border-top: 2px solid var(--line); vertical-align: top; }
+.findings td:first-child { opacity: 0.8; }
+.findings td:last-child { font-weight: 700; }
+
+/* ---------- Type tester ---------- */
+
+.type-tester { margin-top: 1rem; padding: 1.2rem; border: 3px solid var(--line); background: var(--card); }
+.type-tester__controls { display: flex; gap: 12px; align-items: center; font: 700 0.75rem var(--mono); text-transform: uppercase; }
+.type-tester__controls input { flex: 1; max-width: 260px; }
+.block .type-tester__preview {
+  margin-top: 1rem;
+  font-size: 72px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+  outline: none;
+}
+
 /* ---------- Ticket ---------- */
 
 .ticket {
@@ -428,6 +537,66 @@ h1 {
 .changes h4 { display: inline; font-size: 1.02rem; line-height: 1.35; }
 .changes p { margin-top: 0.5rem; font-size: 0.98rem; line-height: 1.65; opacity: 0.88; }
 
+/* ---------- UX principles ---------- */
+
+.block .principles__hint {
+  margin-top: 1rem;
+  color: var(--tone-text);
+  font: 700 0.72rem/1.4 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.principles { display: grid; gap: 14px; margin-top: 0.8rem; list-style: none; }
+
+.principle {
+  padding: 18px 22px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  box-shadow: 6px 6px 0 var(--tone);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.principle:hover,
+.principle:focus-visible {
+  outline: none;
+  box-shadow: 9px 9px 0 var(--tone);
+  transform: translate(-3px, -3px);
+}
+
+.principle__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: calc(clamp(1.9rem, 5.4vw, 3.2rem) * var(--heading-scale, 1));
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.principle__desc {
+  display: block;
+  max-width: 60ch;
+  max-height: 0;
+  overflow: hidden;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  opacity: 0;
+  transition: max-height 320ms ease, opacity 220ms ease, margin-top 320ms ease;
+}
+
+.principle:hover .principle__desc,
+.principle:focus .principle__desc,
+.principle:focus-within .principle__desc {
+  max-height: 14em;
+  margin-top: 12px;
+  opacity: 0.9;
+}
+
+/* No hover on touch screens: show every description */
+@media (hover: none) {
+  .principles__hint { display: none; }
+  .principle__desc { max-height: none; margin-top: 12px; opacity: 0.9; }
+}
+
 /* ---------- Dropdowns ---------- */
 
 .changes summary,
@@ -589,7 +758,47 @@ h1 {
 .next h3 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 1.8rem; margin-top: 0.3rem; }
 .next .kicker { margin-top: 0; }
 
+/* Phones: smaller titles, facts, and media so each screen holds a full idea */
 @media (max-width: 600px) {
   .brand { display: none; }
-  .ticket__stub { width: 70px; }
+  .page { gap: 28px; padding: 28px 16px 64px; }
+  .script { font-size: 1.6rem; }
+  h1 { font-size: calc(clamp(2.4rem, 12vw, 3.2rem) * var(--heading-scale)); text-shadow: 3px 3px 0 var(--tone); }
+  .title-logo img { width: min(100%, 260px); }
+  .lede { font-size: 1rem; }
+  .tldr { padding: 0.8rem 1rem; }
+  .tldr p:last-child { font-size: 0.98rem; }
+  .outcome { padding: 0.8rem 1rem; }
+  .ticket__main { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0.8rem 1rem; gap: 0.6rem 1rem; }
+  .ticket dt { font-size: 0.66rem; }
+  .ticket dd { font-size: 1.05rem; }
+  .ticket__stub { width: 60px; }
+  .ticket__stub strong { font-size: 1.5rem; }
+  .jump a { padding: 5px 10px; font-size: 0.78rem; }
+  .block h2 { font-size: 1.25rem; }
+  .block p,
+  .stars li { font-size: 0.98rem; }
+  .principle { padding: 14px 16px; }
+  .principle__title { font-size: calc(1.5rem * var(--heading-scale, 1)); }
+  .changes li { padding: 12px 14px; }
+  .changes h4 { font-size: 0.95rem; }
+  .identity__logo div { height: 120px; }
+  .findings { font-size: 0.86rem; }
+  .findings td { padding: 10px 12px; }
+  .embed__bar a { font-size: 0.65rem; }
+  .poster__link { font-size: 1.05rem; }
+  .next h3 { font-size: 1.3rem; }
+}
+
+/* Local draft preview notice (dev server only) */
+.draft-banner {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 2px dashed var(--line);
+  color: var(--ink);
+  background: var(--tone-mustard);
+  font: 700 0.8rem/1.4 var(--mono);
+  text-align: center;
 }
